@@ -25,8 +25,9 @@ export interface Race {
 
 export interface RaceSession {
   name: string
-  dateStart: string
-  dateEnd: string
+  dateStart: string  // ISO 8601 또는 'YYYY-MM-DD' (시간 미확정)
+  dateEnd?: string
+  tbc?: boolean      // 시간 미확정
 }
 
 export interface RaceDisplay extends Race {

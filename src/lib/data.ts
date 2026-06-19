@@ -1,4 +1,5 @@
 import type { Series, Race, NewsItem, SportId, RaceDisplay, NewsDisplay, RaceSession } from '@/types'
+import { WEC_RACES_2026 } from './wecData'
 
 export const SERIES: Series[] = [
   {
@@ -57,12 +58,24 @@ export const SERIES_MAP: Record<SportId, Series> = Object.fromEntries(
   SERIES.map((s) => [s.id, s])
 ) as Record<SportId, Series>
 
-const OTHER_RACES: Race[] = [
+// WEC 2026 → Race 인터페이스로 변환
+const WEC_RACES: (Race & { sessions: RaceSession[] })[] = WEC_RACES_2026.map((w) => ({
+  sport: 'wec' as const,
+  round: w.round,
+  name: w.name,
+  circuit: w.circuit,
+  loc: w.loc,
+  date: w.raceDate,
+  laps: w.duration,
+  extra: w.country,
+  tip: w.tip,
+  sessions: w.sessions,
+}))
+
+const NON_WEC_RACES: Race[] = [
   { sport: 'superrace', round: 4, name: 'Round 4 · 인제', circuit: 'Inje Speedium', loc: '강원 인제', date: '2026-07-05T05:00:00Z', laps: '슈퍼6000', extra: '예선 토요일', tip: '한국 최고의 레이싱 트랙. 주말 현장의 열정이 뜨겁다.' },
-  { sport: 'wec', round: 5, name: '6H of São Paulo', circuit: 'Interlagos', loc: 'São Paulo, BR', date: '2026-07-12T15:00:00Z', laps: '6 HOURS', extra: '하이퍼카', tip: '남미의 거친 트랙. 내구력과 스킬의 가장 큰 싸움터.' },
   { sport: 'wrc', round: 8, name: 'Rally Finland', circuit: 'Jyväskylä', loc: 'Finland', date: '2026-07-31T07:00:00Z', laps: '320 KM SS', extra: '점프', tip: '점프의 천국. 드라이버가 차를 공중에 날려 보낸다.' },
   { sport: 'superrace', round: 5, name: 'Round 5 · 영암', circuit: 'KIC', loc: '전남 영암', date: '2026-08-09T05:00:00Z', laps: '슈퍼6000', extra: '나이트 경기', tip: '환상의 밤 경기. 헤드라이트 아래 펼쳐지는 드라마.' },
-  { sport: 'wec', round: 6, name: '6H of Fuji', circuit: 'Fuji Speedway', loc: 'Shizuoka, JP', date: '2026-09-13T04:00:00Z', laps: '6 HOURS', extra: '토요타 홈', tip: '일본의 신사. 토요타의 기술이 극대화되는 무대.' },
 ]
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -90,7 +103,7 @@ export function toRaceDisplay(r: Race & { sessions?: RaceSession[] }): RaceDispl
 
 export function buildSchedule(f1Races: (Race & { sessions?: RaceSession[] })[] = []): RaceDisplay[] {
   const now = Date.now()
-  const all = [...f1Races, ...OTHER_RACES]
+  const all = [...f1Races, ...WEC_RACES, ...NON_WEC_RACES]
   return all
     .map(toRaceDisplay)
     .filter((r) => r.ts > now - 3 * 60 * 60 * 1000)

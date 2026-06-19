@@ -25,21 +25,24 @@ function filterAccent(id: string) {
   return id === 'all' ? '#E10600' : SPORT_COLORS[id]
 }
 
-// Format ISO date string to KST display: "6월 28일 (일) 22:00 KST"
-function formatSessionDate(iso: string): { date: string; time: string } {
-  const d = new Date(iso)
-  // KST = UTC+9
-  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
+// ISO → KST 표시: "6/28(일)" / "22:00 KST" 또는 "시간 미정"
+function formatSessionDate(iso: string, tbc = false): { date: string; time: string } {
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토']
+
+  if (tbc) {
+    // YYYY-MM-DD 형식
+    const [, m, d] = iso.split('-').map(Number)
+    const wday = weekdays[new Date(iso).getDay()]
+    return { date: `${m}/${d}(${wday})`, time: '시간 미정' }
+  }
+
+  const kst = new Date(new Date(iso).getTime() + 9 * 60 * 60 * 1000)
   const month = kst.getUTCMonth() + 1
   const day = kst.getUTCDate()
-  const weekdays = ['일', '월', '화', '수', '목', '금', '토']
   const wday = weekdays[kst.getUTCDay()]
   const hh = String(kst.getUTCHours()).padStart(2, '0')
   const mm = String(kst.getUTCMinutes()).padStart(2, '0')
-  return {
-    date: `${month}/${day}(${wday})`,
-    time: `${hh}:${mm}`,
-  }
+  return { date: `${month}/${day}(${wday})`, time: `${hh}:${mm}` }
 }
 
 function SessionPanel({ sessions, color }: { sessions: RaceSession[]; color: string }) {
@@ -50,8 +53,9 @@ function SessionPanel({ sessions, color }: { sessions: RaceSession[]; color: str
     >
       <div className="flex flex-wrap gap-2 px-8 py-4">
         {sessions.map((s) => {
-          const { date, time } = formatSessionDate(s.dateStart)
+          const { date, time } = formatSessionDate(s.dateStart, s.tbc)
           const isRace = s.name === '결승'
+          const isTbc = s.tbc
           return (
             <div
               key={s.name}
@@ -62,7 +66,7 @@ function SessionPanel({ sessions, color }: { sessions: RaceSession[]; color: str
               }}
             >
               <span
-                className="font-mono text-[10px] font-bold uppercase tracking-[0.08em] min-w-[56px]"
+                className="font-mono text-[10px] font-bold tracking-[0.06em] min-w-[72px]"
                 style={{ color: isRace ? color : '#C9C1B2' }}
               >
                 {s.name}
@@ -70,9 +74,9 @@ function SessionPanel({ sessions, color }: { sessions: RaceSession[]; color: str
               <span className="font-mono text-[11px] text-[#9A9081]">{date}</span>
               <span
                 className="font-mono text-[11px] font-bold"
-                style={{ color: isRace ? color : '#D8D2C6' }}
+                style={{ color: isTbc ? '#6E655A' : isRace ? color : '#D8D2C6' }}
               >
-                {time} KST
+                {isTbc ? '시간 미정' : `${time} KST`}
               </span>
             </div>
           )
