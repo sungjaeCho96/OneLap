@@ -1,6 +1,7 @@
 import type { Series, Race, NewsItem, SportId, RaceDisplay, NewsDisplay, RaceSession } from '@/types'
 import { WEC_RACES_2026 } from './wecData'
 import { WRC_RACES_2026 } from './wrcData'
+import { SUPERRACE_ROUNDS_2026 } from './superraceData'
 
 export const SERIES: Series[] = [
   {
@@ -87,10 +88,21 @@ const WRC_RACES: (Race & { sessions: RaceSession[] })[] = WRC_RACES_2026.map((w)
   sessions: w.sessions,
 }))
 
-const NON_WEC_RACES: Race[] = [
-  { sport: 'superrace', round: 4, name: 'Round 4 · 인제', circuit: 'Inje Speedium', loc: '강원 인제', date: '2026-07-05T05:00:00Z', laps: '슈퍼6000', extra: '예선 토요일', tip: '한국 최고의 레이싱 트랙. 주말 현장의 열정이 뜨겁다.' },
-  { sport: 'superrace', round: 5, name: 'Round 5 · 영암', circuit: 'KIC', loc: '전남 영암', date: '2026-08-09T05:00:00Z', laps: '슈퍼6000', extra: '나이트 경기', tip: '환상의 밤 경기. 헤드라이트 아래 펼쳐지는 드라마.' },
-]
+// SuperRace 2026 → Race 인터페이스로 변환
+const SUPERRACE_RACES: (Race & { sessions: RaceSession[] })[] = SUPERRACE_ROUNDS_2026.map((r) => ({
+  sport: 'superrace' as const,
+  round: r.round,
+  name: r.name,
+  circuit: r.circuit,
+  loc: r.loc,
+  date: r.raceDate,
+  laps: '슈퍼6000',
+  extra: r.eventLabel,
+  tip: r.tip,
+  sessions: r.sessions,
+}))
+
+const NON_WEC_RACES: Race[] = []
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -117,7 +129,7 @@ export function toRaceDisplay(r: Race & { sessions?: RaceSession[] }): RaceDispl
 
 export function buildSchedule(f1Races: (Race & { sessions?: RaceSession[] })[] = []): RaceDisplay[] {
   const now = Date.now()
-  const all = [...f1Races, ...WEC_RACES, ...WRC_RACES, ...NON_WEC_RACES]
+  const all = [...f1Races, ...WEC_RACES, ...WRC_RACES, ...SUPERRACE_RACES, ...NON_WEC_RACES]
   return all
     .map(toRaceDisplay)
     .filter((r) => r.ts > now - 3 * 60 * 60 * 1000)
