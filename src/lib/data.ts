@@ -2,6 +2,7 @@ import type { Series, Race, NewsItem, SportId, RaceDisplay, NewsDisplay, RaceSes
 import { WEC_RACES_2026 } from './wecData'
 import { WRC_RACES_2026 } from './wrcData'
 import { SUPERRACE_ROUNDS_2026 } from './superraceData'
+import { NFESTIVAL_ROUNDS_2026 } from './nfestivalData'
 
 export const SERIES: Series[] = [
   {
@@ -102,6 +103,20 @@ const SUPERRACE_RACES: (Race & { sessions: RaceSession[] })[] = SUPERRACE_ROUNDS
   sessions: r.sessions,
 }))
 
+// Hyundai N Festival 2026 → Race 인터페이스로 변환
+const NFESTIVAL_RACES: (Race & { sessions: RaceSession[] })[] = NFESTIVAL_ROUNDS_2026.map((r) => ({
+  sport: 'nfestival' as const,
+  round: r.round,
+  name: r.name,
+  circuit: r.circuit,
+  loc: r.loc,
+  date: r.raceDate,
+  laps: '원메이크',
+  extra: '아반떼 N',
+  tip: r.tip,
+  sessions: r.sessions,
+}))
+
 const NON_WEC_RACES: Race[] = []
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -129,7 +144,7 @@ export function toRaceDisplay(r: Race & { sessions?: RaceSession[] }): RaceDispl
 
 export function buildSchedule(f1Races: (Race & { sessions?: RaceSession[] })[] = []): RaceDisplay[] {
   const now = Date.now()
-  const all = [...f1Races, ...WEC_RACES, ...WRC_RACES, ...SUPERRACE_RACES, ...NON_WEC_RACES]
+  const all = [...f1Races, ...WEC_RACES, ...WRC_RACES, ...SUPERRACE_RACES, ...NFESTIVAL_RACES, ...NON_WEC_RACES]
   return all
     .map(toRaceDisplay)
     .filter((r) => r.ts > now - 3 * 60 * 60 * 1000)
