@@ -19,7 +19,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-bg text-text">
       <Navbar />
       <main>
-        <HeroSection nextRace={nextRace} />
+        <HeroSection races={schedule} />
         <ScheduleSection schedule={schedule} />
         <SeriesGuideSection series={SERIES} />
         <NewsSection news={news} />

@@ -1,11 +1,53 @@
+'use client'
+
+import { useState } from 'react'
 import type { RaceDisplay } from '@/types'
 import CountdownTimer from './CountdownTimer'
 
 interface HeroSectionProps {
-  nextRace: RaceDisplay
+  races: RaceDisplay[]
 }
 
-export default function HeroSection({ nextRace }: HeroSectionProps) {
+function NavArrow({
+  dir,
+  onClick,
+  disabled,
+}: {
+  dir: 'prev' | 'next'
+  onClick: () => void
+  disabled: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex items-center justify-center w-10 h-10 border transition-colors duration-150 disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+      style={{ borderColor: '#3A352C' }}
+      onMouseEnter={(e) => {
+        if (!disabled) (e.currentTarget as HTMLElement).style.borderColor = '#857A6A'
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled) (e.currentTarget as HTMLElement).style.borderColor = '#3A352C'
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        {dir === 'prev' ? (
+          <path d="M9 2L4 7L9 12" stroke="#C9C1B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+          <path d="M5 2L10 7L5 12" stroke="#C9C1B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </svg>
+    </button>
+  )
+}
+
+export default function HeroSection({ races }: HeroSectionProps) {
+  const [idx, setIdx] = useState(0)
+  const race = races[idx]
+  const total = races.length
+
+  if (!race) return null
+
   return (
     <section className="mx-auto max-w-[1280px] px-6 py-14 pb-16">
       <div className="flex flex-wrap gap-12 items-center">
@@ -16,18 +58,18 @@ export default function HeroSection({ nextRace }: HeroSectionProps) {
             <span
               className="w-[9px] h-[9px] rounded-full flex-none"
               style={{
-                background: nextRace.color,
-                boxShadow: `0 0 0 4px ${nextRace.color}20`,
+                background: race.color,
+                boxShadow: `0 0 0 4px ${race.color}20`,
               }}
             />
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">
-              다음 경기
+              {idx === 0 ? '다음 경기' : '예정 경기'}
             </span>
             <span
               className="font-mono text-xs font-bold uppercase tracking-[0.18em]"
-              style={{ color: nextRace.color }}
+              style={{ color: race.color }}
             >
-              {nextRace.sportShort}
+              {race.sportShort}
             </span>
           </div>
 
@@ -36,30 +78,39 @@ export default function HeroSection({ nextRace }: HeroSectionProps) {
             className="font-archivo font-black uppercase leading-[0.93] tracking-[-0.03em] mb-4"
             style={{ fontSize: 'clamp(42px, 6.4vw, 82px)' }}
           >
-            {nextRace.name}
+            {race.name}
           </h1>
 
           {/* Color underline */}
           <div
-            className="h-[5px] w-[120px] mb-[22px]"
-            style={{ background: nextRace.color }}
+            className="h-[5px] w-[120px] mb-[22px] transition-colors duration-300"
+            style={{ background: race.color }}
           />
 
           {/* Korean name + description */}
           <p className="text-[17px] leading-[1.6] text-text-mid max-w-[480px] mb-2">
-            {nextRace.sportKr} · {nextRace.extra || '경기'}
+            {race.sportKr} · {race.extra || '경기'}
           </p>
 
           {/* Location / round */}
           <div className="flex flex-wrap gap-x-[26px] gap-y-1 font-mono text-[13px] mt-3.5">
-            <span>📍 {nextRace.circuit}</span>
-            <span className="text-text-muted">{nextRace.loc}</span>
-            <span className="text-text-muted">{nextRace.roundLabel}</span>
+            <span>📍 {race.circuit}</span>
+            <span className="text-text-muted">{race.loc}</span>
+            <span className="text-text-muted">{race.roundLabel}</span>
           </div>
 
           {/* Countdown */}
           <div className="mt-9">
-            <CountdownTimer targetTs={nextRace.ts} />
+            <CountdownTimer targetTs={race.ts} />
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center gap-3 mt-8">
+            <NavArrow dir="prev" onClick={() => setIdx((i) => i - 1)} disabled={idx === 0} />
+            <NavArrow dir="next" onClick={() => setIdx((i) => i + 1)} disabled={idx === total - 1} />
+            <span className="font-mono text-[11px] text-text-dim tracking-[0.08em] ml-1">
+              {idx + 1} <span className="text-[#3A352C]">/</span> {total}
+            </span>
           </div>
         </div>
 
@@ -75,10 +126,10 @@ export default function HeroSection({ nextRace }: HeroSectionProps) {
           >
             {/* Sport badge overlay */}
             <div
-              className="absolute top-[18px] left-[18px] font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-white px-3 py-1.5"
-              style={{ background: nextRace.color }}
+              className="absolute top-[18px] left-[18px] font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-white px-3 py-1.5 transition-colors duration-300"
+              style={{ background: race.color }}
             >
-              {nextRace.sportName}
+              {race.sportName}
             </div>
 
             {/* Center placeholder text */}
@@ -92,10 +143,10 @@ export default function HeroSection({ nextRace }: HeroSectionProps) {
               style={{ background: 'linear-gradient(transparent,rgba(21,18,13,0.82))' }}
             >
               <div className="font-archivo font-extrabold text-[18px] uppercase leading-[1.15]">
-                {nextRace.circuit}
+                {race.circuit}
               </div>
               <div className="font-mono text-[11px] text-[#D8D2C6] mt-1">
-                {nextRace.dateLong}
+                {race.dateLong}
               </div>
             </div>
           </div>
@@ -105,7 +156,7 @@ export default function HeroSection({ nextRace }: HeroSectionProps) {
             <div className="font-mono text-[11px] text-text-muted tracking-[0.08em] mb-2">
               💡 TIP
             </div>
-            <p className="text-[13px] leading-[1.5] text-text-mid">{nextRace.tip}</p>
+            <p className="text-[13px] leading-[1.5] text-text-mid">{race.tip}</p>
           </div>
         </div>
       </div>
