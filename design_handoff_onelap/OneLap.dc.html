@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#F2EFE8;}
+  ::selection{background:#E10600;color:#fff;}
+</style>
+</helmet>
+<div style="background:#F2EFE8;color:#15120D;font-family:'Noto Sans KR',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;">
+
+  <!-- NAV -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(242,239,232,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #E0D9CB;">
+    <div style="max-width:1280px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 56 56" style="width:40px;height:40px;" fill="none">
+            <path d="M44 22 A18 18 0 1 0 44 34" stroke="#15120D" stroke-width="5" stroke-linecap="round"/>
+            <path d="M27 17 L27 39 L39 39" stroke="#15120D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M46 23 L54 23" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+            <path d="M46 28 L52 28" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+            <path d="M46 33 L54 33" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:24px;letter-spacing:-0.02em;line-height:1;color:#15120D;">OneLap</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:#857A6A;letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;">모터스포츠</div>
+        </div>
+      </div>
+      <nav style="display:flex;align-items:center;gap:28px;font-size:14px;font-weight:700;">
+        <a href="#schedule" style="color:#15120D;text-decoration:none;">경기 일정</a>
+        <a href="#series" style="color:#15120D;text-decoration:none;">시작하기</a>
+        <a href="#news" style="color:#15120D;text-decoration:none;">뉴스</a>
+        <a href="#schedule" style="color:#fff;text-decoration:none;background:#15120D;padding:9px 18px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px;">LIVE</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section style="max-width:1280px;margin:0 auto;padding:56px 24px 64px;">
+    <div style="display:flex;flex-wrap:wrap;gap:48px;align-items:center;">
+      <div style="flex:1 1 480px;min-width:300px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <span style="width:9px;height:9px;border-radius:50%;background:{{ nextRace.color }};box-shadow:0 0 0 4px rgba(225,6,0,0.12);"></span>
+          <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;">다음 경기</span>
+          <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ nextRace.color }};">{{ nextRace.sportShort }}</span>
+        </div>
+        <h1 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(42px,6.4vw,82px);line-height:0.93;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:18px;">{{ nextRace.name }}</h1>
+        <div style="height:5px;width:120px;background:{{ nextRace.color }};margin-bottom:22px;"></div>
+        <p style="font-size:17px;line-height:1.6;color:#4A4338;max-width:480px;margin-bottom:8px;">{{ nextRace.krName }}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 26px;font-family:'Space Mono',monospace;font-size:13px;color:#15120D;margin-top:14px;">
+          <span>📍 {{ nextRace.circuit }}</span>
+          <span style="color:#857A6A;">{{ nextRace.location }}</span>
+          <span style="color:#857A6A;">{{ nextRace.roundLabel }}</span>
+        </div>
+        <div style="margin-top:36px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">출발까지</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <sc-for list="{{ countdown }}" as="unit" hint-placeholder-count="4">
+              <div style="background:#15120D;color:#F2EFE8;padding:14px 18px;min-width:84px;text-align:center;">
+                <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;">{{ unit.value }}</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9081;margin-top:8px;">{{ unit.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 380px;min-width:280px;display:flex;flex-direction:column;">
+        <div style="position:relative;flex:1;min-height:360px;background:repeating-linear-gradient(48deg,#E4DFD3 0,#E4DFD3 11px,#ECE7DC 11px,#ECE7DC 22px);border:1px solid #DAD2C2;display:flex;align-items:flex-end;overflow:hidden;">
+          <div style="position:absolute;top:18px;left:18px;background:{{ nextRace.color }};color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;padding:6px 12px;text-transform:uppercase;">{{ nextRace.sportName }}</div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;text-align:center;">[ 경기장 사진 ]<br>대표 이미지</div>
+          <div style="position:relative;width:100%;background:linear-gradient(transparent,rgba(21,18,13,0.82));padding:20px;color:#fff;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px;line-height:1.15;text-transform:uppercase;">{{ nextRace.circuit }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#D8D2C6;margin-top:4px;">{{ nextRace.dateLong }}</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #DAD2C2;border-top:none;padding:18px 20px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;margin-bottom:8px;">💡 TIP</div>
+          <p style="font-size:13px;line-height:1.5;color:#4A4338;">{{ nextRace.tip }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" style="background:#15120D;color:#F2EFE8;padding:64px 0;">
+    <div style="max-width:1280px;margin:0 auto;padding:0 24px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:32px;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#E10600;margin-bottom:12px;">Calendar</div>
+          <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;">다음 경기들</h2>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 16px;border:1px solid #3A352C;cursor:pointer;background:{{ f.bg }};color:{{ f.fg }};transition:all .15s;" style-hover="opacity:0.8;">{{ f.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #2C271F;">
+        <sc-for list="{{ schedule }}" as="r" hint-placeholder-count="6">
+          <a href="#schedule" style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:22px 8px;border-bottom:1px solid #2C271F;text-decoration:none;color:#F2EFE8;position:relative;" style-hover="background:rgba(255,255,255,0.03);">
+            <div style="width:5px;align-self:stretch;background:{{ r.color }};min-height:48px;flex:none;"></div>
+            <div style="flex:none;width:84px;text-align:center;">
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:34px;line-height:0.9;">{{ r.day }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;margin-top:4px;">{{ r.month }} · {{ r.wday }}</div>
+            </div>
+            <div style="flex:1 1 260px;min-width:200px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#15120D;background:{{ r.color }};padding:3px 8px;text-transform:uppercase;">{{ r.sportShort }}</span>
+                <span style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;">{{ r.roundLabel }}</span>
+              </div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:21px;line-height:1.1;text-transform:uppercase;">{{ r.name }}</div>
+            </div>
+            <div style="flex:1 1 180px;min-width:140px;">
+              <div style="font-weight:700;font-size:15px;">{{ r.circuit }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9A9081;margin-top:3px;">{{ r.loc }}</div>
+            </div>
+            <div style="flex:none;text-align:right;min-width:96px;">
+              <div style="font-family:'Space Mono',monospace;font-size:12px;color:#D8D2C6;">{{ r.laps }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-top:4px;">{{ r.extra }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- GET STARTED -->
+  <section id="series" style="max-width:1280px;margin:0 auto;padding:72px 24px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;">시작하기</div>
+      <div style="font-family:'Space Mono',monospace;font-size:12px;color:#857A6A;">05 종목</div>
+    </div>
+    <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:36px;">모터스포츠를<br>처음 만나는 순간</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+      <sc-for list="{{ series }}" as="s" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #E0D9CB;display:flex;flex-direction:column;position:relative;overflow:hidden;" style-hover="transform:translateY(-4px);box-shadow:0 18px 40px rgba(21,18,13,0.10);transition:all .2s;">
+          <div style="height:6px;background:{{ s.color }};"></div>
+          <div style="padding:24px 22px 22px;display:flex;flex-direction:column;flex:1;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;">
+              <div>
+                <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:30px;line-height:1;letter-spacing:-0.02em;color:{{ s.color }};">{{ s.short }}</div>
+                <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:17px;text-transform:uppercase;margin-top:8px;">{{ s.name }}</div>
+                <div style="font-size:13px;color:#857A6A;margin-top:2px;">{{ s.kr }}</div>
+              </div>
+              <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:{{ s.color }};border:1px solid {{ s.color }};padding:4px 8px;white-space:nowrap;">{{ s.tag }}</span>
+            </div>
+            <p style="font-size:14px;line-height:1.6;color:#4A4338;margin-bottom:20px;flex:1;text-wrap:pretty;">{{ s.blurb }}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#E8E2D5;border:1px solid #E8E2D5;">
+              <sc-for list="{{ s.facts }}" as="ft" hint-placeholder-count="4">
+                <div style="background:#fff;padding:10px 12px;">
+                  <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#9A9081;">{{ ft.0 }}</div>
+                  <div style="font-size:13px;font-weight:700;margin-top:3px;">{{ ft.1 }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section id="news" style="background:#EAE5DA;padding:72px 0;border-top:1px solid #E0D9CB;">
+    <div style="max-width:1280px;margin:0 auto;padding:0 24px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:36px;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">Stories</div>
+          <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;">트랙 위의<br>이야기들</h2>
+        </div>
+        <a href="#news" style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#15120D;text-decoration:none;border-bottom:2px solid #15120D;padding-bottom:4px;">전체 보기 →</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;">
+        <sc-for list="{{ news }}" as="n" hint-placeholder-count="4">
+          <a href="#news" style="grid-column:{{ n.span }};background:#fff;border:1px solid #E0D9CB;display:flex;flex-direction:column;text-decoration:none;color:#15120D;overflow:hidden;" style-hover="transform:translateY(-4px);box-shadow:0 18px 40px rgba(21,18,13,0.10);transition:all .2s;">
+            <div style="position:relative;aspect-ratio:16/9;background:repeating-linear-gradient(48deg,#E4DFD3 0,#E4DFD3 10px,#ECE7DC 10px,#ECE7DC 20px);display:flex;align-items:center;justify-content:center;border-bottom:1px solid #E0D9CB;">
+              <span style="position:absolute;top:14px;left:14px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;background:{{ n.color }};padding:4px 9px;border-radius:2px;">{{ n.sportShort }} · {{ n.tag }}</span>
+              <span style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;">[ 뉴스 사진 ]</span>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;flex:1;">
+              <h3 style="font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(18px,2vw,22px);line-height:1.18;letter-spacing:-0.01em;margin-bottom:10px;text-wrap:pretty;">{{ n.title }}</h3>
+              <p style="font-size:14px;line-height:1.55;color:#4A4338;margin-bottom:16px;flex:1;text-wrap:pretty;">{{ n.excerpt }}</p>
+              <div style="display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;border-top:1px solid #EFEADF;padding-top:12px;">
+                <span style="color:#15120D;font-weight:700;">{{ n.author }}</span>
+                <span>·</span>
+                <span>{{ n.read }}</span>
+              </div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#15120D;color:#C9C1B2;padding:56px 24px 40px;">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:32px;border-bottom:1px solid #2C271F;padding-bottom:36px;margin-bottom:24px;">
+        <div style="max-width:360px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 56 56" style="width:40px;height:40px;" fill="none">
+                <path d="M44 22 A18 18 0 1 0 44 34" stroke="#F2EFE8" stroke-width="5" stroke-linecap="round"/>
+                <path d="M27 17 L27 39 L39 39" stroke="#F2EFE8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M46 23 L54 23" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+                <path d="M46 28 L52 28" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+                <path d="M46 33 L54 33" stroke="#E10600" stroke-width="3.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:22px;color:#F2EFE8;letter-spacing:-0.02em;">OneLap</div>
+          </div>
+          <p style="font-size:14px;line-height:1.6;color:#9A9081;">모두가 하나 되는, 한 바퀴. 모터스포츠를 처음 만나는 순간부터, 함께 달리는 모든 순간까지.</p>
+        </div>
+        <div style="display:flex;gap:48px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#857A6A;margin-bottom:14px;">탐색</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+              <a href="#schedule" style="color:#C9C1B2;text-decoration:none;">경기 일정</a>
+              <a href="#series" style="color:#C9C1B2;text-decoration:none;">시작하기</a>
+              <a href="#news" style="color:#C9C1B2;text-decoration:none;">뉴스</a>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#857A6A;margin-bottom:14px;">종목</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+              <span style="color:#C9C1B2;">Formula 1</span>
+              <span style="color:#C9C1B2;">FIA WEC</span>
+              <span style="color:#C9C1B2;">World Rally</span>
+              <span style="color:#C9C1B2;">슈퍼레이스</span>
+              <span style="color:#C9C1B2;">현대 N</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-family:'Space Mono',monospace;font-size:11px;color:#6E655A;letter-spacing:0.04em;">
+        <span>© 2026 OneLap. 모터스포츠 정보 통합 사이트.</span>
+        <span>모든 데이터는 예시입니다.</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:2400}}">
+class Component extends DCLogic {
+  state = { now: Date.now(), filter: 'all' };
+
+  componentDidMount() {
+    this._t = setInterval(() => this.setState({ now: Date.now() }), 1000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+
+  series() {
+    return [
+      { id:'f1', short:'F1', name:'Formula 1', kr:'포뮬러 원', color:'#E10600',
+        est:1950, rounds:24, cars:'오픈휠 싱글시터', top:'350 km/h+',
+        tag:'최정상', blurb:'세계 최고의 드라이버와 제조사가 겨루는 모터스포츠의 정점. 0.001초가 승패를 결정한다.',
+        facts:[['시즌','3월–12월'],['경기','연 24회'],['포인트','상위 10위'],['타이어','피렐리']] },
+      { id:'wec', short:'WEC', name:'FIA WEC', kr:'세계 내구 레이스', color:'#0E8C5A',
+        est:2012, rounds:8, cars:'하이퍼카·GT3', top:'장거리',
+        tag:'인내', blurb:'르망 24시를 정점으로, 팀원 3인이 교대하며 밤낮을 달리는 내구 레이스의 명성.',
+        facts:[['시즌','3월–11월'],['라운드','연 8전'],['하이라이트','르망 24시'],['클래스','하이퍼카·GT3']] },
+      { id:'wrc', short:'WRC', name:'World Rally', kr:'세계 랠리 선수권', color:'#E8842B',
+        est:1973, rounds:13, cars:'랠리1 하이브리드', top:'자갈·눈·아스팔트',
+        tag:'공도', blurb:'코드라이버의 페이스노트에 의지해 눈·자갈·아스팔트를 가리지 않고 질주한다.',
+        facts:[['시즌','1월–11월'],['라운드','연 13전'],['스테이지','수백 km'],['노면','믹스드']] },
+      { id:'superrace', short:'SR', name:'CJ SuperRace', kr:'슈퍼레이스 챔피언십', color:'#2C5BD6',
+        est:2006, rounds:8, cars:'슈퍼6000', top:'국내 최강',
+        tag:'가장 가까운', blurb:'6.2L V8 스톡카가 굉음을 내뿜는, 한국에서 가장 가까이서 즐기는 현장의 레이스.',
+        facts:[['시즌','4월–11월'],['라운드','연 8전'],['머신','슈퍼6000'],['홈','인제·영암']] },
+      { id:'nfestival', short:'N', name:'Hyundai N Festival', kr:'현대 N 페스티벌', color:'#00A5C4',
+        est:2017, rounds:6, cars:'아반떼 N', top:'입문',
+        tag:'같은 출발', blurb:'동일 사양 양산차로 겨루는 원메이크. 차이를 만드는 건 오직 드라이버의 실력뿐이다.',
+        facts:[['시즌','4월–11월'],['라운드','연 6전'],['머신','아반떼 N'],['클래스','오픈·마스터즈']] },
+    ];
+  }
+
+  seriesMap() {
+    const m = {}; this.series().forEach(s => m[s.id] = s); return m;
+  }
+
+  rawSchedule() {
+    return [
+      { sport:'f1', round:11, name:'Austrian Grand Prix', circuit:'Red Bull Ring', loc:'Spielberg, AT', date:'2026-06-28T13:00:00Z', laps:'71 LAPS', extra:'프리뷰', tip:'F1 가을 시즌의 개막전. 고공 경기장에서 엔진음이 울려 퍼진다.' },
+      { sport:'superrace', round:4, name:'Round 4 · 인제', circuit:'Inje Speedium', loc:'강원 인제', date:'2026-07-05T05:00:00Z', laps:'슈퍼6000', extra:'예선 토요일', tip:'한국 최고의 레이싱 트랙. 주말 현장의 열정이 뜨겁다.' },
+      { sport:'f1', round:12, name:'British Grand Prix', circuit:'Silverstone', loc:'Northants, UK', date:'2026-07-05T14:00:00Z', laps:'52 LAPS', extra:'홈 경기', tip:'영국의 F1 전당(殿堂). 팬들의 환호가 울려 퍼진다.' },
+      { sport:'wec', round:5, name:'6H of São Paulo', circuit:'Interlagos', loc:'São Paulo, BR', date:'2026-07-12T15:00:00Z', laps:'6 HOURS', extra:'하이퍼카', tip:'남미의 거친 트랙. 내구력과 스킬의 가장 큰 싸움터.' },
+      { sport:'wrc', round:8, name:'Rally Finland', circuit:'Jyväskylä', loc:'Finland', date:'2026-07-31T07:00:00Z', laps:'320 KM SS', extra:'점프', tip:'점프의 천국. 드라이버가 차를 공중에 날려 보낸다.' },
+      { sport:'f1', round:13, name:'Hungarian Grand Prix', circuit:'Hungaroring', loc:'Budapest, HU', date:'2026-08-02T13:00:00Z', laps:'70 LAPS', extra:'마지막', tip:'서머 브레이크 전 최종 전투. 팀 순위가 결정된다.' },
+      { sport:'superrace', round:5, name:'Round 5 · 영암', circuit:'KIC', loc:'전남 영암', date:'2026-08-09T05:00:00Z', laps:'슈퍼6000', extra:'나이트 경기', tip:'환상의 밤 경기. 헤드라이트 아래 펼쳐지는 드라마.' },
+      { sport:'wec', round:6, name:'6H of Fuji', circuit:'Fuji Speedway', loc:'Shizuoka, JP', date:'2026-09-13T04:00:00Z', laps:'6 HOURS', extra:'토요타 홈', tip:'일본의 신사. 토요타의 기술이 극대화되는 무대.' },
+    ];
+  }
+
+  buildSchedule() {
+    const sm = this.seriesMap();
+    const weekday = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    const mon = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    return this.rawSchedule().map(r => {
+      const s = sm[r.sport];
+      const d = new Date(r.date);
+      const dd = String(d.getDate()).padStart(2,'0');
+      return {
+        ...r,
+        color: s.color, sportName: s.name, sportShort: s.short, sportKr: s.kr,
+        roundLabel: 'ROUND ' + r.round,
+        day: dd, month: mon[d.getMonth()], wday: weekday[d.getDay()],
+        dateLabel: mon[d.getMonth()] + ' ' + dd,
+        dateLong: d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + dd,
+        ts: d.getTime(),
+      };
+    }).sort((a,b) => a.ts - b.ts);
+  }
+
+  renderVals() {
+    const sched = this.buildSchedule();
+    const next = sched[0];
+
+    let diff = Math.max(0, next.ts - this.state.now);
+    const dsec = Math.floor(diff/1000);
+    const d = Math.floor(dsec/86400);
+    const h = Math.floor((dsec%86400)/3600);
+    const m = Math.floor((dsec%3600)/60);
+    const s = dsec%60;
+    const pad = n => String(n).padStart(2,'0');
+    const countdown = [
+      { label:'Days', value:String(d) },
+      { label:'Hrs', value:pad(h) },
+      { label:'Min', value:pad(m) },
+      { label:'Sec', value:pad(s) },
+    ];
+
+    const filters = [
+      { id:'all', label:'전체' },
+      { id:'f1', label:'F1' },
+      { id:'wec', label:'WEC' },
+      { id:'wrc', label:'WRC' },
+      { id:'superrace', label:'슈퍼레이스' },
+      { id:'nfestival', label:'현대 N' },
+    ];
+    const filter = this.state.filter;
+    const filtered = filter === 'all' ? sched : sched.filter(x => x.sport === filter);
+    const sm0 = this.seriesMap();
+    const accent = id => id === 'all' ? '#E10600' : sm0[id].color;
+    const filtersUi = filters.map(f => {
+      const on = f.id === filter;
+      return {
+        ...f,
+        active: on,
+        bg: on ? accent(f.id) : 'transparent',
+        fg: on ? (f.id === 'wrc' ? '#15120D' : '#fff') : '#C9C1B2',
+        onClick: () => this.setState({ filter: f.id }),
+      };
+    });
+
+    const nextRace = {
+      ...next,
+      location: next.loc,
+      krName: next.sportKr + ' · ' + (next.extra || '경기'),
+    };
+
+    const news = [
+      { sport:'f1', tag:'분석', title:'미드시즌 판도 변화: 바닥 재설계의 이유', excerpt:'상위 팀들의 세컨드카가 대거 새로운 사양으로 투입된다. 무엇이 바뀐 걸까?', author:'편집부', read:'6분 읽기', big:true },
+      { sport:'wec', tag:'프리뷰', title:'르망 이후, 하이퍼카의 패배자들', excerpt:'3개 팀의 각축 중, 한 팀은 반드시 뒤처진다. 상파울루에서의 역전은 가능할까?', author:'J. KIM', read:'4분 읽기' },
+      { sport:'wrc', tag:'피처', title:'페이스노트의 과학: 2초 안에 코스를 읽다', excerpt:'시속 180km에서 복잡한 턴을 암기하는 사람들의 언어 시스템을 해부했다.', author:'편집부', read:'5분 읽기' },
+      { sport:'superrace', tag:'국내', title:'슈퍼6000, 시즌 중반 라이벌 탄생', excerpt:'신인 드라이버들의 발전이 시리즈를 다시 쓰고 있다. 누가 최종 챔피언이 될까?', author:'박성진', read:'3분 읽기' },
+      { sport:'nfestival', tag:'입문', title:'아반떼 N, 같은 차로 펼치는 실력 싸움', excerpt:'원메이크 레이스에서는 모든 드라이버가 같은 출발선에 선다. 여기서 비로소 본질이 드러난다.', author:'편집부', read:'4분 읽기' },
+    ];
+    const newsUi = news.map(n => ({ ...n, color: sm0[n.sport].color, sportName: sm0[n.sport].name, sportShort: sm0[n.sport].short, span: n.big ? 'span 2' : 'span 1' }));
+
+    return {
+      nextRace,
+      countdown,
+      series: this.series(),
+      schedule: filtered,
+      filters: filtersUi,
+      news: newsUi,
+    };
+  }
+}
+</script>
+</body>
+</html>

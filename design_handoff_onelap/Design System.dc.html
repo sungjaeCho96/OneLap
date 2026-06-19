@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#F2EFE8;color:#15120D;}
+  ::selection{background:#E10600;color:#fff;}
+</style>
+</helmet>
+<div style="font-family:'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;">
+
+  <header style="position:sticky;top:0;z-index:50;background:rgba(242,239,232,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #E0D9CB;">
+    <div style="max-width:1280px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;gap:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:30px;height:30px;background:#15120D;display:flex;align-items:center;justify-content:center;transform:skewX(-8deg);">
+          <div style="width:12px;height:12px;background:#E10600;transform:skewX(8deg);"></div>
+        </div>
+        <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;">APEX Design System</div>
+      </div>
+      <nav style="display:flex;gap:28px;font-size:14px;font-weight:700;">
+        <a href="#colors" style="color:#15120D;text-decoration:none;">Colors</a>
+        <a href="#typography" style="color:#15120D;text-decoration:none;">Typography</a>
+        <a href="#components" style="color:#15120D;text-decoration:none;">Components</a>
+        <a href="#patterns" style="color:#15120D;text-decoration:none;">Patterns</a>
+      </nav>
+    </div>
+  </header>
+
+  <section id="colors" style="max-width:1280px;margin:0 auto;padding:72px 24px;">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">Foundation</div>
+    <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:52px;line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:36px;">Color Palette</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:48px;">
+      <sc-for list="{{ colors.primary }}" as="c" hint-placeholder-count="4">
+        <div style="border:1px solid #E0D9CB;">
+          <div style="height:80px;background:{{ c.hex }};border-bottom:1px solid #E0D9CB;"></div>
+          <div style="padding:14px;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:15px;">{{ c.name }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-top:6px;">{{ c.hex }}</div>
+            <div style="font-size:12px;color:#4A4338;margin-top:4px;">{{ c.usage }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#857A6A;margin-bottom:14px;margin-top:40px;">Sport Brands</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+        <sc-for list="{{ colors.sports }}" as="s" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border:1px solid #E0D9CB;">
+            <div style="width:40px;height:40px;background:{{ s.hex }};border-radius:3px;"></div>
+            <div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;">{{ s.short }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#857A6A;">{{ s.hex }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="typography" style="max-width:1280px;margin:0 auto;padding:72px 24px;border-top:1px solid #E0D9CB;">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">Fonts</div>
+    <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:52px;line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:36px;">Typography</h2>
+
+    <div style="display:grid;gap:32px;">
+      <sc-for list="{{ typography }}" as="t" hint-placeholder-count="6">
+        <div style="border-top:1px solid #E0D9CB;padding-top:20px;">
+          <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;flex:none;">{{ t.label }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;">{{ t.family }} · {{ t.weight }}</div>
+          </div>
+          <div style="font-size:{{ t.size }};line-height:{{ t.lineHeight }};letter-spacing:{{ t.letterSpacing }};font-family:{{ t.fontFamily }};font-weight:{{ t.weight }};margin:20px 0;">{{ t.sample }}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;">
+            Size: {{ t.size }} · Line: {{ t.lineHeight }} · Letter: {{ t.letterSpacing }}
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="components" style="max-width:1280px;margin:0 auto;padding:72px 24px;border-top:1px solid #E0D9CB;">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">Building Blocks</div>
+    <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:52px;line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:36px;">Components</h2>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Buttons</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;">
+        <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;border:1px solid #15120D;background:#15120D;color:#fff;cursor:pointer;" style-hover="background:#2C271F;">Primary</button>
+        <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;border:1px solid #15120D;background:transparent;color:#15120D;cursor:pointer;" style-hover="background:#F9F7F1;">Secondary</button>
+        <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 18px;border:1px solid #E10600;background:#E10600;color:#fff;cursor:pointer;" style-hover="background:#C40500;">Accent</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Tags / Badges</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <sc-for list="{{ tags }}" as="tag" hint-placeholder-count="4">
+          <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#15120D;background:{{ tag.bg }};padding:3px 8px;border-radius:2px;">{{ tag.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Form Input</div>
+      <input type="text" placeholder="Search races, drivers, news..." style="font-family:'Noto Sans KR',sans-serif;font-size:14px;width:100%;max-width:480px;padding:11px 14px;border:1px solid #D8D2C6;border-radius:2px;background:#fff;color:#15120D;" style-focus="outline:none;border-color:#15120D;box-shadow:0 0 0 2px rgba(225,6,0,0.1);">
+    </div>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Cards</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+        <div style="background:#fff;border:1px solid #E0D9CB;overflow:hidden;" style-hover="transform:translateY(-4px);box-shadow:0 18px 40px rgba(21,18,13,0.10);transition:all .2s;">
+          <div style="height:6px;background:#E10600;"></div>
+          <div style="padding:20px;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px;margin-bottom:8px;">Series Card</div>
+            <p style="font-size:14px;color:#4A4338;margin-bottom:14px;">사진/배경 영역 + 메타 정보</p>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;">Hover: Y-offset −4px, subtle shadow</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #E0D9CB;overflow:hidden;" style-hover="transform:translateY(-4px);box-shadow:0 18px 40px rgba(21,18,13,0.10);transition:all .2s;">
+          <div style="height:160px;background:repeating-linear-gradient(48deg,#E4DFD3 0,#E4DFD3 10px,#ECE7DC 10px,#ECE7DC 20px);display:flex;align-items:center;justify-content:center;border-bottom:1px solid #E0D9CB;">
+            <span style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;">Image</span>
+          </div>
+          <div style="padding:20px;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px;margin-bottom:8px;">News Card</div>
+            <p style="font-size:14px;color:#4A4338;margin-bottom:12px;">Headline + excerpt</p>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;border-top:1px solid #EFEADF;padding-top:12px;">Author · Read time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Countdown</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <sc-for list="{{ countdown }}" as="u" hint-placeholder-count="4">
+          <div style="background:#15120D;color:#F2EFE8;padding:14px 18px;min-width:84px;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:32px;line-height:1;">{{ u.num }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#9A9081;margin-top:8px;">{{ u.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">Sport Labels</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <sc-for list="{{ colors.sports }}" as="s" hint-placeholder-count="5">
+          <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{{ s.fg }};background:{{ s.hex }};padding:3px 8px;">{{ s.short }}</div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="patterns" style="max-width:1280px;margin:0 auto;padding:72px 24px;border-top:1px solid #E0D9CB;margin-bottom:48px;">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">Reusable Patterns</div>
+    <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:52px;line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:36px;">Patterns & Layout</h2>
+
+    <div style="display:grid;gap:48px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;color:#857A6A;">Schedule Row</div>
+        <div style="background:#15120D;color:#F2EFE8;display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:22px 8px;border-bottom:1px solid #2C271F;">
+          <div style="width:5px;align-self:stretch;background:#E10600;min-height:48px;flex:none;"></div>
+          <div style="flex:none;width:84px;text-align:center;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:34px;line-height:0.9;">28</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;margin-top:4px;">JUN · SUN</div>
+          </div>
+          <div style="flex:1 1 260px;min-width:200px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+              <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#15120D;background:#E10600;padding:3px 8px;text-transform:uppercase;">F1</span>
+              <span style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;">ROUND 11</span>
+            </div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:21px;line-height:1.1;text-transform:uppercase;">Austrian Grand Prix</div>
+          </div>
+          <div style="flex:1 1 180px;min-width:140px;">
+            <div style="font-weight:700;font-size:15px;">Red Bull Ring</div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9A9081;margin-top:3px;">Spielberg, AT</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;color:#857A6A;">Filter / Tab Bar</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 16px;border:1px solid #3A352C;cursor:pointer;background:#E10600;color:#fff;">전체</button>
+          <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 16px;border:1px solid #3A352C;cursor:pointer;background:transparent;color:#C9C1B2;">F1</button>
+          <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 16px;border:1px solid #3A352C;cursor:pointer;background:transparent;color:#C9C1B2;">WEC</button>
+          <button style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:9px 16px;border:1px solid #3A352C;cursor:pointer;background:transparent;color:#C9C1B2;">WRC</button>
+        </div>
+      </div>
+
+      <div style="padding:40px;background:linear-gradient(135deg,#F2EFE8 0%,#ECE7DC 100%);border:1px solid #E0D9CB;">
+        <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;margin-bottom:16px;">— Next Race</div>
+        <h3 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(32px,5vw,72px);line-height:0.93;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:16px;">Austrian Grand Prix</h3>
+        <div style="height:5px;width:120px;background:#E10600;margin-bottom:18px;"></div>
+        <p style="font-size:17px;line-height:1.5;max-width:440px;">포뮬러 원 시즌의 중원. Red Bull Ring에서 벌어지는 고지전.</p>
+      </div>
+
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;color:#857A6A;">Responsive Grid (Cards)</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+          <div style="background:#fff;border:1px solid #E0D9CB;padding:16px;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-bottom:8px;">Card A</div>
+            <div style="aspect-ratio:1;background:#F9F7F1;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <span style="font-family:'Space Mono',monospace;font-size:10px;color:#9A9081;">auto-fit</span>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E0D9CB;padding:16px;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-bottom:8px;">Card B</div>
+            <div style="aspect-ratio:1;background:#F9F7F1;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <span style="font-family:'Space Mono',monospace;font-size:10px;color:#9A9081;">minmax(240px)</span>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E0D9CB;padding:16px;text-align:center;">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-bottom:8px;">Card C</div>
+            <div style="aspect-ratio:1;background:#F9F7F1;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <span style="font-family:'Space Mono',monospace;font-size:10px;color:#9A9081;">fluid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:48px 24px;border-top:1px solid #E0D9CB;background:#EAE5DA;">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;color:#15120D;">Quick Reference</div>
+    <h3 style="font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;margin-bottom:20px;">Design Tokens</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;font-family:'Space Mono',monospace;font-size:12px;line-height:1.6;color:#4A4338;">
+      <div>
+        <div style="font-weight:700;color:#15120D;margin-bottom:8px;">Spacing</div>
+        <div>8px (base)</div>
+        <div>16px, 24px, 32px, 48px, 64px, 72px</div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#15120D;margin-bottom:8px;">Radius</div>
+        <div>2px (cards, inputs)</div>
+        <div>3px (badges)</div>
+        <div>0 (typically sharp)</div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#15120D;margin-bottom:8px;">Shadows</div>
+        <div>Card hover: 0 18px 40px<br/>rgba(21,18,13,0.10)</div>
+        <div>Subtle: 0 1px 3px rgba(0,0,0,0.08)</div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#15120D;margin-bottom:8px;">Transitions</div>
+        <div>Hover states: .15s–.2s</div>
+        <div>all / ease</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      colors: {
+        primary: [
+          { name: 'Primary Text', hex: '#15120D', usage: '본문 헤더 & 대부분의 텍스트' },
+          { name: 'Accent Red', hex: '#E10600', usage: '콜투액션 & 강조' },
+          { name: 'Bg Light', hex: '#F2EFE8', usage: '기본 배경' },
+          { name: 'Bg Dark', hex: '#15120D', usage: '다크 섹션 & 타다디브' },
+          { name: 'Muted', hex: '#857A6A', usage: '캡션 & 메타 텍스트' },
+          { name: 'Border', hex: '#E0D9CB', usage: '카드 & 구분선' },
+        ],
+        sports: [
+          { short: 'F1', hex: '#E10600', fg: '#fff' },
+          { short: 'WEC', hex: '#0E8C5A', fg: '#fff' },
+          { short: 'WRC', hex: '#E8842B', fg: '#fff' },
+          { short: 'SR', hex: '#2C5BD6', fg: '#fff' },
+          { short: 'N', hex: '#00A5C4', fg: '#15120D' },
+        ],
+      },
+      typography: [
+        { label: 'H1 / Hero', family: 'Archivo', weight: '900', size: 'clamp(40px,6.4vw,82px)', lineHeight: '0.93', letterSpacing: '-0.03em', fontFamily: "'Archivo',sans-serif", sample: 'Austrian Grand Prix' },
+        { label: 'H2 / Section', family: 'Archivo', weight: '900', size: 'clamp(34px,5vw,60px)', lineHeight: '0.95', letterSpacing: '-0.03em', fontFamily: "'Archivo',sans-serif", sample: 'Upcoming Races' },
+        { label: 'H3 / Card', family: 'Archivo', weight: '800', size: '21px', lineHeight: '1.1', letterSpacing: '-0.01em', fontFamily: "'Archivo',sans-serif", sample: 'Austrian Grand Prix' },
+        { label: 'Body / Default', family: 'Noto Sans KR', weight: '400', size: '16px', lineHeight: '1.6', letterSpacing: '0', fontFamily: "'Noto Sans KR',sans-serif", sample: '모터스포츠 경기 일정과 뉴스를 한곳에서 만나보세요.' },
+        { label: 'Meta / UI', family: 'Space Mono', weight: '400', size: '12px', lineHeight: '1.4', letterSpacing: '0.08em', fontFamily: "'Space Mono',monospace", sample: 'ROUND 11 · JUN 28 · SPIELBERG' },
+        { label: 'Caption / Small', family: 'Space Mono', weight: '700', size: '10px', lineHeight: '1.4', letterSpacing: '0.1em', fontFamily: "'Space Mono',monospace", sample: 'NEXT RACE · COUNTDOWN' },
+      ],
+      tags: [
+        { label: 'news', bg: '#EAE5DA' },
+        { label: 'preview', bg: '#E8F3FF' },
+        { label: 'analysis', bg: '#FCE8DC' },
+        { label: 'feature', bg: '#E8F5E9' },
+      ],
+      countdown: [
+        { num: '05', label: 'Days' },
+        { num: '14', label: 'Hrs' },
+        { num: '32', label: 'Min' },
+        { num: '18', label: 'Sec' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
