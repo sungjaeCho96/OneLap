@@ -10,13 +10,13 @@ export const revalidate = 3600
 export async function generateStaticParams() {
   return Object.keys(SERIES_GUIDE_MAP)
     .filter((id) => id !== 'f1')
-    .map((id) => ({ id }))
+    .map((id) => ({ series: id }))
 }
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
-export default async function SeriesGuidePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function SeriesGuidePage({ params }: { params: Promise<{ series: string }> }) {
+  const { series: id } = await params
   const guide = SERIES_GUIDE_MAP[id]
   const series = SERIES_MAP[id as SportId]
 

@@ -160,7 +160,7 @@ export default async function F1GuidePage() {
           <SecHead num="02" title="누가 경쟁하나 — 팀과 드라이버" sub="F1엔 우승 트로피가 두 개 있습니다. 이걸 알면 순위표가 단번에 이해돼요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 22 }}>
             {[
-              { title: '드라이버', tag: '개인전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>20여 명의 드라이버가 각자 점수를 모아 <Hl>월드 드라이버 챔피언</Hl>을 노립니다. 우리가 흔히 "올해 챔피언"이라 부르는 게 보통 이쪽이에요.</p> },
+              { title: '드라이버', tag: '개인전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>22 명의 드라이버가 각자 점수를 모아 <Hl>월드 드라이버 챔피언</Hl>을 노립니다. 우리가 흔히 "올해 챔피언"이라 부르는 게 보통 이쪽이에요.</p> },
               { title: '컨스트럭터(팀)', tag: '단체전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>팀은 곧 <Hl>&apos;컨스트럭터&apos;</Hl>(차를 만드는 주체). 소속 두 드라이버의 점수를 합쳐 <Hl>팀 챔피언</Hl>을 다툽니다. 상금과 직결돼 팀에겐 이쪽이 더 중요하기도 해요.</p> },
             ].map((card) => (
               <div key={card.title} style={{ background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: 24 }}>
