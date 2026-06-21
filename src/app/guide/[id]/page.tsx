@@ -8,7 +8,9 @@ import type { SportId } from '@/types'
 export const revalidate = 3600
 
 export async function generateStaticParams() {
-  return Object.keys(SERIES_GUIDE_MAP).map((id) => ({ id }))
+  return Object.keys(SERIES_GUIDE_MAP)
+    .filter((id) => id !== 'f1')
+    .map((id) => ({ id }))
 }
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
