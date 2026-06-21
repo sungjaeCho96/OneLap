@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Series } from '@/types'
 
 interface SeriesGuideSectionProps {
@@ -24,9 +25,11 @@ export default function SeriesGuideSection({ series }: SeriesGuideSectionProps) 
       {/* Grid */}
       <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
         {series.map((s) => (
-          <div
+          <Link
             key={s.id}
-            className="bg-white border border-border flex flex-col overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
+            href={`/guide/${s.id}`}
+            className="bg-white border border-border flex flex-col overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover no-underline text-inherit"
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
             {/* Top color bar */}
             <div className="h-1.5" style={{ background: s.color }} />
@@ -76,7 +79,7 @@ export default function SeriesGuideSection({ series }: SeriesGuideSectionProps) 
                 ))}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
