@@ -8,63 +8,54 @@ interface HeroSectionProps {
   races: RaceDisplay[]
 }
 
-function NavArrow({
-  dir,
-  onClick,
-  disabled,
-}: {
-  dir: 'prev' | 'next'
-  onClick: () => void
-  disabled: boolean
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="flex items-center justify-center w-10 h-10 border transition-colors duration-150 disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
-      style={{ borderColor: '#3A352C' }}
-      onMouseEnter={(e) => {
-        if (!disabled) (e.currentTarget as HTMLElement).style.borderColor = '#857A6A'
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled) (e.currentTarget as HTMLElement).style.borderColor = '#3A352C'
-      }}
-    >
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        {dir === 'prev' ? (
-          <path d="M9 2L4 7L9 12" stroke="#C9C1B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        ) : (
-          <path d="M5 2L10 7L5 12" stroke="#C9C1B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        )}
-      </svg>
-    </button>
-  )
-}
-
 export default function HeroSection({ races }: HeroSectionProps) {
   const [idx, setIdx] = useState(0)
-  const race = races[idx]
-  const total = races.length
 
-  if (!race) return null
+  if (races.length === 0) return null
+
+  const total = races.length
+  const race = races[idx]
+  const liveCount = races.filter((r) => r.isLive).length
+  const pad = (n: number) => String(n).padStart(2, '0')
 
   return (
     <section className="mx-auto max-w-[1280px] px-6 py-14 pb-16">
       <div className="flex flex-wrap gap-12 items-center">
         {/* Left panel */}
         <div className="flex-1 min-w-[300px]" style={{ flexBasis: '480px' }}>
-          {/* Sport badge */}
-          <div className="flex items-center gap-3 mb-6">
-            <span
-              className="w-[9px] h-[9px] rounded-full flex-none"
-              style={{
-                background: race.color,
-                boxShadow: `0 0 0 4px ${race.color}20`,
-              }}
-            />
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">
-              {idx === 0 ? '다음 경기' : '예정 경기'}
-            </span>
+
+          {/* Status badge row */}
+          <div className="flex items-center gap-[10px] mb-6 flex-wrap">
+            {race.isLive ? (
+              <>
+                <span
+                  className="inline-flex items-center gap-[7px] text-white font-mono text-xs font-bold uppercase tracking-[0.12em] px-[11px] py-[5px] rounded-sm"
+                  style={{ background: '#E10600', animation: 'livepulse 1.6s infinite' }}
+                >
+                  <span
+                    className="w-[7px] h-[7px] rounded-full bg-white flex-none"
+                    style={{ animation: 'liveblink 1.2s infinite' }}
+                  />
+                  LIVE
+                </span>
+                <span className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">
+                  지금 진행 중
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className="w-[9px] h-[9px] rounded-full flex-none"
+                  style={{
+                    background: race.color,
+                    boxShadow: `0 0 0 4px ${race.color}20`,
+                  }}
+                />
+                <span className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">
+                  {idx === liveCount ? '다음 경기' : '예정 경기'}
+                </span>
+              </>
+            )}
             <span
               className="font-mono text-xs font-bold uppercase tracking-[0.18em]"
               style={{ color: race.color }}
@@ -99,19 +90,62 @@ export default function HeroSection({ races }: HeroSectionProps) {
             <span className="text-text-muted">{race.roundLabel}</span>
           </div>
 
-          {/* Countdown */}
+          {/* Countdown / Elapsed */}
           <div className="mt-9">
-            <CountdownTimer targetTs={race.ts} />
+            <CountdownTimer targetTs={race.ts} isLive={race.isLive} />
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center gap-3 mt-8">
-            <NavArrow dir="prev" onClick={() => setIdx((i) => i - 1)} disabled={idx === 0} />
-            <NavArrow dir="next" onClick={() => setIdx((i) => i + 1)} disabled={idx === total - 1} />
-            <span className="font-mono text-[11px] text-text-dim tracking-[0.08em] ml-1">
-              {idx + 1} <span className="text-[#3A352C]">/</span> {total}
-            </span>
-          </div>
+          {total > 1 && (
+            <div className="flex items-center gap-[18px] mt-[26px] flex-wrap">
+              {/* Prev / Next buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIdx((i) => Math.max(0, i - 1))}
+                  disabled={idx === 0}
+                  aria-label="이전 경기"
+                  className="w-[42px] h-[42px] flex items-center justify-center border text-[20px] leading-none rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  style={{ borderColor: '#15120D', background: 'transparent', color: '#15120D' }}
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => setIdx((i) => Math.min(total - 1, i + 1))}
+                  disabled={idx === total - 1}
+                  aria-label="다음 경기"
+                  className="w-[42px] h-[42px] flex items-center justify-center border text-[20px] leading-none rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                  style={{ background: '#15120D', borderColor: '#15120D', color: '#F2EFE8' }}
+                >
+                  ›
+                </button>
+              </div>
+
+              {/* Dot indicators */}
+              <div className="flex gap-[7px] items-center">
+                {races.map((r, i) => {
+                  const isActive = i === idx
+                  const dotColor = isActive
+                    ? (r.isLive ? '#E10600' : '#15120D')
+                    : '#CFC7B6'
+                  const dotW = isActive ? '22px' : '8px'
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setIdx(i)}
+                      aria-label="경기 선택"
+                      className="h-2 rounded-full border-none p-0 cursor-pointer transition-all duration-200"
+                      style={{ width: dotW, background: dotColor }}
+                    />
+                  )
+                })}
+              </div>
+
+              {/* Position label */}
+              <span className="ml-auto font-mono text-xs tracking-[0.1em] text-text-muted">
+                {pad(idx + 1)} / {pad(total)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Right panel */}
@@ -124,20 +158,15 @@ export default function HeroSection({ races }: HeroSectionProps) {
                 'repeating-linear-gradient(48deg,#E4DFD3 0,#E4DFD3 11px,#ECE7DC 11px,#ECE7DC 22px)',
             }}
           >
-            {/* Sport badge overlay */}
             <div
               className="absolute top-[18px] left-[18px] font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-white px-3 py-1.5 transition-colors duration-300"
               style={{ background: race.color }}
             >
               {race.sportName}
             </div>
-
-            {/* Center placeholder text */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-[11px] text-text-dim tracking-[0.1em] text-center">
               [ 경기장 사진 ]<br />대표 이미지
             </div>
-
-            {/* Bottom overlay */}
             <div
               className="relative w-full px-5 py-5 text-white"
               style={{ background: 'linear-gradient(transparent,rgba(21,18,13,0.82))' }}

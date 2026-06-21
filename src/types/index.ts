@@ -41,6 +41,8 @@ export interface RaceDisplay extends Race {
   wday: string
   dateLong: string
   ts: number
+  timeLabel: string
+  isLive: boolean
   sessions?: RaceSession[]
 }
 

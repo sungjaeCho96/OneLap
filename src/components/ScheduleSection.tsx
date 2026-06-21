@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import type { RaceDisplay, RaceSession } from '@/types'
+import { useEffect, useState } from 'react'
+import type { RaceDisplay } from '@/types'
 import { SERIES } from '@/lib/data'
 
 interface ScheduleSectionProps {
@@ -25,185 +25,147 @@ function filterAccent(id: string) {
   return id === 'all' ? '#E10600' : SPORT_COLORS[id]
 }
 
-// ISO → KST 표시: "6/28(일)" / "22:00 KST" 또는 "시간 미정"
-function formatSessionDate(iso: string, tbc = false): { date: string; time: string } {
-  const weekdays = ['일', '월', '화', '수', '목', '금', '토']
-
-  if (tbc) {
-    // YYYY-MM-DD 형식
-    const [, m, d] = iso.split('-').map(Number)
-    const wday = weekdays[new Date(iso).getDay()]
-    return { date: `${m}/${d}(${wday})`, time: '시간 미정' }
-  }
-
-  const kst = new Date(new Date(iso).getTime() + 9 * 60 * 60 * 1000)
-  const month = kst.getUTCMonth() + 1
-  const day = kst.getUTCDate()
-  const wday = weekdays[kst.getUTCDay()]
-  const hh = String(kst.getUTCHours()).padStart(2, '0')
-  const mm = String(kst.getUTCMinutes()).padStart(2, '0')
-  return { date: `${month}/${day}(${wday})`, time: `${hh}:${mm}` }
+function fmtElapsed(startTs: number, now: number): string {
+  const sec = Math.floor(Math.max(0, now - startTs) / 1000)
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor((sec % 3600) / 60)
+  return h > 0 ? `${h}시간 ${m}분 경과` : `${m}분 경과`
 }
 
-function SessionPanel({ sessions, color }: { sessions: RaceSession[]; color: string }) {
+function LiveCard({ r, now }: { r: RaceDisplay; now: number }) {
   return (
     <div
-      className="border-b border-border-dark overflow-hidden"
-      style={{ background: 'rgba(255,255,255,0.02)' }}
+      className="flex flex-col gap-[14px] text-text-inv"
+      style={{
+        background: '#1E1A12',
+        border: '1px solid rgba(52,48,38,0.38)',
+        borderLeft: `5px solid ${r.color}`,
+        padding: '22px 22px 20px',
+      }}
     >
-      <div className="flex flex-wrap gap-2 px-8 py-4">
-        {sessions.map((s) => {
-          const { date, time } = formatSessionDate(s.dateStart, s.tbc)
-          const isRace = s.name === '결승'
-          const isTbc = s.tbc
-          return (
-            <div
-              key={s.name}
-              className="flex items-center gap-2.5 px-3 py-2 border"
-              style={{
-                borderColor: isRace ? color : '#3A352C',
-                background: isRace ? `${color}18` : 'transparent',
-              }}
-            >
-              <span
-                className="font-mono text-[10px] font-bold tracking-[0.06em] min-w-[72px]"
-                style={{ color: isRace ? color : '#C9C1B2' }}
-              >
-                {s.name}
-              </span>
-              <span className="font-mono text-[11px] text-[#9A9081]">{date}</span>
-              <span
-                className="font-mono text-[11px] font-bold"
-                style={{ color: isTbc ? '#6E655A' : isRace ? color : '#D8D2C6' }}
-              >
-                {isTbc ? '시간 미정' : `${time} KST`}
-              </span>
-            </div>
-          )
-        })}
+      <div className="flex items-center gap-[10px] flex-wrap">
+        <span
+          className="font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-dark px-2 py-[3px]"
+          style={{ background: r.color }}
+        >
+          {r.sportShort}
+        </span>
+        <span
+          className="inline-flex items-center gap-[5px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-white px-2 py-[3px]"
+          style={{ background: '#E10600', animation: 'livepulse 1.6s infinite' }}
+        >
+          <span
+            className="w-[5px] h-[5px] rounded-full bg-white flex-none"
+            style={{ animation: 'liveblink 1.2s infinite' }}
+          />
+          LIVE
+        </span>
+        <span className="font-mono text-[11px] text-text-muted tracking-[0.08em]">
+          {r.roundLabel}
+        </span>
+      </div>
+
+      <div className="font-archivo font-extrabold text-[24px] uppercase leading-[1.08]">
+        {r.name}
+      </div>
+
+      <div className="flex justify-between items-end gap-3">
+        <div>
+          <div className="font-bold text-[15px]">{r.circuit}</div>
+          <div className="font-mono text-xs text-text-dim mt-[3px]">{r.loc}</div>
+        </div>
+        <div className="text-right flex-none">
+          <div className="font-mono font-bold text-[15px] text-text-inv">
+            {fmtElapsed(r.ts, now)}
+          </div>
+          <div className="font-mono text-[11px] text-text-muted mt-[3px]">{r.laps}</div>
+        </div>
       </div>
     </div>
   )
 }
 
-function RaceRow({
-  r,
-  isExpanded,
-  onToggle,
-}: {
-  r: RaceDisplay
-  isExpanded: boolean
-  onToggle: () => void
-}) {
-  const hasSessions = (r.sessions?.length ?? 0) > 0
+interface DateGroup {
+  key: string
+  day: string
+  month: string
+  wday: string
+  races: RaceDisplay[]
+}
 
+function buildGroups(races: RaceDisplay[]): DateGroup[] {
+  const map = new Map<string, DateGroup>()
+  for (const r of races) {
+    const key = r.dateLong
+    if (!map.has(key)) {
+      map.set(key, { key, day: r.day, month: r.month, wday: r.wday, races: [] })
+    }
+    map.get(key)!.races.push(r)
+  }
+  return Array.from(map.values())
+}
+
+function RaceItem({ r }: { r: RaceDisplay }) {
   return (
-    <>
+    <div
+      className="flex flex-wrap items-center gap-4 py-3 pr-3 text-text-inv transition-colors duration-150"
+      style={{ cursor: 'default' }}
+    >
       <div
-        onClick={hasSessions ? onToggle : undefined}
-        className={[
-          'flex flex-wrap items-center gap-5 py-[22px] px-2 border-b border-border-dark text-text-inv relative',
-          'transition-colors',
-          hasSessions ? 'cursor-pointer hover:bg-white/[0.03]' : '',
-          isExpanded ? 'bg-white/[0.04]' : '',
-        ].join(' ')}
-      >
-        {/* Sport color bar */}
-        <div
-          className="w-[5px] self-stretch min-h-[48px] flex-none"
-          style={{ background: r.color }}
-        />
-
-        {/* Date */}
-        <div className="flex-none w-[84px] text-center">
-          <div className="font-archivo font-black text-[34px] leading-[0.9]">{r.day}</div>
-          <div className="font-mono text-[11px] text-text-dim tracking-[0.1em] mt-1">
-            {r.month} · {r.wday}
-          </div>
+        className="w-1 self-stretch flex-none"
+        style={{ background: r.color, minHeight: '42px' }}
+      />
+      <div className="flex-1 min-w-[180px]" style={{ flexBasis: '220px' }}>
+        <div className="flex items-center gap-[10px] mb-1.5 flex-wrap">
+          <span
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-dark px-2 py-[3px]"
+            style={{ background: r.color }}
+          >
+            {r.sportShort}
+          </span>
+          <span className="font-mono text-[11px] text-text-muted tracking-[0.08em]">
+            {r.roundLabel}
+          </span>
+          <span className="font-mono text-[11px] text-[#9A9081] tracking-[0.06em]">
+            {r.timeLabel} KST
+          </span>
         </div>
-
-        {/* Sport + race name */}
-        <div className="flex-1 min-w-[200px]" style={{ flexBasis: '260px' }}>
-          <div className="flex items-center gap-2.5 mb-1.5">
-            <span
-              className="font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-dark px-2 py-[3px]"
-              style={{ background: r.color }}
-            >
-              {r.sportShort}
-            </span>
-            <span className="font-mono text-[11px] text-text-muted tracking-[0.08em]">
-              {r.roundLabel}
-            </span>
-          </div>
-          <div className="font-archivo font-extrabold text-[21px] uppercase leading-[1.1]">
-            {r.name}
-          </div>
-        </div>
-
-        {/* Circuit */}
-        <div className="flex-1 min-w-[140px]" style={{ flexBasis: '180px' }}>
-          <div className="font-bold text-[15px]">{r.circuit}</div>
-          <div className="font-mono text-xs text-text-dim mt-[3px]">{r.loc}</div>
-        </div>
-
-        {/* Extra info + chevron */}
-        <div className="flex-none text-right min-w-[96px] flex items-center justify-end gap-3">
-          <div>
-            <div className="font-mono text-xs text-[#D8D2C6]">{r.laps}</div>
-            <div className="font-mono text-[11px] text-text-muted mt-1">{r.extra}</div>
-          </div>
-          {hasSessions && (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              className="flex-none transition-transform duration-200"
-              style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            >
-              <path
-                d="M4 6L8 10L12 6"
-                stroke="#857A6A"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
+        <div className="font-archivo font-extrabold text-[20px] uppercase leading-[1.1]">
+          {r.name}
         </div>
       </div>
-
-      {/* Session panel – CSS max-height transition */}
-      <div
-        className="overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: isExpanded ? '300px' : '0px' }}
-      >
-        {hasSessions && <SessionPanel sessions={r.sessions!} color={r.color} />}
+      <div className="flex-1 min-w-[130px]" style={{ flexBasis: '160px' }}>
+        <div className="font-bold text-[15px]">{r.circuit}</div>
+        <div className="font-mono text-xs text-text-dim mt-[3px]">{r.loc}</div>
       </div>
-    </>
+      <div className="flex-none text-right min-w-[90px]">
+        <div className="font-mono text-xs text-[#D8D2C6]">{r.laps}</div>
+        <div className="font-mono text-[11px] text-text-muted mt-1">{r.extra}</div>
+      </div>
+    </div>
   )
 }
 
 export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
   const [filter, setFilter] = useState('all')
-  const [expandedKey, setExpandedKey] = useState<string | null>(null)
+  const [now, setNow] = useState(Date.now())
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
 
   const filtered = filter === 'all' ? schedule : schedule.filter((r) => r.sport === filter)
-
-  function rowKey(r: RaceDisplay) {
-    return `${r.sport}-${r.round}`
-  }
-
-  function toggleRow(r: RaceDisplay) {
-    const key = rowKey(r)
-    setExpandedKey((prev) => (prev === key ? null : key))
-  }
+  const liveRaces = filtered.filter((r) => r.isLive)
+  const upcoming = filtered.filter((r) => !r.isLive)
+  const groups = buildGroups(upcoming)
 
   return (
     <section id="schedule" className="bg-bg-dark text-text-inv py-16">
       <div className="mx-auto max-w-[1280px] px-6">
+
         {/* Header */}
-        <div className="flex flex-wrap items-end justify-between gap-5 mb-8">
+        <div className="flex flex-wrap items-end justify-between gap-5 mb-9">
           <div>
             <div className="font-mono text-xs uppercase tracking-[0.18em] text-accent mb-3">
               Calendar
@@ -212,7 +174,7 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
               className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em]"
               style={{ fontSize: 'clamp(34px, 5vw, 60px)' }}
             >
-              다음 경기들
+              경기 일정
             </h2>
           </div>
 
@@ -221,18 +183,14 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
             {FILTERS.map((f) => {
               const active = f.id === filter
               const color = filterAccent(f.id)
-              const isWrc = f.id === 'wrc'
               return (
                 <button
                   key={f.id}
-                  onClick={() => {
-                    setFilter(f.id)
-                    setExpandedKey(null)
-                  }}
+                  onClick={() => setFilter(f.id)}
                   className="font-mono text-xs font-bold uppercase tracking-[0.06em] px-4 py-[9px] border cursor-pointer transition-all duration-150"
                   style={{
                     background: active ? color : 'transparent',
-                    color: active ? (isWrc ? '#15120D' : '#fff') : '#C9C1B2',
+                    color: active ? (f.id === 'wrc' ? '#15120D' : '#fff') : '#C9C1B2',
                     borderColor: active ? color : '#3A352C',
                   }}
                 >
@@ -243,17 +201,100 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
           </div>
         </div>
 
-        {/* Race list */}
-        <div className="border-t border-border-dark">
-          {filtered.map((r) => (
-            <RaceRow
-              key={rowKey(r)}
-              r={r}
-              isExpanded={expandedKey === rowKey(r)}
-              onToggle={() => toggleRow(r)}
-            />
-          ))}
+        {/* LIVE NOW */}
+        {liveRaces.length > 0 && (
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-5">
+              <span
+                className="inline-flex items-center gap-[7px] text-white font-mono text-[13px] font-bold uppercase tracking-[0.12em] px-3 py-[6px] rounded-sm"
+                style={{ background: '#E10600', animation: 'livepulse 1.6s infinite' }}
+              >
+                <span
+                  className="w-[7px] h-[7px] rounded-full bg-white flex-none"
+                  style={{ animation: 'liveblink 1.2s infinite' }}
+                />
+                LIVE
+              </span>
+              <h3
+                className="font-archivo font-black uppercase tracking-[-0.02em]"
+                style={{ fontSize: 'clamp(22px, 3vw, 30px)' }}
+              >
+                진행 중인 경기
+              </h3>
+              <span className="font-mono text-[13px] text-[#9A9081]">
+                {liveRaces.length}경기
+              </span>
+            </div>
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))' }}
+            >
+              {liveRaces.map((r) => (
+                <LiveCard key={`${r.sport}-${r.round}`} r={r} now={now} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Upcoming — grouped by date */}
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <h3
+              className="font-archivo font-black uppercase tracking-[-0.02em]"
+              style={{ fontSize: 'clamp(22px, 3vw, 30px)' }}
+            >
+              다음 경기
+            </h3>
+            <span className="font-mono text-[13px] text-[#9A9081]">
+              {upcoming.length}경기 예정
+            </span>
+          </div>
+
+          {groups.length > 0 ? (
+            <div style={{ borderTop: '1px solid #2C271F' }}>
+              {groups.map((g) => (
+                <div
+                  key={g.key}
+                  className="flex flex-wrap gap-6"
+                  style={{ borderBottom: '1px solid #2C271F', padding: '24px 8px' }}
+                >
+                  {/* Date column */}
+                  <div className="flex-none" style={{ width: '108px' }}>
+                    <div className="font-archivo font-black text-[40px] leading-[0.85]">
+                      {g.day}
+                    </div>
+                    <div className="font-mono text-[11px] text-[#9A9081] tracking-[0.1em] mt-[6px]">
+                      {g.month} · {g.wday}
+                    </div>
+                    {g.races.length > 1 && (
+                      <div
+                        className="inline-block mt-[10px] font-mono text-[10px] font-bold uppercase tracking-[0.06em] px-[7px] py-[3px]"
+                        style={{ color: '#E10600', border: '1px solid #E10600' }}
+                      >
+                        {g.races.length}경기
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Race list */}
+                  <div className="flex-1 min-w-[240px] flex flex-col gap-0.5" style={{ flexBasis: '320px' }}>
+                    {g.races.map((r) => (
+                      <RaceItem key={`${r.sport}-${r.round}`} r={r} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="font-mono text-[13px] text-text-muted py-10 px-2"
+              style={{ borderTop: '1px solid #2C271F' }}
+            >
+              예정된 경기가 없습니다.
+            </div>
+          )}
         </div>
+
       </div>
     </section>
   )

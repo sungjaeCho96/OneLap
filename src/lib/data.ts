@@ -18,7 +18,7 @@ export const SERIES: Series[] = [
   {
     id: 'wec',
     short: 'WEC',
-    name: 'FIA WEC',
+    name: 'World Endurance Championship',
     kr: '세계 내구 레이스',
     color: '#0E8C5A',
     tag: '인내',
@@ -122,10 +122,31 @@ const NON_WEC_RACES: Race[] = []
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
+function getEventEndTs(r: Race & { sessions?: RaceSession[] }): number {
+  if (r.sessions && r.sessions.length > 0) {
+    const last = r.sessions[r.sessions.length - 1]
+    const lastTs = new Date(last.dateStart).getTime()
+    // 날짜만 있는 tbc 세션이면 그 날 자정 기준 +24h로 하루 전체 커버
+    if (last.tbc || last.dateStart.length === 10) return lastTs + 24 * 3_600_000
+    return lastTs + 4 * 3_600_000
+  }
+  if (r.sport === 'wec') {
+    const match = r.laps.match(/^(\d+)\s*HOURS?/i)
+    if (match) return new Date(r.date).getTime() + parseInt(match[1]) * 3_600_000
+    return new Date(r.date).getTime() + 6 * 3_600_000
+  }
+  return new Date(r.date).getTime() + 3 * 3_600_000
+}
+
 export function toRaceDisplay(r: Race & { sessions?: RaceSession[] }): RaceDisplay {
   const s = SERIES_MAP[r.sport]
   const d = new Date(r.date)
   const dd = String(d.getDate()).padStart(2, '0')
+  const ts = d.getTime()
+  const now = Date.now()
+  const isLive = ts <= now && getEventEndTs(r) > now
+  const kst = new Date(ts + 9 * 3_600_000)
+  const timeLabel = `${String(kst.getUTCHours()).padStart(2, '0')}:${String(kst.getUTCMinutes()).padStart(2, '0')}`
   return {
     ...r,
     color: s.color,
@@ -137,7 +158,9 @@ export function toRaceDisplay(r: Race & { sessions?: RaceSession[] }): RaceDispl
     month: MONTHS[d.getMonth()],
     wday: WEEKDAYS[d.getDay()],
     dateLong: `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${dd}`,
-    ts: d.getTime(),
+    ts,
+    timeLabel,
+    isLive,
     sessions: r.sessions,
   }
 }
@@ -147,8 +170,11 @@ export function buildSchedule(f1Races: (Race & { sessions?: RaceSession[] })[] =
   const all = [...f1Races, ...WEC_RACES, ...WRC_RACES, ...SUPERRACE_RACES, ...NFESTIVAL_RACES, ...NON_WEC_RACES]
   return all
     .map(toRaceDisplay)
-    .filter((r) => r.ts > now - 3 * 60 * 60 * 1000)
-    .sort((a, b) => a.ts - b.ts)
+    .filter((r) => r.isLive || r.ts > now)
+    .sort((a, b) => {
+      if (a.isLive !== b.isLive) return a.isLive ? -1 : 1
+      return a.ts - b.ts
+    })
 }
 
 export const NEWS_ITEMS: NewsItem[] = [

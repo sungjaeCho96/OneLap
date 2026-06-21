@@ -15,6 +15,8 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:#F2EFE8;}
   ::selection{background:#E10600;color:#fff;}
+  @keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(225,6,0,0.5);}70%{box-shadow:0 0 0 9px rgba(225,6,0,0);}100%{box-shadow:0 0 0 0 rgba(225,6,0,0);}}
+  @keyframes liveblink{0%,100%{opacity:1;}50%{opacity:0.35;}}
 </style>
 </helmet>
 <div style="background:#F2EFE8;color:#15120D;font-family:'Noto Sans KR',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;">
@@ -50,11 +52,22 @@
   <section style="max-width:1280px;margin:0 auto;padding:56px 24px 64px;">
     <div style="display:flex;flex-wrap:wrap;gap:48px;align-items:center;">
       <div style="flex:1 1 480px;min-width:300px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-          <span style="width:9px;height:9px;border-radius:50%;background:{{ nextRace.color }};box-shadow:0 0 0 4px rgba(225,6,0,0.12);"></span>
-          <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;">다음 경기</span>
-          <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ nextRace.color }};">{{ nextRace.sportShort }}</span>
-        </div>
+        <sc-if value="{{ heroLive }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;gap:7px;background:#E10600;color:#fff;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:5px 11px;border-radius:2px;animation:livepulse 1.6s infinite;">
+              <span style="width:7px;height:7px;border-radius:50%;background:#fff;animation:liveblink 1.2s infinite;"></span>LIVE
+            </span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;">지금 진행 중</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ nextRace.color }};">{{ nextRace.sportShort }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ heroNotLive }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+            <span style="width:9px;height:9px;border-radius:50%;background:{{ nextRace.color }};box-shadow:0 0 0 4px rgba(225,6,0,0.12);"></span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#857A6A;">다음 경기</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ nextRace.color }};">{{ nextRace.sportShort }}</span>
+          </div>
+        </sc-if>
         <h1 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(42px,6.4vw,82px);line-height:0.93;letter-spacing:-0.03em;text-transform:uppercase;margin-bottom:18px;">{{ nextRace.name }}</h1>
         <div style="height:5px;width:120px;background:{{ nextRace.color }};margin-bottom:22px;"></div>
         <p style="font-size:17px;line-height:1.6;color:#4A4338;max-width:480px;margin-bottom:8px;">{{ nextRace.krName }}</p>
@@ -64,7 +77,7 @@
           <span style="color:#857A6A;">{{ nextRace.roundLabel }}</span>
         </div>
         <div style="margin-top:36px;">
-          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">출발까지</div>
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#857A6A;margin-bottom:12px;">{{ countdownLabel }}</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <sc-for list="{{ countdown }}" as="unit" hint-placeholder-count="4">
               <div style="background:#15120D;color:#F2EFE8;padding:14px 18px;min-width:84px;text-align:center;">
@@ -74,6 +87,21 @@
             </sc-for>
           </div>
         </div>
+
+        <sc-if value="{{ heroMulti }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:18px;margin-top:26px;flex-wrap:wrap;">
+            <div style="display:flex;gap:8px;">
+              <button onClick="{{ heroPrev }}" aria-label="이전 경기" style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid #15120D;color:#15120D;cursor:pointer;font-size:20px;line-height:1;border-radius:2px;transition:all .15s;" style-hover="background:#15120D;color:#F2EFE8;">‹</button>
+              <button onClick="{{ heroNext }}" aria-label="다음 경기" style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#15120D;border:1px solid #15120D;color:#F2EFE8;cursor:pointer;font-size:20px;line-height:1;border-radius:2px;transition:all .15s;" style-hover="opacity:0.82;">›</button>
+            </div>
+            <div style="display:flex;gap:7px;align-items:center;">
+              <sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="4">
+                <button onClick="{{ d.go }}" aria-label="경기 선택" style="width:{{ d.dotW }};height:8px;border-radius:99px;border:none;padding:0;background:{{ d.dotBg }};cursor:pointer;transition:all .2s;"></button>
+              </sc-for>
+            </div>
+            <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.1em;color:#857A6A;">{{ heroPos }}</span>
+          </div>
+        </sc-if>
       </div>
 
       <div style="flex:1 1 380px;min-width:280px;display:flex;flex-direction:column;">
@@ -96,10 +124,12 @@
   <!-- SCHEDULE -->
   <section id="schedule" style="background:#15120D;color:#F2EFE8;padding:64px 0;">
     <div style="max-width:1280px;margin:0 auto;padding:0 24px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:32px;">
+
+      <!-- Filter bar -->
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:36px;">
         <div>
           <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#E10600;margin-bottom:12px;">Calendar</div>
-          <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;">다음 경기들</h2>
+          <h2 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(34px,5vw,60px);line-height:0.95;letter-spacing:-0.03em;text-transform:uppercase;">경기 일정</h2>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
           <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
@@ -108,32 +138,91 @@
         </div>
       </div>
 
-      <div style="border-top:1px solid #2C271F;">
-        <sc-for list="{{ schedule }}" as="r" hint-placeholder-count="6">
-          <a href="#schedule" style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:22px 8px;border-bottom:1px solid #2C271F;text-decoration:none;color:#F2EFE8;position:relative;" style-hover="background:rgba(255,255,255,0.03);">
-            <div style="width:5px;align-self:stretch;background:{{ r.color }};min-height:48px;flex:none;"></div>
-            <div style="flex:none;width:84px;text-align:center;">
-              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:34px;line-height:0.9;">{{ r.day }}</div>
-              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;margin-top:4px;">{{ r.month }} · {{ r.wday }}</div>
-            </div>
-            <div style="flex:1 1 260px;min-width:200px;">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#15120D;background:{{ r.color }};padding:3px 8px;text-transform:uppercase;">{{ r.sportShort }}</span>
-                <span style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;">{{ r.roundLabel }}</span>
+      <!-- LIVE NOW -->
+      <sc-if value="{{ hasLive }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-bottom:48px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <span style="display:inline-flex;align-items:center;gap:7px;background:#E10600;color:#fff;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:6px 12px;border-radius:2px;animation:livepulse 1.6s infinite;"><span style="width:7px;height:7px;border-radius:50%;background:#fff;animation:liveblink 1.2s infinite;"></span>LIVE</span>
+            <h3 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;text-transform:uppercase;">진행 중인 경기</h3>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#9A9081;">{{ liveCount }}경기</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px;">
+            <sc-for list="{{ liveRaces }}" as="r" hint-placeholder-count="2">
+              <a href="#schedule" style="display:flex;flex-direction:column;gap:14px;background:#1E1A12;border:1px solid #34302660;border-left:5px solid {{ r.color }};padding:22px 22px 20px;text-decoration:none;color:#F2EFE8;" style-hover="background:#241F16;">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#15120D;background:{{ r.color }};padding:3px 8px;text-transform:uppercase;">{{ r.sportShort }}</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#fff;background:#E10600;padding:3px 8px;text-transform:uppercase;animation:livepulse 1.6s infinite;"><span style="width:5px;height:5px;border-radius:50%;background:#fff;animation:liveblink 1.2s infinite;"></span>LIVE</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;">{{ r.roundLabel }}</span>
+                </div>
+                <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;line-height:1.08;text-transform:uppercase;">{{ r.name }}</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;">
+                  <div>
+                    <div style="font-weight:700;font-size:15px;">{{ r.circuit }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9A9081;margin-top:3px;">{{ r.loc }}</div>
+                  </div>
+                  <div style="text-align:right;flex:none;">
+                    <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:#fff;">{{ r.elapsed }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-top:3px;">{{ r.laps }}</div>
+                  </div>
+                </div>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- UPCOMING (grouped by date) -->
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <h3 style="font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;text-transform:uppercase;">다음 경기</h3>
+          <span style="font-family:'Space Mono',monospace;font-size:13px;color:#9A9081;">{{ upcomingCount }}경기 예정</span>
+        </div>
+
+        <sc-if value="{{ hasUpcoming }}" hint-placeholder-val="{{ true }}">
+          <div style="border-top:1px solid #2C271F;">
+            <sc-for list="{{ upcomingGroups }}" as="g" hint-placeholder-count="5">
+              <div style="display:flex;flex-wrap:wrap;gap:24px;border-bottom:1px solid #2C271F;padding:24px 8px;">
+                <!-- Date column -->
+                <div style="flex:none;width:108px;">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:40px;line-height:0.85;">{{ g.day }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.1em;margin-top:6px;">{{ g.month }} · {{ g.wday }}</div>
+                  <sc-if value="{{ g.multi }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:inline-block;margin-top:10px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#E10600;border:1px solid #E10600;padding:3px 7px;">{{ g.countLabel }}</div>
+                  </sc-if>
+                </div>
+                <!-- Races on that day -->
+                <div style="flex:1 1 320px;min-width:240px;display:flex;flex-direction:column;gap:2px;">
+                  <sc-for list="{{ g.races }}" as="r" hint-placeholder-count="1">
+                    <a href="#schedule" style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:12px 12px 12px 0;text-decoration:none;color:#F2EFE8;" style-hover="background:rgba(255,255,255,0.03);">
+                      <div style="width:4px;align-self:stretch;background:{{ r.color }};min-height:42px;flex:none;"></div>
+                      <div style="flex:1 1 220px;min-width:180px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+                          <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#15120D;background:{{ r.color }};padding:3px 8px;text-transform:uppercase;">{{ r.sportShort }}</span>
+                          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;letter-spacing:0.08em;">{{ r.roundLabel }}</span>
+                          <span style="font-family:'Space Mono',monospace;font-size:11px;color:#9A9081;letter-spacing:0.06em;">{{ r.timeLabel }}</span>
+                        </div>
+                        <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;line-height:1.1;text-transform:uppercase;">{{ r.name }}</div>
+                      </div>
+                      <div style="flex:1 1 160px;min-width:130px;">
+                        <div style="font-weight:700;font-size:15px;">{{ r.circuit }}</div>
+                        <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9A9081;margin-top:3px;">{{ r.loc }}</div>
+                      </div>
+                      <div style="flex:none;text-align:right;min-width:90px;">
+                        <div style="font-family:'Space Mono',monospace;font-size:12px;color:#D8D2C6;">{{ r.laps }}</div>
+                        <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-top:4px;">{{ r.extra }}</div>
+                      </div>
+                    </a>
+                  </sc-for>
+                </div>
               </div>
-              <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:21px;line-height:1.1;text-transform:uppercase;">{{ r.name }}</div>
-            </div>
-            <div style="flex:1 1 180px;min-width:140px;">
-              <div style="font-weight:700;font-size:15px;">{{ r.circuit }}</div>
-              <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9A9081;margin-top:3px;">{{ r.loc }}</div>
-            </div>
-            <div style="flex:none;text-align:right;min-width:96px;">
-              <div style="font-family:'Space Mono',monospace;font-size:12px;color:#D8D2C6;">{{ r.laps }}</div>
-              <div style="font-family:'Space Mono',monospace;font-size:11px;color:#857A6A;margin-top:4px;">{{ r.extra }}</div>
-            </div>
-          </a>
-        </sc-for>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noUpcoming }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top:1px solid #2C271F;padding:40px 8px;font-family:'Space Mono',monospace;font-size:13px;color:#857A6A;">예정된 경기가 없습니다.</div>
+        </sc-if>
       </div>
+
     </div>
   </section>
 
@@ -257,7 +346,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:2400}}">
 class Component extends DCLogic {
-  state = { now: Date.now(), filter: 'all' };
+  state = { now: Date.now(), filter: 'all', heroIdx: 0 };
 
   componentDidMount() {
     this._t = setInterval(() => this.setState({ now: Date.now() }), 1000);
@@ -293,8 +382,18 @@ class Component extends DCLogic {
     const m = {}; this.series().forEach(s => m[s.id] = s); return m;
   }
 
+  raceDuration(sport) {
+    // 경기 진행 추정 시간(분)
+    const map = { f1:120, wec:360, wrc:480, superrace:90, nfestival:70 };
+    return map[sport] || 120;
+  }
+
   rawSchedule() {
     return [
+      // anchorNow: 현재 기준 시작 오프셋(분). 음수면 이미 시작됨 → 진행 중 데모.
+      { sport:'wec', round:4, name:'6H of Spa', circuit:'Spa-Francorchamps', loc:'Stavelot, BE', anchorNow:-46, laps:'6 HOURS', extra:'중계 중', tip:'아르덴의 전설적인 트랙. 변덕스러운 날씨가 최대 변수다.' },
+      { sport:'f1', round:10, name:'Canadian Grand Prix', circuit:'Gilles Villeneuve', loc:'Montreal, CA', anchorNow:-58, laps:'70 LAPS', extra:'중계 중', tip:'벽이 가까운 시가지 트랙. 추월과 충돌이 끊이지 않는다.' },
+      { sport:'superrace', round:3, name:'Round 3 · 인제', circuit:'Inje Speedium', loc:'강원 인제', anchorNow:-32, laps:'슈퍼6000', extra:'결승 진행', tip:'국내 스톡카의 굉음을 가장 가까이서. 결승이 한창이다.' },
       { sport:'f1', round:11, name:'Austrian Grand Prix', circuit:'Red Bull Ring', loc:'Spielberg, AT', date:'2026-06-28T13:00:00Z', laps:'71 LAPS', extra:'프리뷰', tip:'F1 가을 시즌의 개막전. 고공 경기장에서 엔진음이 울려 퍼진다.' },
       { sport:'superrace', round:4, name:'Round 4 · 인제', circuit:'Inje Speedium', loc:'강원 인제', date:'2026-07-05T05:00:00Z', laps:'슈퍼6000', extra:'예선 토요일', tip:'한국 최고의 레이싱 트랙. 주말 현장의 열정이 뜨겁다.' },
       { sport:'f1', round:12, name:'British Grand Prix', circuit:'Silverstone', loc:'Northants, UK', date:'2026-07-05T14:00:00Z', laps:'52 LAPS', extra:'홈 경기', tip:'영국의 F1 전당(殿堂). 팬들의 환호가 울려 퍼진다.' },
@@ -308,12 +407,20 @@ class Component extends DCLogic {
 
   buildSchedule() {
     const sm = this.seriesMap();
+    const now = this.state.now;
     const weekday = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
     const mon = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    return this.rawSchedule().map(r => {
+    const list = this.rawSchedule().map(r => {
       const s = sm[r.sport];
-      const d = new Date(r.date);
+      const startTs = (r.anchorNow != null) ? now + r.anchorNow*60000 : new Date(r.date).getTime();
+      const d = new Date(startTs);
       const dd = String(d.getDate()).padStart(2,'0');
+      const durMs = this.raceDuration(r.sport) * 60000;
+      const endTs = startTs + durMs;
+      let status = 'upcoming';
+      if (now >= startTs && now < endTs) status = 'live';
+      else if (now >= endTs) status = 'finished';
+      const p2 = n => String(n).padStart(2,'0');
       return {
         ...r,
         color: s.color, sportName: s.name, sportShort: s.short, sportKr: s.kr,
@@ -321,28 +428,59 @@ class Component extends DCLogic {
         day: dd, month: mon[d.getMonth()], wday: weekday[d.getDay()],
         dateLabel: mon[d.getMonth()] + ' ' + dd,
         dateLong: d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + dd,
-        ts: d.getTime(),
+        timeLabel: p2(d.getHours()) + ':' + p2(d.getMinutes()),
+        ts: startTs, endTs, status,
+        isLive: status === 'live',
       };
-    }).sort((a,b) => a.ts - b.ts);
+    });
+    const rank = x => x.status === 'live' ? 0 : (x.status === 'upcoming' ? 1 : 2);
+    return list.sort((a,b) => rank(a) - rank(b) || (rank(a) === 2 ? b.ts - a.ts : a.ts - b.ts));
   }
 
   renderVals() {
     const sched = this.buildSchedule();
-    const next = sched[0];
-
-    let diff = Math.max(0, next.ts - this.state.now);
-    const dsec = Math.floor(diff/1000);
-    const d = Math.floor(dsec/86400);
-    const h = Math.floor((dsec%86400)/3600);
-    const m = Math.floor((dsec%3600)/60);
-    const s = dsec%60;
     const pad = n => String(n).padStart(2,'0');
-    const countdown = [
-      { label:'Days', value:String(d) },
-      { label:'Hrs', value:pad(h) },
-      { label:'Min', value:pad(m) },
-      { label:'Sec', value:pad(s) },
-    ];
+
+    // 히어로 캐러셀 — 진행 중 + 예정 경기를 빠른 순으로 넘겨봄 (종료 제외)
+    const heroList = sched.filter(x => x.status !== 'finished');
+    const hlen = heroList.length || 1;
+    const idx = (((this.state.heroIdx % hlen) + hlen) % hlen);
+    const heroRace = heroList[idx] || sched[0];
+    const heroLive = heroRace.status === 'live';
+    const heroNext = () => this.setState(s => ({ heroIdx: s.heroIdx + 1 }));
+    const heroPrev = () => this.setState(s => ({ heroIdx: s.heroIdx - 1 }));
+    const heroDots = heroList.map((r, i) => ({
+      active: i === idx,
+      live: r.status === 'live',
+      dotBg: i === idx ? (r.status === 'live' ? '#E10600' : '#15120D') : '#CFC7B6',
+      dotW: i === idx ? '22px' : '8px',
+      go: () => this.setState({ heroIdx: i }),
+    }));
+    const heroPos = pad(idx + 1) + ' / ' + pad(hlen);
+    const heroMulti = hlen > 1;
+
+    // 진행 중이면 경기 경과 시간, 아니면 출발까지 남은 시간
+    let countdown, countdownLabel;
+    if (heroLive) {
+      let el = Math.max(0, this.state.now - heroRace.ts);
+      const es = Math.floor(el/1000);
+      countdownLabel = '경기 경과 시간';
+      countdown = [
+        { label:'Hrs', value:pad(Math.floor(es/3600)) },
+        { label:'Min', value:pad(Math.floor((es%3600)/60)) },
+        { label:'Sec', value:pad(es%60) },
+      ];
+    } else {
+      let diff = Math.max(0, heroRace.ts - this.state.now);
+      const dsec = Math.floor(diff/1000);
+      countdownLabel = '출발까지';
+      countdown = [
+        { label:'Days', value:String(Math.floor(dsec/86400)) },
+        { label:'Hrs', value:pad(Math.floor((dsec%86400)/3600)) },
+        { label:'Min', value:pad(Math.floor((dsec%3600)/60)) },
+        { label:'Sec', value:pad(dsec%60) },
+      ];
+    }
 
     const filters = [
       { id:'all', label:'전체' },
@@ -354,6 +492,30 @@ class Component extends DCLogic {
     ];
     const filter = this.state.filter;
     const filtered = filter === 'all' ? sched : sched.filter(x => x.sport === filter);
+
+    // 진행 중 경기 (경과 시간 포함)
+    const fmtElapsed = (ms) => {
+      const s = Math.floor(ms/1000);
+      const h = Math.floor(s/3600), m = Math.floor((s%3600)/60);
+      return (h > 0 ? h + '시간 ' : '') + m + '분 경과';
+    };
+    const liveRaces = filtered.filter(x => x.status === 'live')
+      .map(r => ({ ...r, elapsed: fmtElapsed(this.state.now - r.ts) }));
+
+    // 예정 경기 — 날짜별 그룹화 (같은 날 동시 경기 대응)
+    const upcoming = filtered.filter(x => x.status === 'upcoming');
+    const gmap = {}, gorder = [];
+    upcoming.forEach(r => {
+      const k = r.dateLong;
+      if (!gmap[k]) { gmap[k] = { key:k, day:r.day, month:r.month, wday:r.wday, dateLong:r.dateLong, races:[] }; gorder.push(k); }
+      gmap[k].races.push(r);
+    });
+    const upcomingGroups = gorder.map(k => {
+      const g = gmap[k];
+      const multi = g.races.length > 1;
+      return { ...g, multi, countLabel: g.races.length + '경기' };
+    });
+
     const sm0 = this.seriesMap();
     const accent = id => id === 'all' ? '#E10600' : sm0[id].color;
     const filtersUi = filters.map(f => {
@@ -368,9 +530,11 @@ class Component extends DCLogic {
     });
 
     const nextRace = {
-      ...next,
-      location: next.loc,
-      krName: next.sportKr + ' · ' + (next.extra || '경기'),
+      ...heroRace,
+      location: heroRace.loc,
+      isLive: heroLive,
+      statusLabel: heroLive ? '지금 진행 중' : '다음 경기',
+      krName: heroRace.sportKr + ' · ' + (heroRace.extra || '경기'),
     };
 
     const news = [
@@ -385,8 +549,22 @@ class Component extends DCLogic {
     return {
       nextRace,
       countdown,
+      countdownLabel,
+      heroLive,
+      heroNotLive: !heroLive,
+      heroNext,
+      heroPrev,
+      heroDots,
+      heroPos,
+      heroMulti,
+      hasLive: liveRaces.length > 0,
+      liveCount: liveRaces.length,
+      liveRaces,
+      upcomingGroups,
+      hasUpcoming: upcomingGroups.length > 0,
+      noUpcoming: upcomingGroups.length === 0,
+      upcomingCount: upcoming.length,
       series: this.series(),
-      schedule: filtered,
       filters: filtersUi,
       news: newsUi,
     };

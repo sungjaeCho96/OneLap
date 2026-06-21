@@ -15,6 +15,17 @@
   color: #fff;
 }
 
+@keyframes livepulse {
+  0%   { box-shadow: 0 0 0 0 rgba(225,6,0,0.5); }
+  70%  { box-shadow: 0 0 0 9px rgba(225,6,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(225,6,0,0); }
+}
+
+@keyframes liveblink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
 body {
   background: #F2EFE8;
   color: #15120D;
