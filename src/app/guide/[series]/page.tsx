@@ -9,7 +9,7 @@ export const revalidate = 3600
 
 export async function generateStaticParams() {
   return Object.keys(SERIES_GUIDE_MAP)
-    .filter((id) => id !== 'f1')
+    .filter((id) => id !== 'f1' && id !== 'wec')
     .map((id) => ({ series: id }))
 }
 
