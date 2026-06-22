@@ -179,16 +179,14 @@ export async function fetchF1DriverStandings(): Promise<F1DriverStanding[]> {
 
     if (list.length === 0) return []
 
-    const leaderPts = parseFloat(list[0].points)
-
-    return list.slice(0, 4).map((d, i) => {
+    return list.slice(0, 4).map((d) => {
       const pts = parseFloat(d.points)
       return {
         pos: parseInt(d.position),
         code: d.Driver.code ?? '???',
         team: d.Constructors[0]?.name ?? '',
         points: pts,
-        gap: i === 0 ? `${pts}pts` : `-${(leaderPts - pts).toFixed(0)}pts`,
+        gap: `${pts}pts`,
       }
     })
   } catch {
