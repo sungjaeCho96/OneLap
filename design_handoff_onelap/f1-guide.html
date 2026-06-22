@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 입문 가이드 — 처음이라도 레이스가 보입니다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#0f1117;
+    --asphalt-2:#171a22;
+    --asphalt-3:#1d212b;
+    --line:#2a2f3b;
+    --chalk:#edeff2;
+    --smoke:#969ba6;
+    --smoke-dim:#6b707b;
+    --purple:#b45cff;   /* 최고 기록 구간 */
+    --green:#2fd27a;    /* 자기 최고 기록 */
+    --amber:#f4c13b;    /* 평소 / 주의 */
+    --red:#ff2e55;      /* 속도 / 소프트 타이어 */
+    --white-tire:#e9ecf2;
+
+    --display:"Saira Condensed", "Noto Sans KR", sans-serif;
+    --body:"Noto Sans KR", sans-serif;
+    --mono:"JetBrains Mono", monospace;
+
+    --maxw:1080px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--asphalt);
+    color:var(--chalk);
+    font-family:var(--body);
+    font-weight:400;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--purple);color:#fff;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  .eyebrow{
+    font-family:var(--display);
+    font-weight:700;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    font-size:.72rem;
+    color:var(--smoke);
+    display:inline-flex;
+    align-items:center;
+    gap:.6em;
+  }
+  .eyebrow::before{
+    content:"";width:26px;height:2px;background:var(--purple);display:inline-block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:74px 0 64px;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;inset:0;
+    background:
+      radial-gradient(900px 380px at 78% -10%, rgba(180,92,255,.16), transparent 60%),
+      radial-gradient(700px 340px at 10% 120%, rgba(255,46,85,.10), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:48px;
+    align-items:center;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(2.6rem,6vw,4.6rem);
+    line-height:.98;
+    letter-spacing:-.01em;
+    margin:18px 0 0;
+  }
+  h1 .kr{
+    font-family:var(--body);
+    font-weight:900;
+    display:block;
+    font-size:clamp(2.1rem,5vw,3.7rem);
+    line-height:1.08;
+    margin-top:.12em;
+  }
+  h1 em{font-style:normal;color:var(--purple);}
+  .lede{
+    margin-top:22px;
+    max-width:42ch;
+    color:var(--smoke);
+    font-size:1.05rem;
+    font-weight:300;
+  }
+  .lede strong{color:var(--chalk);font-weight:500;}
+
+  .scroll-cue{
+    margin-top:30px;
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:.78rem;color:var(--smoke-dim);
+    text-decoration:none;
+  }
+  .scroll-cue:hover{color:var(--chalk);}
+  .scroll-cue span.arrow{
+    width:30px;height:30px;border:1px solid var(--line);border-radius:50%;
+    display:grid;place-items:center;color:var(--purple);
+    animation:bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* ---------- TIMING TOWER (signature) ---------- */
+  .tower{
+    background:linear-gradient(180deg,var(--asphalt-2),#13161d);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 16px 14px;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.8);
+    font-family:var(--mono);
+  }
+  .tower-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 4px 12px;border-bottom:1px solid var(--line);margin-bottom:8px;
+  }
+  .tower-head .live{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:.7rem;letter-spacing:.18em;color:var(--smoke);text-transform:uppercase;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--red);
+    box-shadow:0 0 0 0 rgba(255,46,85,.6);animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,46,85,.55)}70%{box-shadow:0 0 0 7px rgba(255,46,85,0)}100%{box-shadow:0 0 0 0 rgba(255,46,85,0)}}
+  .tower-head .lap{font-size:.72rem;color:var(--smoke);}
+
+  .row{
+    display:grid;
+    grid-template-columns:22px 1fr repeat(3,30px) 56px;
+    align-items:center;
+    gap:8px;
+    padding:7px 4px;
+    font-size:.82rem;
+    border-radius:5px;
+  }
+  .row.lead{background:rgba(180,92,255,.07);}
+  .row .pos{color:var(--smoke);font-size:.74rem;text-align:center;}
+  .row .drv{font-weight:700;letter-spacing:.04em;color:var(--chalk);}
+  .row .drv small{color:var(--smoke-dim);font-weight:400;margin-left:6px;font-size:.7rem;}
+  .seg{height:6px;border-radius:2px;background:var(--asphalt-3);}
+  .seg.p{background:var(--purple);} .seg.g{background:var(--green);} .seg.y{background:var(--amber);}
+  .row .lap-t{text-align:right;color:var(--chalk);font-weight:500;font-size:.8rem;}
+  .row .lap-t.p{color:var(--purple);}
+
+  .tower-legend{
+    display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;padding-top:11px;
+    border-top:1px solid var(--line);font-size:.68rem;color:var(--smoke);
+    font-family:var(--body);
+  }
+  .tower-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .swatch{width:18px;height:6px;border-radius:2px;display:inline-block;}
+  .caption{
+    margin-top:14px;font-family:var(--body);font-size:.84rem;color:var(--smoke);
+    line-height:1.55;
+  }
+  .caption b{color:var(--chalk);font-weight:500;}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:72px 0;border-bottom:1px solid var(--line);}
+  .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:34px;flex-wrap:wrap;}
+  .sec-num{
+    font-family:var(--mono);font-size:.82rem;color:var(--purple);font-weight:700;
+    border:1px solid var(--line);border-radius:5px;padding:4px 9px;
+  }
+  h2{
+    font-family:var(--body);font-weight:900;
+    font-size:clamp(1.55rem,3.4vw,2.3rem);line-height:1.15;letter-spacing:-.01em;
+  }
+  .sec-sub{color:var(--smoke);font-weight:300;margin-top:6px;max-width:60ch;}
+  p.body{color:#c8ccd4;font-weight:300;max-width:64ch;}
+  p.body + p.body{margin-top:14px;}
+  .hl{color:var(--chalk);font-weight:500;}
+
+  /* stat chips */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px;}
+  .stat{
+    background:var(--asphalt-2);border:1px solid var(--line);border-radius:9px;
+    padding:22px 20px;position:relative;overflow:hidden;
+  }
+  .stat::after{content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:var(--purple);}
+  .stat .big{font-family:var(--display);font-weight:800;font-size:2.7rem;line-height:1;}
+  .stat .lab{color:var(--smoke);font-size:.86rem;margin-top:8px;}
+  .stat .note{color:var(--smoke-dim);font-size:.74rem;margin-top:3px;font-family:var(--mono);}
+
+  /* two-col cards */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px;}
+  .card{
+    background:var(--asphalt-2);border:1px solid var(--line);border-radius:10px;padding:24px;
+  }
+  .card h3{font-size:1.12rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:9px;}
+  .card h3 .tag{font-family:var(--mono);font-size:.68rem;color:var(--purple);border:1px solid var(--line);padding:2px 6px;border-radius:4px;font-weight:500;}
+  .card p{color:#c2c6cf;font-size:.93rem;font-weight:300;}
+
+  /* timeline */
+  .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:8px;position:relative;}
+  .tl-step{padding:24px 22px;border:1px solid var(--line);border-right:none;position:relative;background:var(--asphalt-2);}
+  .tl-step:last-child{border-right:1px solid var(--line);border-radius:0 10px 10px 0;}
+  .tl-step:first-child{border-radius:10px 0 0 10px;}
+  .tl-step .phase{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;color:var(--purple);text-transform:uppercase;}
+  .tl-step h4{font-size:1.18rem;font-weight:700;margin:8px 0 9px;}
+  .tl-step p{color:#bcc0c9;font-size:.9rem;font-weight:300;}
+  .tl-step .arrow-x{position:absolute;right:-11px;top:50%;transform:translateY(-50%);z-index:2;
+    width:22px;height:22px;border-radius:50%;background:var(--asphalt);border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--purple);font-size:.7rem;}
+  .sprint-note{margin-top:18px;background:rgba(244,193,59,.07);border:1px solid rgba(244,193,59,.28);
+    border-radius:9px;padding:16px 18px;font-size:.9rem;color:#d8d2bd;font-weight:300;}
+  .sprint-note b{color:var(--amber);font-weight:600;}
+
+  /* points table */
+  .pts-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:8px;}
+  .pts{background:var(--asphalt-2);border:1px solid var(--line);border-radius:7px;padding:14px 6px;text-align:center;}
+  .pts .pp{font-family:var(--mono);font-size:.66rem;color:var(--smoke);}
+  .pts .pv{font-family:var(--display);font-weight:800;font-size:1.55rem;margin-top:4px;}
+  .pts.gold{border-color:rgba(244,193,59,.5);}
+  .pts.gold .pv{color:var(--amber);}
+  .pts.silver .pv{color:var(--white-tire);}
+  .pts.bronze .pv{color:#d08a52;}
+
+  /* tires */
+  .tires{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px;}
+  .tire{background:var(--asphalt-2);border:1px solid var(--line);border-radius:10px;padding:18px 14px;text-align:center;}
+  .tire .disc{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;position:relative;
+    background:#15171d;border:4px solid var(--c);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.8rem;color:var(--c);}
+  .tire .nm{font-weight:700;font-size:.96rem;}
+  .tire .en{font-family:var(--mono);font-size:.66rem;color:var(--smoke);letter-spacing:.08em;margin-top:2px;}
+  .tire .ds{color:#b9bdc6;font-size:.8rem;font-weight:300;margin-top:9px;line-height:1.5;}
+
+  /* flags */
+  .flags{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px;}
+  .flag{display:flex;gap:16px;align-items:flex-start;background:var(--asphalt-2);border:1px solid var(--line);border-radius:9px;padding:16px 18px;}
+  .flag .fc{width:34px;height:24px;border-radius:3px;flex:0 0 auto;margin-top:3px;border:1px solid rgba(255,255,255,.1);}
+  .flag h4{font-size:.98rem;font-weight:700;}
+  .flag p{color:#b9bdc6;font-size:.85rem;font-weight:300;margin-top:3px;}
+
+  /* glossary */
+  .gloss{display:grid;grid-template-columns:repeat(2,1fr);gap:0 36px;margin-top:8px;}
+  .term{padding:16px 0;border-bottom:1px solid var(--line);}
+  .term dt{font-weight:700;font-size:1rem;display:flex;align-items:baseline;gap:10px;}
+  .term dt .en{font-family:var(--mono);font-size:.7rem;color:var(--purple);font-weight:500;}
+  .term dd{color:#b9bdc6;font-size:.88rem;font-weight:300;margin-top:5px;}
+
+  /* tips */
+  .tips{counter-reset:tip;margin-top:8px;}
+  .tip{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .tip:last-child{border-bottom:none;}
+  .tip::before{counter-increment:tip;content:counter(tip,decimal-leading-zero);
+    font-family:var(--mono);font-weight:700;color:var(--purple);font-size:.92rem;flex:0 0 auto;
+    border:1px solid var(--line);border-radius:6px;padding:5px 9px;line-height:1;}
+  .tip .tt{font-weight:700;font-size:1.02rem;}
+  .tip .td{color:#b9bdc6;font-size:.9rem;font-weight:300;margin-top:3px;}
+
+  /* footer */
+  footer{padding:46px 0 60px;}
+  .foot-card{background:var(--asphalt-2);border:1px solid var(--line);border-radius:10px;padding:24px 26px;
+    display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;}
+  .foot-card p{color:var(--smoke);font-size:.86rem;font-weight:300;max-width:52ch;}
+  .foot-card .stamp{font-family:var(--mono);font-size:.74rem;color:var(--smoke-dim);
+    border:1px solid var(--line);border-radius:6px;padding:8px 12px;white-space:nowrap;}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:880px){
+    .hero-grid{grid-template-columns:1fr;gap:36px;}
+    .stats{grid-template-columns:1fr;}
+    .duo{grid-template-columns:1fr;}
+    .timeline{grid-template-columns:1fr;}
+    .tl-step,.tl-step:first-child,.tl-step:last-child{border-radius:10px;border-right:1px solid var(--line);margin-bottom:12px;}
+    .tl-step .arrow-x{display:none;}
+    .pts-grid{grid-template-columns:repeat(5,1fr);}
+    .tires{grid-template-columns:repeat(2,1fr);}
+    .flags,.gloss{grid-template-columns:1fr;}
+  }
+  @media(max-width:480px){
+    .pts-grid{grid-template-columns:repeat(2,1fr);}
+    .tires{grid-template-columns:1fr;}
+    .row{font-size:.74rem;grid-template-columns:18px 1fr repeat(3,22px) 48px;gap:6px;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Formula 1 · 입문 가이드</span>
+      <h1>READY?<span class="kr">규칙을 몰라도<br><em>레이스는 보입니다</em></span></h1>
+      <p class="lede">F1을 한 번도 안 본 사람을 위한 안내서. <strong>차 한 대가 왜 빠른지</strong>부터, 중계 화면 구석의 <strong>이 타이밍 보드를 읽는 법</strong>까지 — 순서대로 따라오면 다음 경기부터 다르게 보여요.</p>
+      <a class="scroll-cue" href="#what"><span class="arrow">↓</span> 30분이면 충분합니다</a>
+    </div>
+
+    <!-- signature: live timing tower -->
+    <div class="tower" aria-label="라이브 타이밍 보드 예시">
+      <div class="tower-head">
+        <span class="live"><span class="dot"></span> Live Timing</span>
+        <span class="lap">LAP 38 / 58</span>
+      </div>
+
+      <div class="row lead">
+        <span class="pos">1</span><span class="drv">VER <small>Red Bull</small></span>
+        <span class="seg p anim1"></span><span class="seg g"></span><span class="seg p anim2"></span>
+        <span class="lap-t p">1:18.204</span>
+      </div>
+      <div class="row">
+        <span class="pos">2</span><span class="drv">NOR <small>McLaren</small></span>
+        <span class="seg g"></span><span class="seg p anim3"></span><span class="seg y"></span>
+        <span class="lap-t">+1.6</span>
+      </div>
+      <div class="row">
+        <span class="pos">3</span><span class="drv">LEC <small>Ferrari</small></span>
+        <span class="seg y"></span><span class="seg g anim1"></span><span class="seg g"></span>
+        <span class="lap-t">+4.0</span>
+      </div>
+      <div class="row">
+        <span class="pos">4</span><span class="drv">RUS <small>Mercedes</small></span>
+        <span class="seg g"></span><span class="seg y"></span><span class="seg p anim2"></span>
+        <span class="lap-t">+7.3</span>
+      </div>
+
+      <div class="tower-legend">
+        <span><i class="swatch" style="background:var(--purple)"></i> 전체 최고 구간</span>
+        <span><i class="swatch" style="background:var(--green)"></i> 자기 최고</span>
+        <span><i class="swatch" style="background:var(--amber)"></i> 평소 페이스</span>
+      </div>
+      <p class="caption">처음엔 외계어처럼 보이죠? <b>색이 곧 정보</b>예요. 보라색 구간이 많은 차가 지금 가장 빠르다는 뜻. 이 가이드를 다 보면 이 보드가 읽힙니다.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== 1. WHAT IS F1 ===================== -->
+<section class="block" id="what">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div><h2>F1, 한 줄로 말하면</h2>
+      <p class="sec-sub">세계에서 가장 빠른 자동차 경주. 한 시즌 동안 전 세계를 돌며 우승을 다투는 챔피언십입니다.</p></div>
+    </div>
+    <p class="body">F1(포뮬러 1)은 <span class="hl">오픈휠</span>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요. 차 한 대가 시속 300km를 넘나들고, 순위는 <span class="hl">0.001초</span> 단위로 갈립니다. 하지만 F1의 진짜 재미는 속도만이 아니라 <span class="hl">팀과 팀의 전략 싸움</span>에 있어요 — 언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.</p>
+    <p class="body">한 시즌은 여러 나라에서 열리는 경주(그랑프리)의 모음이고, 매 경주에서 쌓은 점수로 연말 챔피언을 가립니다.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="big">11</div><div class="lab">참가 팀 (컨스트럭터)</div><div class="note">2026 · Cadillac 합류로 +1</div></div>
+      <div class="stat"><div class="big">22</div><div class="lab">드라이버 (팀당 2명)</div><div class="note">2026 시즌 기준</div></div>
+      <div class="stat"><div class="big">22</div><div class="lab">그랑프리 (3월~12월)</div><div class="note">전 세계 순회</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. BIG PICTURE ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div><h2>누가 경쟁하나 — 팀과 드라이버</h2>
+      <p class="sec-sub">F1엔 우승 트로피가 두 개 있습니다. 이걸 알면 순위표가 단번에 이해돼요.</p></div>
+    </div>
+    <div class="duo">
+      <div class="card">
+        <h3>드라이버 <span class="tag">개인전</span></h3>
+        <p>20여 명의 드라이버가 각자 점수를 모아 <span class="hl">월드 드라이버 챔피언</span>을 노립니다. 우리가 흔히 "올해 챔피언"이라 부르는 게 보통 이쪽이에요.</p>
+      </div>
+      <div class="card">
+        <h3>컨스트럭터(팀) <span class="tag">단체전</span></h3>
+        <p>팀은 곧 <span class="hl">'컨스트럭터'</span>(차를 만드는 주체). 소속 두 드라이버의 점수를 합쳐 <span class="hl">팀 챔피언</span>을 다툽니다. 상금과 직결돼 팀에겐 이쪽이 더 중요하기도 해요.</p>
+      </div>
+    </div>
+    <p class="body" style="margin-top:22px;">즉 한 드라이버가 결승선을 통과할 때, <span class="hl">자신을 위한 점수</span>와 <span class="hl">팀을 위한 점수</span>를 동시에 버는 셈이에요. 같은 팀 동료끼리도 라이벌이 되는 이유죠.</p>
+  </div>
+</section>
+
+<!-- ===================== 3. RACE WEEKEND ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div><h2>레이스 주말은 이렇게 흘러갑니다</h2>
+      <p class="sec-sub">하루짜리 이벤트가 아니에요. 보통 3일에 걸쳐 단계가 쌓입니다.</p></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-step">
+        <span class="phase">Practice</span>
+        <h4>연습 주행</h4>
+        <p>팀이 차를 세팅하고 타이어·코스에 적응하는 시간. 순위에 직접 영향은 없지만 누가 빠른지 힌트를 줍니다.</p>
+        <div class="arrow-x">→</div>
+      </div>
+      <div class="tl-step">
+        <span class="phase">Qualifying</span>
+        <h4>예선</h4>
+        <p>가장 빠른 한 바퀴로 결승 <span class="hl">출발 순서(그리드)</span>를 정합니다. Q1·Q2·Q3로 갈수록 느린 차가 탈락. 1위가 <span class="hl">폴 포지션</span>.</p>
+        <div class="arrow-x">→</div>
+      </div>
+      <div class="tl-step">
+        <span class="phase">Race</span>
+        <h4>결승</h4>
+        <p>본 경기. 정해진 바퀴 수를 가장 먼저 완주하면 우승. 상위 10위까지 점수를 받습니다.</p>
+      </div>
+    </div>
+    <div class="sprint-note"><b>스프린트 주말</b>이라는 변형도 있어요(시즌에 몇 번). 짧은 거리의 <b>스프린트 레이스</b>가 추가돼 별도 점수까지 걸리는, 주말 내내 긴장감이 높은 포맷입니다.</div>
+  </div>
+</section>
+
+<!-- ===================== 4. POINTS ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div><h2>점수는 어떻게 매겨지나</h2>
+      <p class="sec-sub">결승에서 상위 10위까지만 점수를 받습니다. 1등과 2등의 차이가 꽤 크죠.</p></div>
+    </div>
+    <div class="pts-grid">
+      <div class="pts gold"><div class="pp">P1</div><div class="pv">25</div></div>
+      <div class="pts silver"><div class="pp">P2</div><div class="pv">18</div></div>
+      <div class="pts bronze"><div class="pp">P3</div><div class="pv">15</div></div>
+      <div class="pts"><div class="pp">P4</div><div class="pv">12</div></div>
+      <div class="pts"><div class="pp">P5</div><div class="pv">10</div></div>
+      <div class="pts"><div class="pp">P6</div><div class="pv">8</div></div>
+      <div class="pts"><div class="pp">P7</div><div class="pv">6</div></div>
+      <div class="pts"><div class="pp">P8</div><div class="pv">4</div></div>
+      <div class="pts"><div class="pp">P9</div><div class="pv">2</div></div>
+      <div class="pts"><div class="pp">P10</div><div class="pv">1</div></div>
+    </div>
+    <p class="body" style="margin-top:22px;">11위부터는 점수가 없습니다(<span class="hl">노 포인트</span>). 스프린트 레이스에서는 별도로 <span class="hl">8위까지</span> 8·7·6·5·4·3·2·1점이 주어져요. 이 점수들이 시즌 내내 쌓여 두 챔피언십의 순위가 결정됩니다.</p>
+  </div>
+</section>
+
+<!-- ===================== 5. KEY CONCEPTS ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div><h2>이것만 알면 레이스가 읽힌다</h2>
+      <p class="sec-sub">중계에서 가장 자주 나오는 네 가지 — 타이어, 추월, 피트스톱, 세이프티카.</p></div>
+    </div>
+
+    <h3 style="font-size:1.05rem;font-weight:700;margin:6px 0 14px;color:var(--smoke);font-family:var(--mono);letter-spacing:.05em;">A. 타이어 — 전략의 핵심</h3>
+    <div class="tires">
+      <div class="tire" style="--c:var(--red)"><div class="disc">S</div><div class="nm">소프트</div><div class="en">SOFT</div><div class="ds">가장 빠르지만 가장 빨리 닳음</div></div>
+      <div class="tire" style="--c:var(--amber)"><div class="disc">M</div><div class="nm">미디엄</div><div class="en">MEDIUM</div><div class="ds">속도와 내구의 균형</div></div>
+      <div class="tire" style="--c:var(--white-tire)"><div class="disc">H</div><div class="nm">하드</div><div class="en">HARD</div><div class="ds">느리지만 가장 오래 감</div></div>
+      <div class="tire" style="--c:var(--green)"><div class="disc">I</div><div class="nm">인터</div><div class="en">INTER</div><div class="ds">젖은 노면용</div></div>
+      <div class="tire" style="--c:#3aa0ff"><div class="disc">W</div><div class="nm">웻</div><div class="en">WET</div><div class="ds">폭우·물웅덩이용</div></div>
+    </div>
+    <p class="body" style="margin-top:16px;">건조한 레이스에서는 <span class="hl">최소 두 종류</span>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다. "빠른 타이어로 짧게 vs 오래가는 타이어로 길게" — 이 선택이 승부를 가르죠.</p>
+
+    <div class="duo" style="margin-top:30px;">
+      <div class="card">
+        <h3>추월 보조 <span class="tag">2026 신규</span></h3>
+        <p>예전의 <span class="hl">DRS</span>는 2026년부터 사라졌어요. 대신 직선에서 날개를 눕혀 공기저항을 줄이는 <span class="hl">액티브 에어로</span>와, 앞차에 <span class="hl">1초 이내</span>로 붙으면 전기 동력을 더 쏟아붓는 <span class="hl">오버테이크 모드</span>로 추월을 돕습니다.</p>
+      </div>
+      <div class="card">
+        <h3>피트스톱 <span class="tag">≈ 2초</span></h3>
+        <p>타이어를 갈러 정비 구역에 들어오는 것. 숙련된 팀은 <span class="hl">2초대</span>에 끝냅니다. 상대보다 먼저 들어와 새 타이어로 앞서는 <span class="hl">언더컷</span> 같은 전략이 여기서 나와요.</p>
+      </div>
+      <div class="card">
+        <h3>세이프티카 <span class="tag">SC</span></h3>
+        <p>사고나 위험이 생기면 안전차가 코스에 나와 모두의 속도를 통제합니다. 벌어졌던 간격이 <span class="hl">한꺼번에 좁혀져</span> 경기 양상이 뒤집히곤 하죠.</p>
+      </div>
+      <div class="card">
+        <h3>더티 에어 <span class="tag">Dirty Air</span></h3>
+        <p>앞차가 만든 <span class="hl">난기류</span>. 바로 뒤를 따라가면 차가 불안정해져 추월이 어려워집니다. F1 배틀이 쉽지 않은 핵심 이유예요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6. FLAGS ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <div><h2>깃발(그리고 불빛) 읽기</h2>
+      <p class="sec-sub">코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요.</p></div>
+    </div>
+    <div class="flags">
+      <div class="flag"><span class="fc" style="background:var(--amber)"></span><div><h4>황색기</h4><p>전방에 위험. 속도를 줄이고 추월 금지.</p></div></div>
+      <div class="flag"><span class="fc" style="background:var(--red)"></span><div><h4>적색기</h4><p>세션 중단. 모두 피트로 복귀해야 합니다.</p></div></div>
+      <div class="flag"><span class="fc" style="background:#3aa0ff"></span><div><h4>청색기</h4><p>더 빠른 차가 따라온다 — 추월당하는 쪽은 길을 비켜야 함.</p></div></div>
+      <div class="flag"><span class="fc" style="background:linear-gradient(135deg,#111 0 50%,#fff 50% 100%)"></span><div><h4>흑백기</h4><p>비신사적 행위에 대한 경고(옐로카드 같은 개념).</p></div></div>
+      <div class="flag"><span class="fc" style="background:linear-gradient(135deg,#111 0 50%,#0a0 50% 100%)"></span><div><h4>녹색기</h4><p>위험 해제 — 다시 정상 주행·추월 가능.</p></div></div>
+      <div class="flag"><span class="fc" style="background:conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)"></span><div><h4>체커기</h4><p>세션 종료. 결승에서 이걸 받으면 그 바퀴로 경기 끝.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 7. GLOSSARY ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <div><h2>중계에서 자주 듣는 말</h2>
+      <p class="sec-sub">이 단어들만 익혀두면 해설이 훨씬 잘 들립니다.</p></div>
+    </div>
+    <dl class="gloss">
+      <div class="term"><dt>폴 포지션 <span class="en">Pole</span></dt><dd>예선 1위. 결승 맨 앞에서 출발하는 자리.</dd></div>
+      <div class="term"><dt>포디움 <span class="en">Podium</span></dt><dd>상위 3위까지 오르는 시상대. "포디움에 섰다" = 3위 안.</dd></div>
+      <div class="term"><dt>그리드 <span class="en">Grid</span></dt><dd>결승 출발 대형. 예선 결과로 자리가 정해짐.</dd></div>
+      <div class="term"><dt>박스, 박스 <span class="en">Box</span></dt><dd>"피트로 들어와라"라는 팀 무전 신호.</dd></div>
+      <div class="term"><dt>언더컷 <span class="en">Undercut</span></dt><dd>상대보다 먼저 새 타이어로 갈아 앞서는 전략.</dd></div>
+      <div class="term"><dt>패스티스트 랩 <span class="en">Fastest Lap</span></dt><dd>그 경기에서 가장 빠른 한 바퀴 기록.</dd></div>
+      <div class="term"><dt>포메이션 랩 <span class="en">Formation Lap</span></dt><dd>출발 직전, 대형을 갖추며 도는 준비 바퀴.</dd></div>
+      <div class="term"><dt>라이트 아웃 <span class="en">Lights Out</span></dt><dd>출발 신호등이 모두 꺼지는 순간 = 레이스 시작!</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 8. FIRST WATCH TIPS ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <div><h2>처음 볼 때, 이렇게 보세요</h2>
+      <p class="sec-sub">규칙을 다 외울 필요 없어요. 이 다섯 가지만으로 충분히 빠져듭니다.</p></div>
+    </div>
+    <div class="tips">
+      <div class="tip"><div><div class="tt">한 명(또는 한 팀)을 정해 응원하세요</div><div class="td">감정이입할 대상이 생기면 90분이 순식간에 지나갑니다.</div></div></div>
+      <div class="tip"><div><div class="tt">출발과 첫 몇 코너에 집중</div><div class="td">'라이트 아웃' 직후가 순위 변화가 가장 격렬한 구간이에요.</div></div></div>
+      <div class="tip"><div><div class="tt">피트스톱 타이밍을 지켜보세요</div><div class="td">누가 언제 들어오느냐로 보이지 않던 전략 싸움이 드러납니다.</div></div></div>
+      <div class="tip"><div><div class="tt">화면 그래픽을 믿으세요</div><div class="td">간격·타이어·순위가 다 표시돼요. 이 가이드 맨 위 타이밍 보드가 그거예요.</div></div></div>
+      <div class="tip"><div><div class="tt">가능하면 예선부터</div><div class="td">출발 순서의 맥락을 알고 보면 결승이 두 배로 흥미진진해집니다.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-card">
+      <p>이 가이드의 숫자와 규정은 <span style="color:var(--chalk)">2026 시즌</span> 기준입니다. 팀 수·드라이버·규정은 매년 바뀌니, 시즌이 넘어가면 이 부분만 업데이트하면 돼요.</p>
+      <span class="stamp">F1 BEGINNER'S GUIDE · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // timing tower: occasionally flip a segment color to feel "live"
+  const segs = document.querySelectorAll('.tower .seg');
+  const cls = ['p','g','y'];
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(()=>{
+      const s = segs[Math.floor(Math.random()*segs.length)];
+      s.classList.remove('p','g','y');
+      s.classList.add(cls[Math.floor(Math.random()*cls.length)]);
+    },1100);
+  }
+</script>
+</body>
+</html>
