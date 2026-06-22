@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { SERIES, buildSchedule } from '@/lib/data'
-import { fetchF1Races } from '@/lib/f1Api'
+import { fetchF1Races, fetchF1DriverStandings } from '@/lib/f1Api'
 import TimingTower from './TimingTower'
 
 export const revalidate = 3600
@@ -31,7 +31,7 @@ function Hl({ children }: { children: ReactNode }) {
 
 
 export default async function F1GuidePage() {
-  const f1Races = await fetchF1Races()
+  const [f1Races, standings] = await Promise.all([fetchF1Races(), fetchF1DriverStandings()])
   const schedule = buildSchedule(f1Races)
   const upcomingRaces = schedule.filter((r) => r.sport === 'f1').slice(0, 3)
 
@@ -90,7 +90,7 @@ export default async function F1GuidePage() {
 
           {/* 라이브 타이밍 보드 */}
           <div style={{ flex: '1 1 300px', maxWidth: 440 }}>
-            <TimingTower />
+            <TimingTower standings={standings} />
           </div>
         </div>
       </section>

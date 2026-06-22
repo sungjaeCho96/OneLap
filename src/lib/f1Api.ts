@@ -153,3 +153,45 @@ export async function fetchF1Races(): Promise<F1RaceWithSessions[]> {
     return []
   }
 }
+
+export interface F1DriverStanding {
+  pos: number
+  code: string
+  team: string
+  points: number
+  gap: string  // P1: "146pts", P2+: "-12pts"
+}
+
+const STANDINGS_URL = 'https://api.jolpi.ca/ergast/f1/2026/driverStandings/'
+
+export async function fetchF1DriverStandings(): Promise<F1DriverStanding[]> {
+  try {
+    const res = await fetch(STANDINGS_URL, { next: { revalidate: 86400 } })
+    if (!res.ok) throw new Error('Standings API error')
+
+    const json = await res.json()
+    const list: {
+      position: string
+      points: string
+      Driver: { code: string }
+      Constructors: { name: string }[]
+    }[] = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings ?? []
+
+    if (list.length === 0) return []
+
+    const leaderPts = parseFloat(list[0].points)
+
+    return list.slice(0, 4).map((d, i) => {
+      const pts = parseFloat(d.points)
+      return {
+        pos: parseInt(d.position),
+        code: d.Driver.code ?? '???',
+        team: d.Constructors[0]?.name ?? '',
+        points: pts,
+        gap: i === 0 ? `${pts}pts` : `-${(leaderPts - pts).toFixed(0)}pts`,
+      }
+    })
+  } catch {
+    return []
+  }
+}
