@@ -208,7 +208,8 @@ export default async function F1GuidePage() {
       <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <SecHead num="04" title="점수는 어떻게 매겨지나" sub="결승에서 상위 10위까지만 점수를 받습니다. 1등과 2등의 차이가 꽤 크죠." />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6 }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#857A6A', marginBottom: 10 }}>A. 레이스 - 그랑프리의 본 경기</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6, marginBottom: 15 }}>
             {[
               { pos: 'P1',  pts: 25, valueColor: '#D4A017', borderColor: 'rgba(244,193,59,.5)' },
               { pos: 'P2',  pts: 18, valueColor: '#888' },
@@ -220,6 +221,24 @@ export default async function F1GuidePage() {
               { pos: 'P8',  pts: 4  },
               { pos: 'P9',  pts: 2  },
               { pos: 'P10', pts: 1  },
+            ].map((p) => (
+              <div key={p.pos} style={{ background: '#fff', border: `1px solid ${p.borderColor ?? '#E0D9CB'}`, borderRadius: 4, padding: '14px 6px', textAlign: 'center' }}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A' }}>{p.pos}</div>
+                <div style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 900, fontSize: 22, marginTop: 4, color: p.valueColor ?? '#15120D' }}>{p.pts}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#857A6A', marginBottom: 10 }}>B. 스프린트 레이스 - 미니 레이스</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6, marginBottom: 15 }}>
+            {[
+              { pos: 'P1',  pts: 8, valueColor: '#D4A017', borderColor: 'rgba(244,193,59,.5)' },
+              { pos: 'P2',  pts: 7, valueColor: '#888' },
+              { pos: 'P3',  pts: 6, valueColor: '#C87941' },
+              { pos: 'P4',  pts: 5 },
+              { pos: 'P5',  pts: 4 },
+              { pos: 'P6',  pts: 3  },
+              { pos: 'P7',  pts: 2  },
+              { pos: 'P8',  pts: 1  },
             ].map((p) => (
               <div key={p.pos} style={{ background: '#fff', border: `1px solid ${p.borderColor ?? '#E0D9CB'}`, borderRadius: 4, padding: '14px 6px', textAlign: 'center' }}>
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A' }}>{p.pos}</div>
@@ -256,7 +275,7 @@ export default async function F1GuidePage() {
             ))}
           </div>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch', marginTop: 18 }}>
-            건조한 레이스에서는 <Hl>최소 두 종류</Hl>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다. &quot;빠른 타이어로 짧게 vs 오래가는 타이어로 길게&quot; — 이 선택이 승부를 가르죠.
+            건조한 레이스에서는 <Hl>최소 두 종류</Hl>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다.<br></br>&quot;빠른 타이어로 짧게 vs 오래가는 타이어로 길게&quot; — 이 선택이 승부를 가르죠.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, marginTop: 32 }}>
@@ -281,7 +300,7 @@ export default async function F1GuidePage() {
       {/* 06. 깃발 읽기 */}
       <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="06" title="깃발(그리고 불빛) 읽기" sub="코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요." />
+          <SecHead num="06" title="Flag 읽기" sub="코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
               { bg: '#f4c13b', title: '황색기', desc: '전방에 위험. 속도를 줄이고 추월 금지.' },
