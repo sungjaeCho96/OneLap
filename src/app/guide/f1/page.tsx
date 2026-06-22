@@ -95,21 +95,65 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
+      {/* WHY HOOK */}
+      <section style={{ padding: '80px 0 72px', borderBottom: '1px solid #E0D9CB', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '52ch', margin: '0 auto 52px' }}>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: RED, marginBottom: 14 }}>왜 빠져드는가</div>
+            <h2 style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 900, fontSize: 'clamp(26px,3.8vw,40px)', lineHeight: 1.15, letterSpacing: '-0.01em', marginBottom: 14 }}>
+              한 번 보면 끊기 어렵습니다.<br />이유가 세 가지 있어요.
+            </h2>
+            <p style={{ color: '#857A6A', fontSize: 16, lineHeight: 1.65 }}>속도 때문만이 아니에요. 사람, 전략, 그리고 그 순간 — 세 가지가 겹치는 스포츠가 F1입니다.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 2 }}>
+            {([
+              {
+                c: RED, num: '01', icon: '🎭', title: '사람 이야기가 있다',
+                moment: '"팀메이트가 가장 위험한 적이 된다."',
+                desc: <>같은 차, 같은 타이어, 같은 데이터 — 그런데 왜 한 명은 이기고 한 명은 진걸까. <strong>22명 각자의 야망과 균열</strong>이 90분 안에 드러납니다. 챔피언의 몰락, 신인의 반란, 동료 간의 갈등. F1엔 드라마 작가가 따로 없어요.</>,
+              },
+              {
+                c: '#b45cff', num: '02', icon: '🧠', title: '알면 알수록 더 보인다',
+                moment: '"피트스톱 2초가 순위를 뒤집는다."',
+                desc: <>경기 중반, 아무 일도 없어 보이는 순간 — 사실 팀은 <strong>타이어, 연료, 간격, 날씨</strong>를 모두 계산하고 있어요. 세이프티카 하나에 판이 뒤집히고, 언더컷 전략 하나가 챔피언십을 바꿉니다. 규칙을 조금씩 알게 될수록 화면이 다르게 읽혀요.</>,
+              },
+              {
+                c: '#f4c13b', num: '03', icon: '⚡', title: '보는 것만으로 압도된다',
+                moment: '"시속 320km에서 브레이크를 밟는 순간."',
+                desc: <>모나코의 야간 예선, 빗속에서 물보라를 가르는 웻 레이스, 피트레인에서 새 타이어를 신고 튀어나오는 차 — <strong>설명 없이도 심장이 반응하는 장면</strong>들이 있어요. F1은 눈으로 먼저 빠져드는 스포츠입니다.</>,
+              },
+            ] as { c: string; num: string; icon: string; title: string; moment: string; desc: ReactNode }[]).map((card, i, arr) => (
+              <div key={card.num} style={{
+                padding: '38px 30px 34px', background: '#fff',
+                borderRadius: i === 0 ? '4px 0 0 4px' : i === arr.length - 1 ? '0 4px 4px 0' : 0,
+                borderTop: `3px solid ${card.c}`,
+              }}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.2em', color: card.c, opacity: 0.7, marginBottom: 16 }}>{card.num}</div>
+                <div style={{ fontSize: 28, marginBottom: 18 }}>{card.icon}</div>
+                <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 10, lineHeight: 1.2 }}>{card.title}</h3>
+                <div style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 600, color: card.c, fontSize: 14, lineHeight: 1.45, marginBottom: 14 }}>{card.moment}</div>
+                <p style={{ color: '#4A4338', fontSize: 14, fontWeight: 400, lineHeight: 1.65 }}>{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 01. F1, 한 줄로 말하면 */}
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <SecHead num="01" title="F1, 한 줄로 말하면" sub="세계에서 가장 빠른 자동차 경주. 한 시즌 동안 전 세계를 돌며 우승을 다투는 챔피언십입니다." />
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch' }}>
-            F1(포뮬러 1)은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요. 차 한 대가 시속 300km를 넘나들고, 순위는 <Hl>0.001초</Hl> 단위로 갈립니다. 하지만 F1의 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요 — 언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
+            F1(포뮬러 1)은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요.<br></br> 차 한 대가 시속 300km를 넘나들고, 순위는 <Hl>0.001초</Hl> 단위로 갈립니다. <br></br>하지만 F1의 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요<br></br>언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
           </p>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch', marginTop: 14 }}>
-            한 시즌은 여러 나라에서 열리는 경주(그랑프리)의 모음이고, 매 경주에서 쌓은 점수로 연말 챔피언을 가립니다.
+            한 시즌은 여러 나라에서 열리는 경주(그랑프리)의 모음이고, <br></br>매 경주에서 쌓은 점수로 연말 챔피언을 가립니다.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginTop: 32 }}>
             {[
               { big: '11', lab: '참가 팀 (컨스트럭터)', note: '2026 · Cadillac 합류로 +1' },
               { big: '22', lab: '드라이버 (팀당 2명)', note: '2026 시즌 기준' },
-              { big: '22', lab: '그랑프리 (3월~12월)', note: '전 세계 순회' },
+              { big: '22', lab: '그랑프리 (3월~12월)', note: '원래 24경기 → 2경기 취소' },
             ].map((s) => (
               <div key={s.lab} style={{ background: '#fff', borderLeft: `3px solid ${RED}`, borderRadius: 4, padding: '22px 20px' }}>
                 <div style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 900, fontSize: 44, lineHeight: 1 }}>{s.big}</div>
@@ -117,6 +161,15 @@ export default async function F1GuidePage() {
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#857A6A', marginTop: 4 }}>{s.note}</div>
               </div>
             ))}
+          </div>
+          <div style={{ marginTop: 22, display: 'flex', gap: 16, alignItems: 'flex-start', background: 'rgba(244,193,59,.06)', border: '1px solid rgba(244,193,59,.3)', borderRadius: 4, padding: '18px 20px' }}>
+            <div style={{ flexShrink: 0, fontSize: 18, marginTop: 2, color: '#E8842B' }}>⚠</div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: '#E8842B', marginBottom: 7 }}>2026 시즌 특이사항 — 바레인 · 사우디아라비아 GP 취소</div>
+              <p style={{ fontSize: 14, color: '#4A4338', lineHeight: 1.7 }}>
+                2026년 2월 말 중동 전쟁이 발발하면서 바레인과 사우디아라비아가 분쟁 지역에 포함됐습니다. F1은 선수단 안전을 이유로 <strong>3월 14일 두 경기의 공식 취소</strong>를 발표했어요. 4라운드(바레인, 4/12)와 5라운드(사우디아라비아, 4/19)가 모두 빠지면서 원래 <strong>24경기였던 시즌이 22경기로 축소</strong>됐고, 일본 GP 이후 다음 경기인 마이애미 GP까지 <strong>5주 공백</strong>이 생겼습니다. 취소된 두 경기는 다른 일정으로 대체되지 않았어요.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -264,10 +317,10 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
-      {/* 06. 깃발 읽기 */}
+      {/* 06. Flag 가 뭐에요? */}
       <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="06" title="Flag 읽기" sub="코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요." />
+          <SecHead num="06" title="깃발(그리고 불빛) 읽기" sub="코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
               { bg: '#f4c13b', title: '황색기', desc: '전방에 위험. 속도를 줄이고 추월 금지.' },
