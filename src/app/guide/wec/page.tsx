@@ -101,7 +101,7 @@ export default async function WECGuidePage() {
             <div style={{ background: 'linear-gradient(180deg,#14182e,#0e1124)', border: '1px solid #272d4d', borderRadius: 14, padding: '20px 20px 18px', boxShadow: '0 34px 70px -34px rgba(0,0,0,.9)', fontFamily: "'Space Mono', monospace" }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, letterSpacing: '0.16em', color: '#9298b5', textTransform: 'uppercase', marginBottom: 16 }}>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff6a4d', display: 'inline-block', boxShadow: '0 0 0 4px rgba(255,106,77,.15)' }} />
+                  <span className="wec-live-dot" style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff6a4d', display: 'inline-block' }} />
                   24H Le Mans
                 </span>
                 <span>DAY → NIGHT → DAWN</span>
@@ -116,6 +116,8 @@ export default async function WECGuidePage() {
                   WebkitMask: 'radial-gradient(circle, transparent 60%, #000 61%)',
                   mask: 'radial-gradient(circle, transparent 60%, #000 61%)',
                 }} />
+                {/* 바늘 */}
+                <div className="wec-dial-hand" />
                 {/* 코어 */}
                 <div style={{ position: 'absolute', inset: '30%', borderRadius: '50%', background: '#14182e', border: '1px solid #272d4d', display: 'grid', placeItems: 'center', textAlign: 'center' }}>
                   <div>

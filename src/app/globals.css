@@ -26,6 +26,31 @@
   50%       { opacity: 0.35; }
 }
 
+/* WEC 다이얼 위젯 */
+@keyframes wec-sweep {
+  to { transform: translate(-50%, -100%) rotate(360deg); }
+}
+@keyframes wec-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,106,77,.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(255,106,77,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,106,77,0); }
+}
+.wec-dial-hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 48%;
+  background: linear-gradient(#5fd9ff, transparent);
+  transform-origin: bottom center;
+  transform: translate(-50%, -100%) rotate(0deg);
+  animation: wec-sweep 14s linear infinite;
+  border-radius: 2px;
+}
+.wec-live-dot {
+  animation: wec-pulse 1.7s infinite;
+}
+
 body {
   background: #F2EFE8;
   color: #15120D;
