@@ -26,6 +26,16 @@
   50%       { opacity: 0.35; }
 }
 
+/* F1 타이밍 보드 위젯 */
+@keyframes f1-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,46,85,.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(255,46,85,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,46,85,0); }
+}
+.f1-live-dot {
+  animation: f1-pulse 1.6s infinite;
+}
+
 /* WEC 다이얼 위젯 */
 @keyframes wec-sweep {
   to { transform: translate(-50%, -100%) rotate(360deg); }
