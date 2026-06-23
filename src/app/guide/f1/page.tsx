@@ -81,13 +81,14 @@ export default async function F1GuidePage() {
           alt=""
           aria-hidden="true"
           style={{
-            position: 'absolute', right: 0, bottom: 0,
-            height: '110%', width: 'auto',
-            objectFit: 'contain', objectPosition: 'bottom right',
+            position: 'absolute', left: '50%', bottom: 0,
+            transform: 'translateX(-50%)',
+            height: '115%', width: 'auto',
+            objectFit: 'contain', objectPosition: 'bottom center',
             pointerEvents: 'none', userSelect: 'none',
-            maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.6) 40%, #000 65%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.6) 40%, #000 65%)',
-            opacity: 0.72,
+            maskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)',
+            opacity: 0.65,
           }}
         />
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(900px 380px at 80% -10%, rgba(0,0,0,.22), transparent 60%), radial-gradient(700px 340px at 10% 120%, rgba(0,0,0,.18), transparent 60%)', pointerEvents: 'none' }} />
