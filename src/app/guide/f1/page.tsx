@@ -4,6 +4,7 @@ import { SERIES, buildSchedule } from '@/lib/data'
 import { fetchF1Races, fetchF1DriverStandings } from '@/lib/f1Api'
 import TimingTower from './TimingTower'
 import TireSimulator from './TireSimulator'
+import FlagQuiz from './FlagQuiz'
 
 export const revalidate = 3600
 
@@ -181,7 +182,7 @@ export default async function F1GuidePage() {
           <SecHead num="02" title="누가 경쟁하나 — 팀과 드라이버" sub="F1엔 우승 트로피가 두 개 있습니다. 이걸 알면 순위표가 단번에 이해돼요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 22 }}>
             {[
-              { title: '드라이버', tag: '개인전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>22 명의 드라이버가 각자 점수를 모아 <Hl>월드 드라이버 챔피언</Hl>을 노립니다. 우리가 흔히 "올해 챔피언"이라 부르는 게 보통 이쪽이에요.</p> },
+              { title: '드라이버', tag: '개인전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>22 명의 드라이버가 각자 점수를 모아 <Hl>월드 드라이버 챔피언</Hl>을 노립니다. 우리가 흔히 &quot;올해 챔피언&quot;이라 부르는 게 보통 이쪽이에요.</p> },
               { title: '컨스트럭터(팀)', tag: '단체전', body: <p style={{ fontSize: 14, lineHeight: 1.65, color: '#4A4338' }}>팀은 곧 <Hl>&apos;컨스트럭터&apos;</Hl>(차를 만드는 주체). 소속 두 드라이버의 점수를 합쳐 <Hl>팀 챔피언</Hl>을 다툽니다. 상금과 직결돼 팀에겐 이쪽이 더 중요하기도 해요.</p> },
             ].map((card) => (
               <div key={card.title} style={{ background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: 24 }}>
@@ -347,6 +348,21 @@ export default async function F1GuidePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 07-B. 플래그 퀴즈 */}
+      <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '0 0 72px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ paddingTop: 48, marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: RED, marginBottom: 8 }}>
+              실력 확인
+            </div>
+            <h3 style={{ fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 900, fontSize: 'clamp(18px,2.4vw,24px)', lineHeight: 1.2 }}>
+              플래그 퀴즈 — 방금 배운 걸 확인해보세요
+            </h3>
+          </div>
+          <FlagQuiz />
         </div>
       </section>
 

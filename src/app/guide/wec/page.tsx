@@ -92,7 +92,7 @@ export default async function WECGuidePage() {
               가장 빠른 차가 아니라<br /><span style={{ color: '#FFD86B' }}>끝까지 버틴 차</span>가 이긴다
             </div>
             <p style={{ fontSize: 16, lineHeight: 1.7, opacity: 0.88, maxWidth: '42ch' }}>
-              WEC를 한 번도 안 본 사람을 위한 안내서. 한 트랙에 <strong style={{ fontWeight: 700 }}>두 종류의 차가 동시에</strong> 달리고, <strong style={{ fontWeight: 700 }}>한 대를 여러 명이 교대</strong>로 몰며, 순위를 <strong style={{ fontWeight: 700 }}>'시간'으로 가리는</strong> — F1과는 전혀 다른 레이스의 세계로 안내합니다.
+              WEC를 한 번도 안 본 사람을 위한 안내서. 한 트랙에 <strong style={{ fontWeight: 700 }}>두 종류의 차가 동시에</strong> 달리고, <strong style={{ fontWeight: 700 }}>한 대를 여러 명이 교대</strong>로 몰며, 순위를 <strong style={{ fontWeight: 700 }}>&apos;시간&apos;으로 가리는</strong> — F1과는 전혀 다른 레이스의 세계로 안내합니다.
             </p>
           </div>
 
