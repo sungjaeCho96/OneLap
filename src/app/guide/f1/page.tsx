@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { SERIES, buildSchedule } from '@/lib/data'
 import { fetchF1Races, fetchF1DriverStandings } from '@/lib/f1Api'
 import TimingTower from './TimingTower'
+import TireSimulator from './TireSimulator'
 
 export const revalidate = 3600
 
@@ -296,6 +297,7 @@ export default async function F1GuidePage() {
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch', marginTop: 18 }}>
             건조한 레이스에서는 <Hl>최소 두 종류</Hl>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다.<br></br>&quot;빠른 타이어로 짧게 vs 오래가는 타이어로 길게&quot; — 이 선택이 승부를 가르죠.
           </p>
+          <TireSimulator />
         </div>
       </section>
 
