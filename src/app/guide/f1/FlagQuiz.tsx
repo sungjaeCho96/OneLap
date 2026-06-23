@@ -111,17 +111,20 @@ function generateQuestions(): Question[] {
 
 function FlagSwatch({ flagId, size = 32 }: { flagId: FlagId; size?: number }) {
   const flag = FLAGS.find((f) => f.id === flagId)!
+  const h = Math.round(size * 0.68)
+  const offset = Math.round(size * 0.14)
+
+  if (flagId === 'double-yellow') {
+    return (
+      <div style={{ position: 'relative', width: size + offset, height: h + offset, flexShrink: 0 }}>
+        <div style={{ position: 'absolute', top: offset, left: offset, width: size, height: h, background: '#d4a012', borderRadius: 2, border: '1px solid rgba(0,0,0,.12)' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, width: size, height: h, background: '#f4c13b', borderRadius: 2, border: '1px solid rgba(0,0,0,.12)' }} />
+      </div>
+    )
+  }
+
   return (
-    <div
-      style={{
-        width: size,
-        height: Math.round(size * 0.68),
-        borderRadius: 2,
-        background: flag.bg,
-        border: '1px solid rgba(0,0,0,.12)',
-        flexShrink: 0,
-      }}
-    />
+    <div style={{ width: size, height: h, borderRadius: 2, background: flag.bg, border: '1px solid rgba(0,0,0,.12)', flexShrink: 0 }} />
   )
 }
 
@@ -236,12 +239,14 @@ export default function FlagQuiz() {
             <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#857A6A', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 20 }}>
               이 플래그는 어떤 의미일까요?
             </p>
-            <div style={{
-              width: 120, height: 80, borderRadius: 4, marginBottom: 28,
-              background: answerFlag.bg,
-              border: '1px solid rgba(0,0,0,.12)',
-              boxShadow: '0 4px 20px rgba(0,0,0,.08)',
-            }} />
+            {q.answerId === 'double-yellow' ? (
+              <div style={{ position: 'relative', width: 132, height: 92, marginBottom: 28 }}>
+                <div style={{ position: 'absolute', top: 12, left: 12, width: 120, height: 80, background: '#d4a012', borderRadius: 4, border: '1px solid rgba(0,0,0,.12)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: 120, height: 80, background: '#f4c13b', borderRadius: 4, border: '1px solid rgba(0,0,0,.12)', boxShadow: '0 4px 20px rgba(0,0,0,.08)' }} />
+              </div>
+            ) : (
+              <div style={{ width: 120, height: 80, borderRadius: 4, marginBottom: 28, background: answerFlag.bg, border: '1px solid rgba(0,0,0,.12)', boxShadow: '0 4px 20px rgba(0,0,0,.08)' }} />
+            )}
           </>
         ) : (
           <>

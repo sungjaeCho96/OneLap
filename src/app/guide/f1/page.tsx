@@ -334,7 +334,7 @@ export default async function F1GuidePage() {
             {[
               { bg: '#2fd27a', title: '녹색기', desc: '위험 해제 — 정상 주행·추월 가능. 세션 시작 신호로도 쓰임.' },
               { bg: '#f4c13b', title: '황색기', desc: '전방 위험 — 속도를 줄이고 추월 금지.' },
-              { bg: 'linear-gradient(90deg, #f4c13b calc(50% - 1.5px), #a07000 calc(50% - 1.5px), #a07000 calc(50% + 1.5px), #f4c13b calc(50% + 1.5px))', title: '더블 황색기', desc: '즉각 감속·추월 절대 금지 — 정지 준비. 황색기보다 훨씬 위험한 상황(코스에 마샬이 있을 때).' },
+              { bg: '', title: '더블 황색기', desc: '즉각 감속·추월 절대 금지 — 정지 준비. 황색기보다 훨씬 위험한 상황(코스에 마샬이 있을 때).' },
               { bg: '#ff2e55', title: '적색기', desc: '세션 중단 — 모두 즉시 피트로 복귀.' },
               { bg: '#3aa0ff', title: '청색기', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
               { bg: '#1a1a1a', title: '흑색기', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
@@ -345,7 +345,14 @@ export default async function F1GuidePage() {
               { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: '체커기', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
-                <div style={{ width: 34, height: 24, borderRadius: 3, flexShrink: 0, marginTop: 3, background: f.bg, border: '1px solid rgba(0,0,0,.08)' }} />
+                {f.title === '더블 황색기' ? (
+                  <div style={{ position: 'relative', width: 38, height: 28, flexShrink: 0, marginTop: 3 }}>
+                    <div style={{ position: 'absolute', top: 4, left: 4, width: 34, height: 24, background: '#d4a012', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: 34, height: 24, background: '#f4c13b', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
+                  </div>
+                ) : (
+                  <div style={{ width: 34, height: 24, borderRadius: 3, flexShrink: 0, marginTop: 3, background: f.bg, border: '1px solid rgba(0,0,0,.08)' }} />
+                )}
                 <div>
                   <h4 style={{ fontWeight: 700, fontSize: 15 }}>{f.title}</h4>
                   <p style={{ fontSize: 13, color: '#4A4338', marginTop: 3, lineHeight: 1.55 }}>{f.desc}</p>
