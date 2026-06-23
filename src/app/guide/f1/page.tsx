@@ -332,20 +332,20 @@ export default async function F1GuidePage() {
           <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. F1에서 쓰이는 11가지를 모두 알아두세요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
-              { bg: '#2fd27a', title: '녹색기', desc: '위험 해제 — 정상 주행·추월 가능. 세션 시작 신호로도 쓰임.' },
-              { bg: '#f4c13b', title: '황색기', desc: '전방 위험 — 속도를 줄이고 추월 금지.' },
-              { bg: '', title: '더블 황색기', desc: '즉각 감속·추월 절대 금지 — 정지 준비. 황색기보다 훨씬 위험한 상황(코스에 마샬이 있을 때).' },
-              { bg: '#ff2e55', title: '적색기', desc: '세션 중단 — 모두 즉시 피트로 복귀.' },
-              { bg: '#3aa0ff', title: '청색기', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
-              { bg: '#1a1a1a', title: '흑색기', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
-              { bg: '#f0f0f0', title: '백색기', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
-              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: '흑백기', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 흑색기로 이어질 수 있음.' },
-              { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: '황적 줄무늬기', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
-              { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: '흑기·오렌지 원', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
-              { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: '체커기', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
+              { bg: '#2fd27a', title: 'Green Flag', desc: '위험 해제 — 정상 주행·추월 가능. 세션 시작 신호로도 쓰임.' },
+              { bg: '#f4c13b', title: 'Yellow Flag', desc: '전방 위험 — 속도를 줄이고 추월 금지.' },
+              { bg: '', title: 'Double Yellow Flag', desc: '즉각 감속·추월 절대 금지 — 정지 준비. Yellow Flag보다 훨씬 위험한 상황(코스에 마샬이 있을 때).' },
+              { bg: '#ff2e55', title: 'Red Flag', desc: '세션 중단 — 모두 즉시 피트로 복귀.' },
+              { bg: '#3aa0ff', title: 'Blue Flag', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
+              { bg: '#1a1a1a', title: 'Black Flag', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
+              { bg: '#f0f0f0', title: 'White Flag', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
+              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: 'Black & White Flag', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 Black Flag로 이어질 수 있음.' },
+              { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: 'Yellow & Red Striped Flag', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
+              { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: 'Black Flag / Orange Circle', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
+              { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: 'Chequered Flag', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
-                {f.title === '더블 황색기' ? (
+                {f.title === 'Double Yellow Flag' ? (
                   <div style={{ position: 'relative', width: 38, height: 28, flexShrink: 0, marginTop: 3 }}>
                     <div style={{ position: 'absolute', top: 4, left: 4, width: 34, height: 24, background: '#d4a012', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
                     <div style={{ position: 'absolute', top: 0, left: 0, width: 34, height: 24, background: '#f4c13b', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
