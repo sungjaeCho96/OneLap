@@ -74,7 +74,22 @@ export default async function F1GuidePage() {
       </div>
 
       {/* HERO */}
-      <section style={{ background: RED, padding: '60px 24px 56px', overflow: 'hidden', position: 'relative' }}>
+      <section style={{ background: RED, padding: '60px 24px 56px', overflow: 'hidden', position: 'relative', minHeight: 420 }}>
+        {/* 베르스타펜 이미지 */}
+        <img
+          src="/images/max-verstappen.webp"
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: 'absolute', right: 0, bottom: 0,
+            height: '110%', width: 'auto',
+            objectFit: 'contain', objectPosition: 'bottom right',
+            pointerEvents: 'none', userSelect: 'none',
+            maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.6) 40%, #000 65%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.6) 40%, #000 65%)',
+            opacity: 0.72,
+          }}
+        />
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(900px 380px at 80% -10%, rgba(0,0,0,.22), transparent 60%), radial-gradient(700px 340px at 10% 120%, rgba(0,0,0,.18), transparent 60%)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', display: 'flex', flexWrap: 'wrap', gap: 48, alignItems: 'center' }}>
 
