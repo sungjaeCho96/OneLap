@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const RED = '#E10600'
 
@@ -129,11 +129,13 @@ function FlagSwatch({ flagId, size = 32 }: { flagId: FlagId; size?: number }) {
 }
 
 export default function FlagQuiz() {
-  const [questions, setQuestions] = useState<Question[]>(() => generateQuestions())
+  const [questions, setQuestions] = useState<Question[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [selected, setSelected] = useState<FlagId | null>(null)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
+
+  useEffect(() => { setQuestions(generateQuestions()) }, [])
 
   const q = questions[currentIdx]
   const answered = selected !== null
@@ -161,6 +163,17 @@ export default function FlagQuiz() {
     setSelected(null)
     setScore(0)
     setDone(false)
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div style={{ marginTop: 32, border: '1px solid #E0D9CB', borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ background: '#15120D', padding: '12px 20px' }}>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#9A9081', letterSpacing: '0.1em', textTransform: 'uppercase' }}>FLAG QUIZ</span>
+        </div>
+        <div style={{ padding: 24, background: '#fff', minHeight: 200 }} />
+      </div>
+    )
   }
 
   if (done) {
