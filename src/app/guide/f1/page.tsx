@@ -54,7 +54,7 @@ export default async function F1GuidePage() {
       {/* SERIES TABS */}
       <div style={{ background: '#15120D', overflowX: 'auto' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', display: 'flex' }}>
-          {SERIES.map((s) => {
+          {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
             const isActive = s.id === 'f1'
             return (
               <Link key={s.id} href={`/guide/${s.id}`} style={{
@@ -144,7 +144,7 @@ export default async function F1GuidePage() {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <SecHead num="01" title="F1, 한 줄로 말하면" sub="세계에서 가장 빠른 자동차 경주. 한 시즌 동안 전 세계를 돌며 우승을 다투는 챔피언십입니다." />
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch' }}>
-            F1(포뮬러 1)은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요.<br></br> 차 한 대가 시속 300km를 넘나들고, 순위는 <Hl>0.001초</Hl> 단위로 갈립니다. <br></br>하지만 F1의 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요<br></br>언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
+            F1은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요.<br></br> 차 한 대가 시속 300km를 넘나들고, 순위는 <Hl>0.001초</Hl> 단위로 갈립니다. <br></br>하지만 F1의 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요<br></br>언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
           </p>
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch', marginTop: 14 }}>
             한 시즌은 여러 나라에서 열리는 경주(그랑프리)의 모음이고, <br></br>매 경주에서 쌓은 점수로 연말 챔피언을 가립니다.
@@ -272,12 +272,11 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
-      {/* 05. 이것만 알면 */}
+      {/* 05. 타이어 */}
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="05" title="이것만 알면 레이스가 읽힌다" sub="중계에서 가장 자주 나오는 네 가지 — 타이어, 추월, 피트스톱, 세이프티카." />
+          <SecHead num="05" title="타이어 — 전략의 핵심" sub="F1의 승부는 타이어에서 갈립니다. 종류만 알아도 피트스톱 전략이 보여요." />
 
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#857A6A', marginBottom: 16 }}>A. 타이어 — 전략의 핵심</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 14 }}>
             {[
               { c: '#ff2e55', abbr: 'S', nm: '소프트',  en: 'SOFT',   ds: '가장 빠르지만 가장 빨리 닳음' },
@@ -297,8 +296,15 @@ export default async function F1GuidePage() {
           <p style={{ fontSize: 16, lineHeight: 1.75, color: '#3A352C', maxWidth: '64ch', marginTop: 18 }}>
             건조한 레이스에서는 <Hl>최소 두 종류</Hl>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다.<br></br>&quot;빠른 타이어로 짧게 vs 오래가는 타이어로 길게&quot; — 이 선택이 승부를 가르죠.
           </p>
+        </div>
+      </section>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, marginTop: 32 }}>
+      {/* 06. 레이스를 바꾸는 네 가지 */}
+      <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <SecHead num="06" title="레이스를 바꾸는 네 가지" sub="중계에서 가장 자주 나오는 개념 — 추월, 피트스톱, 세이프티카, 더티 에어." />
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
             {([
               { title: '추월 보조', tag: '2026 신규', body: <>예전의 <Hl>DRS</Hl>는 2026년부터 사라졌어요. 대신 직선에서 날개를 눕혀 공기저항을 줄이는 <Hl>액티브 에어로</Hl>와, 앞차에 <Hl>1초 이내</Hl>로 붙으면 전기 동력을 더 쏟아붓는 <Hl>오버테이크 모드</Hl>로 추월을 돕습니다.</> },
               { title: '피트스톱',  tag: '≈ 2초',   body: <>타이어를 갈러 정비 구역에 들어오는 것. 숙련된 팀은 <Hl>2초대</Hl>에 끝냅니다. 상대보다 먼저 들어와 새 타이어로 앞서는 <Hl>언더컷</Hl> 같은 전략이 여기서 나와요.</> },
@@ -317,10 +323,10 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
-      {/* 06. Flag 가 뭐에요? */}
-      <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
+      {/* 07. Flag 가 뭐에요? */}
+      <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="06" title="깃발(그리고 불빛) 읽기" sub="코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요." />
+          <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. 색만 알아도 상황이 보여요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
               { bg: '#f4c13b', title: '황색기', desc: '전방에 위험. 속도를 줄이고 추월 금지.' },
@@ -342,10 +348,10 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
-      {/* 07. 용어집 */}
-      <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
+      {/* 08. 용어집 */}
+      <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="07" title="중계에서 자주 듣는 말" sub="이 단어들만 익혀두면 해설이 훨씬 잘 들립니다." />
+          <SecHead num="08" title="중계에서 자주 듣는 말" sub="이 단어들만 익혀두면 해설이 훨씬 잘 들립니다." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '0 36px' }}>
             {[
               { kr: '폴 포지션',    en: 'Pole',          def: '예선 1위. 결승 맨 앞에서 출발하는 자리.' },
@@ -369,10 +375,10 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
-      {/* 08. 처음 볼 때 */}
-      <section style={{ padding: '72px 0', borderTop: '1px solid #E0D9CB' }}>
+      {/* 09. 처음 볼 때 */}
+      <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="08" title="처음 볼 때, 이렇게 보세요" sub="규칙을 다 외울 필요 없어요. 이 다섯 가지만으로 충분히 빠져듭니다." />
+          <SecHead num="09" title="처음 볼 때, 이렇게 보세요" sub="규칙을 다 외울 필요 없어요. 이 다섯 가지만으로 충분히 빠져듭니다." />
           <div>
             {[
               { title: '한 명(또는 한 팀)을 정해 응원하세요', desc: '감정이입할 대상이 생기면 90분이 순식간에 지나갑니다.' },

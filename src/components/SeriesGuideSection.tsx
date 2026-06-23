@@ -13,7 +13,7 @@ export default function SeriesGuideSection({ series }: SeriesGuideSectionProps) 
         <div className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">
           시작하기
         </div>
-        <div className="font-mono text-xs text-text-muted">05 종목</div>
+        <div className="font-mono text-xs text-text-muted">02 종목</div>
       </div>
       <h2
         className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em] mb-9"

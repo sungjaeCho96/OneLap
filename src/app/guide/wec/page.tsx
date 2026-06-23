@@ -60,7 +60,7 @@ export default async function WECGuidePage() {
       {/* SERIES TABS */}
       <div style={{ background: '#15120D', overflowX: 'auto' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', display: 'flex' }}>
-          {SERIES.map((s) => {
+          {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
             const isActive = s.id === 'wec'
             return (
               <Link key={s.id} href={`/guide/${s.id}`} style={{

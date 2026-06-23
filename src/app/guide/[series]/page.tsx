@@ -120,7 +120,7 @@ export default async function SeriesGuidePage({ params }: { params: Promise<{ se
             gap: 0,
           }}
         >
-          {SERIES.map((s) => {
+          {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
             const isActive = s.id === id
             const label = s.short
             return (

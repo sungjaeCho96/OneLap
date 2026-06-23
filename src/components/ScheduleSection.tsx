@@ -12,9 +12,6 @@ const FILTERS = [
   { id: 'all', label: '전체' },
   { id: 'f1', label: 'F1' },
   { id: 'wec', label: 'WEC' },
-  { id: 'wrc', label: 'WRC' },
-  { id: 'superrace', label: '슈퍼레이스' },
-  { id: 'nfestival', label: '현대 N' },
 ]
 
 const SPORT_COLORS: Record<string, string> = Object.fromEntries(
@@ -155,7 +152,8 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
     return () => clearInterval(t)
   }, [])
 
-  const filtered = filter === 'all' ? schedule : schedule.filter((r) => r.sport === filter)
+  const visible = schedule.filter((r) => ['f1', 'wec'].includes(r.sport))
+  const filtered = filter === 'all' ? visible : visible.filter((r) => r.sport === filter)
   const liveRaces = filtered.filter((r) => r.isLive)
   const upcoming = filtered.filter((r) => !r.isLive)
   const groups = buildGroups(upcoming)

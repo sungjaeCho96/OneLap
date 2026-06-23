@@ -201,6 +201,29 @@
   .stat .lab{color:var(--smoke);font-size:.86rem;margin-top:8px;}
   .stat .note{color:var(--smoke-dim);font-size:.74rem;margin-top:3px;font-family:var(--mono);}
 
+  /* cancellation notice */
+  .cancel-notice{
+    margin-top:22px;
+    display:flex;gap:16px;align-items:flex-start;
+    background:rgba(244,193,59,.06);
+    border:1px solid rgba(244,193,59,.3);
+    border-radius:10px;
+    padding:18px 20px;
+  }
+  .cn-icon{
+    flex:0 0 auto;
+    font-size:1.1rem;
+    margin-top:2px;
+    color:var(--amber);
+  }
+  .cn-title{
+    font-weight:700;font-size:.96rem;color:var(--amber);margin-bottom:7px;
+  }
+  .cancel-notice p{
+    color:#cbc8b0;font-size:.88rem;font-weight:300;line-height:1.7;max-width:none;
+  }
+  .cancel-notice p strong{color:var(--chalk);font-weight:600;}
+
   /* two-col cards */
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px;}
   .card{
@@ -301,6 +324,97 @@
     *{animation:none!important;transition:none!important;}
     .reveal{opacity:1;transform:none;}
   }
+
+  /* ---------- WHY HOOK SECTION ---------- */
+  .hook{
+    padding:80px 0 72px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hook::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(1100px 500px at 50% 50%, rgba(180,92,255,.05), transparent 70%);
+  }
+  .hook-intro{
+    text-align:center;
+    max-width:52ch;
+    margin:0 auto 52px;
+  }
+  .hook-intro .pre{
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--purple);
+  }
+  .hook-intro h2{
+    font-family:var(--body);font-weight:900;
+    font-size:clamp(1.7rem,3.8vw,2.6rem);
+    line-height:1.15;letter-spacing:-.01em;
+    margin-top:14px;
+  }
+  .hook-intro p{
+    color:var(--smoke);font-weight:300;font-size:1rem;margin-top:12px;
+  }
+
+  .hook-cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+  }
+  .hcard{
+    position:relative;
+    padding:38px 30px 34px;
+    background:var(--asphalt-2);
+    overflow:hidden;
+    cursor:default;
+    transition:background .3s ease;
+  }
+  .hcard:first-child{border-radius:12px 0 0 12px;}
+  .hcard:last-child{border-radius:0 12px 12px 0;}
+  .hcard:hover{background:var(--asphalt-3);}
+  .hcard::after{
+    content:"";position:absolute;bottom:0;left:0;right:0;
+    height:3px;background:var(--c);
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .4s ease;
+  }
+  .hcard:hover::after{transform:scaleX(1);}
+
+  .hcard .num{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;
+    color:var(--c);opacity:.7;
+  }
+  .hcard .icon-wrap{
+    width:52px;height:52px;margin:16px 0 18px;
+    border-radius:12px;background:var(--asphalt-3);border:1px solid var(--line);
+    display:grid;place-items:center;
+    font-size:1.5rem;
+    transition:border-color .3s ease;
+  }
+  .hcard:hover .icon-wrap{border-color:var(--c);}
+  .hcard h3{
+    font-size:1.22rem;font-weight:700;margin-bottom:10px;
+    line-height:1.2;
+  }
+  .hcard .moment{
+    font-family:var(--display);
+    font-size:clamp(.82rem,1.5vw,1rem);
+    font-weight:600;
+    color:var(--c);
+    line-height:1.45;
+    letter-spacing:.01em;
+    margin-bottom:14px;
+    display:block;
+  }
+  .hcard p{
+    color:#9da3b3;font-size:.88rem;font-weight:300;line-height:1.65;
+  }
+  .hcard p strong{color:var(--chalk);font-weight:500;}
+
+  @media(max-width:880px){
+    .hook-cards{grid-template-columns:1fr;gap:2px;}
+    .hcard:first-child{border-radius:12px 12px 0 0;}
+    .hcard:last-child{border-radius:0 0 12px 12px;}
+  }
 </style>
 </head>
 <body>
@@ -353,6 +467,45 @@
   </div>
 </header>
 
+<!-- ===================== WHY HOOK ===================== -->
+<section class="hook">
+  <div class="wrap">
+    <div class="hook-intro reveal">
+      <span class="pre">왜 빠져드는가</span>
+      <h2>한 번 보면 끊기 어렵습니다.<br>이유가 세 가지 있어요.</h2>
+      <p>속도 때문만이 아니에요. 사람, 전략, 그리고 그 순간 — 세 가지가 겹치는 스포츠가 F1입니다.</p>
+    </div>
+
+    <div class="hook-cards">
+
+      <div class="hcard reveal" style="--c:var(--red)">
+        <span class="num">01</span>
+        <div class="icon-wrap">🎭</div>
+        <h3>사람 이야기가 있다</h3>
+        <span class="moment">"팀메이트가 가장 위험한 적이 된다."</span>
+        <p>같은 차, 같은 타이어, 같은 데이터 — 그런데 왜 한 명은 이기고 한 명은 진걸까. <strong>22명 각자의 야망과 균열</strong>이 90분 안에 드러납니다. 챔피언의 몰락, 신인의 반란, 동료 간의 갈등. F1엔 드라마 작가가 따로 없어요.</p>
+      </div>
+
+      <div class="hcard reveal" style="--c:var(--purple)">
+        <span class="num">02</span>
+        <div class="icon-wrap">🧠</div>
+        <h3>알면 알수록 더 보인다</h3>
+        <span class="moment">"피트스톱 2초가 순위를 뒤집는다."</span>
+        <p>경기 중반, 아무 일도 없어 보이는 순간 — 사실 팀은 <strong>타이어, 연료, 간격, 날씨</strong>를 모두 계산하고 있어요. 세이프티카 하나에 판이 뒤집히고, 언더컷 전략 하나가 챔피언십을 바꿉니다. 규칙을 조금씩 알게 될수록 화면이 다르게 읽혀요.</p>
+      </div>
+
+      <div class="hcard reveal" style="--c:var(--amber)">
+        <span class="num">03</span>
+        <div class="icon-wrap">⚡</div>
+        <h3>보는 것만으로 압도된다</h3>
+        <span class="moment">"시속 320km에서 브레이크를 밟는 순간."</span>
+        <p>모나코의 야간 예선, 빗속에서 물보라를 가르는 웻 레이스, 피트레인에서 새 타이어를 신고 튀어나오는 차 — <strong>설명 없이도 심장이 반응하는 장면</strong>들이 있어요. F1은 눈으로 먼저 빠져드는 스포츠입니다.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ===================== 1. WHAT IS F1 ===================== -->
 <section class="block" id="what">
   <div class="wrap reveal">
@@ -367,7 +520,15 @@
     <div class="stats">
       <div class="stat"><div class="big">11</div><div class="lab">참가 팀 (컨스트럭터)</div><div class="note">2026 · Cadillac 합류로 +1</div></div>
       <div class="stat"><div class="big">22</div><div class="lab">드라이버 (팀당 2명)</div><div class="note">2026 시즌 기준</div></div>
-      <div class="stat"><div class="big">22</div><div class="lab">그랑프리 (3월~12월)</div><div class="note">전 세계 순회</div></div>
+      <div class="stat"><div class="big">22</div><div class="lab">그랑프리 (3월~12월)</div><div class="note">원래 24경기 → 2경기 취소</div></div>
+    </div>
+
+    <div class="cancel-notice">
+      <div class="cn-icon">⚠</div>
+      <div class="cn-body">
+        <div class="cn-title">2026 시즌 특이사항 — 바레인 · 사우디아라비아 GP 취소</div>
+        <p>2026년 2월 말 중동 전쟁이 발발하면서 바레인과 사우디아라비아가 분쟁 지역에 포함됐습니다. F1은 선수단 안전을 이유로 <strong>3월 14일 두 경기의 공식 취소</strong>를 발표했어요. 4라운드(바레인, 4/12)와 5라운드(사우디아라비아, 4/19)가 모두 빠지면서 원래 <strong>24경기였던 시즌이 22경기로 축소</strong>됐고, 일본 GP 이후 다음 경기인 마이애미 GP까지 <strong>5주 공백</strong>이 생겼습니다. 취소된 두 경기는 다른 일정으로 대체되지 않았어요.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -449,16 +610,14 @@
   </div>
 </section>
 
-<!-- ===================== 5. KEY CONCEPTS ===================== -->
+<!-- ===================== 5. TIRES ===================== -->
 <section class="block">
   <div class="wrap reveal">
     <div class="sec-head">
       <span class="sec-num">05</span>
-      <div><h2>이것만 알면 레이스가 읽힌다</h2>
-      <p class="sec-sub">중계에서 가장 자주 나오는 네 가지 — 타이어, 추월, 피트스톱, 세이프티카.</p></div>
+      <div><h2>타이어 — 전략의 핵심</h2>
+      <p class="sec-sub">F1의 승부는 타이어에서 갈립니다. 종류만 알아도 피트스톱 전략이 보여요.</p></div>
     </div>
-
-    <h3 style="font-size:1.05rem;font-weight:700;margin:6px 0 14px;color:var(--smoke);font-family:var(--mono);letter-spacing:.05em;">A. 타이어 — 전략의 핵심</h3>
     <div class="tires">
       <div class="tire" style="--c:var(--red)"><div class="disc">S</div><div class="nm">소프트</div><div class="en">SOFT</div><div class="ds">가장 빠르지만 가장 빨리 닳음</div></div>
       <div class="tire" style="--c:var(--amber)"><div class="disc">M</div><div class="nm">미디엄</div><div class="en">MEDIUM</div><div class="ds">속도와 내구의 균형</div></div>
@@ -467,8 +626,18 @@
       <div class="tire" style="--c:#3aa0ff"><div class="disc">W</div><div class="nm">웻</div><div class="en">WET</div><div class="ds">폭우·물웅덩이용</div></div>
     </div>
     <p class="body" style="margin-top:16px;">건조한 레이스에서는 <span class="hl">최소 두 종류</span>의 타이어를 써야 해서, 모두가 한 번 이상 피트에 들어옵니다. "빠른 타이어로 짧게 vs 오래가는 타이어로 길게" — 이 선택이 승부를 가르죠.</p>
+  </div>
+</section>
 
-    <div class="duo" style="margin-top:30px;">
+<!-- ===================== 6. KEY CONCEPTS ===================== -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <div><h2>레이스를 바꾸는 네 가지</h2>
+      <p class="sec-sub">중계에서 가장 자주 나오는 개념 — 추월, 피트스톱, 세이프티카, 더티 에어.</p></div>
+    </div>
+    <div class="duo">
       <div class="card">
         <h3>추월 보조 <span class="tag">2026 신규</span></h3>
         <p>예전의 <span class="hl">DRS</span>는 2026년부터 사라졌어요. 대신 직선에서 날개를 눕혀 공기저항을 줄이는 <span class="hl">액티브 에어로</span>와, 앞차에 <span class="hl">1초 이내</span>로 붙으면 전기 동력을 더 쏟아붓는 <span class="hl">오버테이크 모드</span>로 추월을 돕습니다.</p>
@@ -489,13 +658,13 @@
   </div>
 </section>
 
-<!-- ===================== 6. FLAGS ===================== -->
+<!-- ===================== 7. FLAGS ===================== -->
 <section class="block">
   <div class="wrap reveal">
     <div class="sec-head">
-      <span class="sec-num">06</span>
-      <div><h2>깃발(그리고 불빛) 읽기</h2>
-      <p class="sec-sub">코스 곳곳에서 깃발로 신호를 줍니다. 색만 알아도 상황이 보여요.</p></div>
+      <span class="sec-num">07</span>
+      <div><h2>플래그 신호 읽기</h2>
+      <p class="sec-sub">코스 곳곳에서 플래그로 신호를 줍니다. 색만 알아도 상황이 보여요.</p></div>
     </div>
     <div class="flags">
       <div class="flag"><span class="fc" style="background:var(--amber)"></span><div><h4>황색기</h4><p>전방에 위험. 속도를 줄이고 추월 금지.</p></div></div>
@@ -508,11 +677,11 @@
   </div>
 </section>
 
-<!-- ===================== 7. GLOSSARY ===================== -->
+<!-- ===================== 8. GLOSSARY ===================== -->
 <section class="block">
   <div class="wrap reveal">
     <div class="sec-head">
-      <span class="sec-num">07</span>
+      <span class="sec-num">08</span>
       <div><h2>중계에서 자주 듣는 말</h2>
       <p class="sec-sub">이 단어들만 익혀두면 해설이 훨씬 잘 들립니다.</p></div>
     </div>
@@ -529,11 +698,11 @@
   </div>
 </section>
 
-<!-- ===================== 8. FIRST WATCH TIPS ===================== -->
+<!-- ===================== 9. FIRST WATCH TIPS ===================== -->
 <section class="block">
   <div class="wrap reveal">
     <div class="sec-head">
-      <span class="sec-num">08</span>
+      <span class="sec-num">09</span>
       <div><h2>처음 볼 때, 이렇게 보세요</h2>
       <p class="sec-sub">규칙을 다 외울 필요 없어요. 이 다섯 가지만으로 충분히 빠져듭니다.</p></div>
     </div>

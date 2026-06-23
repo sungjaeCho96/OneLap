@@ -19,10 +19,10 @@ export default async function HomePage() {
     <div className="min-h-screen bg-bg text-text">
       <Navbar />
       <main>
-        <HeroSection races={schedule} />
+        <HeroSection races={schedule.filter((r) => ['f1', 'wec'].includes(r.sport))} />
         <ScheduleSection schedule={schedule} />
-        <SeriesGuideSection series={SERIES} />
-        <NewsSection news={news} />
+        <SeriesGuideSection series={SERIES.filter((s) => ['f1', 'wec'].includes(s.id))} />
+        <NewsSection news={news.filter((n) => ['f1', 'wec'].includes(n.sport))} />
       </main>
       <Footer />
     </div>
