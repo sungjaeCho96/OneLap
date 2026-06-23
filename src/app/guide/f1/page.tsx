@@ -77,11 +77,11 @@ export default async function F1GuidePage() {
       <section style={{ background: RED, padding: '60px 24px 56px', overflow: 'hidden', position: 'relative', minHeight: 420 }}>
         {/* 베르스타펜 이미지 */}
         <img
-          src="/images/max-verstappen.webp"
+          src="/images/f1/max-verstappen.webp"
           alt=""
           aria-hidden="true"
           style={{
-            position: 'absolute', left: '50%', bottom: 0,
+            position: 'absolute', left: '50%', bottom: -70,
             transform: 'translateX(-50%)',
             height: '115%', width: 'auto',
             objectFit: 'contain', objectPosition: 'bottom center',
