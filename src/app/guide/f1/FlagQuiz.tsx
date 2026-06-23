@@ -70,7 +70,7 @@ const FLAGS = [
   },
   {
     id: 'black-orange',
-    bg: 'radial-gradient(circle at 60% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)',
+    bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)',
     title: '흑기·오렌지 원',
     situation: '이 드라이버의 차량에 기계적 결함이 발견됐습니다. 다른 차량에 위험이 될 수 있어 즉시 피트로 복귀해야 합니다.',
     desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.',

@@ -341,7 +341,7 @@ export default async function F1GuidePage() {
               { bg: '#f0f0f0', title: '백색기', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
               { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: '흑백기', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 흑색기로 이어질 수 있음.' },
               { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: '황적 줄무늬기', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
-              { bg: 'radial-gradient(circle at 60% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: '흑기·오렌지 원', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
+              { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: '흑기·오렌지 원', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
               { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: '체커기', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
