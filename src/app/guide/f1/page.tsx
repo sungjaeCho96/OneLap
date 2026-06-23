@@ -329,15 +329,20 @@ export default async function F1GuidePage() {
       {/* 07. Flag 가 뭐에요? */}
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. 색만 알아도 상황이 보여요." />
+          <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. F1에서 쓰이는 11가지를 모두 알아두세요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
-              { bg: '#f4c13b', title: '황색기', desc: '전방에 위험. 속도를 줄이고 추월 금지.' },
-              { bg: '#ff2e55', title: '적색기', desc: '세션 중단. 모두 피트로 복귀해야 합니다.' },
-              { bg: '#3aa0ff', title: '청색기', desc: '더 빠른 차가 따라온다 — 추월당하는 쪽은 길을 비켜야 함.' },
-              { bg: 'linear-gradient(135deg,#111 0 50%,#fff 50% 100%)', title: '흑백기', desc: '비신사적 행위에 대한 경고(옐로카드 같은 개념).' },
-              { bg: 'linear-gradient(135deg,#111 0 50%,#0a0 50% 100%)', title: '녹색기', desc: '위험 해제 — 다시 정상 주행·추월 가능.' },
-              { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: '체커기', desc: '세션 종료. 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
+              { bg: '#2fd27a', title: '녹색기', desc: '위험 해제 — 정상 주행·추월 가능. 세션 시작 신호로도 쓰임.' },
+              { bg: '#f4c13b', title: '황색기', desc: '전방 위험 — 속도를 줄이고 추월 금지.' },
+              { bg: 'linear-gradient(90deg, #f4c13b calc(50% - 1.5px), #a07000 calc(50% - 1.5px), #a07000 calc(50% + 1.5px), #f4c13b calc(50% + 1.5px))', title: '더블 황색기', desc: '즉각 감속·추월 절대 금지 — 정지 준비. 황색기보다 훨씬 위험한 상황(코스에 마샬이 있을 때).' },
+              { bg: '#ff2e55', title: '적색기', desc: '세션 중단 — 모두 즉시 피트로 복귀.' },
+              { bg: '#3aa0ff', title: '청색기', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
+              { bg: '#1a1a1a', title: '흑색기', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
+              { bg: '#f0f0f0', title: '백색기', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
+              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: '흑백기', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 흑색기로 이어질 수 있음.' },
+              { bg: 'repeating-linear-gradient(0deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: '황적 줄무늬기', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
+              { bg: 'radial-gradient(circle at 60% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: '흑기·오렌지 원', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
+              { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: '체커기', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
                 <div style={{ width: 34, height: 24, borderRadius: 3, flexShrink: 0, marginTop: 3, background: f.bg, border: '1px solid rgba(0,0,0,.08)' }} />
