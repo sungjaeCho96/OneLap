@@ -63,7 +63,7 @@ const FLAGS = [
   },
   {
     id: 'yellow-red',
-    bg: 'repeating-linear-gradient(0deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)',
+    bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)',
     title: '황적 줄무늬기',
     situation: '앞 차에서 기름이 새어 코스 노면이 미끄러운 상태입니다.',
     desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.',
