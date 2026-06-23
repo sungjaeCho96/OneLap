@@ -5,6 +5,7 @@ import { fetchF1Races, fetchF1DriverStandings } from '@/lib/f1Api'
 import TimingTower from './TimingTower'
 import TireSimulator from './TireSimulator'
 import FlagQuiz from './FlagQuiz'
+import TeamShowcase from './TeamShowcase'
 
 export const revalidate = 3600
 
@@ -200,6 +201,20 @@ export default async function F1GuidePage() {
         </div>
       </section>
 
+      {/* 02-B. 2026 그리드 — 11개 팀 */}
+      <section style={{ padding: '0 0 72px', borderTop: '1px solid #E0D9CB' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ paddingTop: 64, marginBottom: 4 }}>
+            <SecHead
+              num="02-B"
+              title="2026 그리드 — 11개 팀 둘러보기"
+              sub="로고를 눌러 각 팀의 드라이버와 특징, 초심자 관전 포인트를 확인하세요. 응원할 팀을 하나 정하면 레이스가 훨씬 재밌어집니다."
+            />
+          </div>
+          <TeamShowcase />
+        </div>
+      </section>
+
       {/* 03. 레이스 주말 */}
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
@@ -329,7 +344,7 @@ export default async function F1GuidePage() {
       {/* 07. Flag 가 뭐에요? */}
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
-          <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. F1에서 쓰이는 11가지를 모두 알아두세요." />
+          <SecHead num="07" title="플래그 읽기" sub="코스 곳곳에서 플래그로 신호를 줍니다. F1에서 쓰이는 플래그는 모두 11가지예요." />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
             {[
               { bg: '#2fd27a', title: 'Green Flag', desc: '위험 해제 — 정상 주행·추월 가능. 세션 시작 신호로도 쓰임.' },
@@ -339,9 +354,9 @@ export default async function F1GuidePage() {
               { bg: '#3aa0ff', title: 'Blue Flag', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
               { bg: '#1a1a1a', title: 'Black Flag', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
               { bg: '#f0f0f0', title: 'White Flag', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
-              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: 'Black & White Flag', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 Black Flag로 이어질 수 있음.' },
-              { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: 'Yellow & Red Striped Flag', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
-              { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: 'Black Flag / Orange Circle', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
+              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: 'Black And   White Flag', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 Black Flag로 이어질 수 있음.' },
+              { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: 'Yellow Flag With Red Striped', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
+              { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: 'Black Flag With An Orange Disc', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
               { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: 'Chequered Flag', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
               <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
