@@ -6,6 +6,7 @@ import TimingTower from './TimingTower'
 import TireSimulator from './TireSimulator'
 import FlagQuiz from './FlagQuiz'
 import TeamShowcase from './TeamShowcase'
+import DriverGallery from './DriverGallery'
 
 export const revalidate = 3600
 
@@ -77,7 +78,7 @@ export default async function F1GuidePage() {
       <section style={{ background: RED, padding: '60px 24px 56px', overflow: 'hidden', position: 'relative', minHeight: 420 }}>
         {/* 베르스타펜 이미지 */}
         <img
-          src="/images/f1/max-verstappen.webp"
+          src="/images/f1/Max-Verstappen-Hero-Section.webp"
           alt=""
           aria-hidden="true"
           style={{
@@ -228,6 +229,20 @@ export default async function F1GuidePage() {
             />
           </div>
           <TeamShowcase />
+        </div>
+      </section>
+
+      {/* 02-C. 드라이버 라인업 */}
+      <section style={{ padding: '0 0 72px', borderTop: '1px solid #E0D9CB' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ paddingTop: 64, marginBottom: 4 }}>
+            <SecHead
+              num="02-C"
+              title="2026 드라이버 라인업"
+              sub="11개 팀, 22명의 드라이버. 팀마다 두 명씩 — 같은 차를 타는 팀메이트가 서로의 가장 가까운 라이벌이기도 합니다."
+            />
+          </div>
+          <DriverGallery />
         </div>
       </section>
 
