@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { SERIES_GUIDE_MAP } from '@/lib/seriesGuideData'
+import { SERIES_GUIDE_MAP } from '@/lib/sports/seriesGuideData'
 import { SERIES_MAP, SERIES, buildSchedule } from '@/lib/data'
-import { fetchF1Races } from '@/lib/f1Api'
+import { fetchF1Races } from '@/features/f1/api'
 import type { SportId } from '@/types'
 
 export const revalidate = 3600

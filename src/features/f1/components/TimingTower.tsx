@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type { F1DriverStanding } from '@/lib/f1Api'
+import type { F1DriverStanding } from '@/features/f1/api'
 
 type SegColor = 'p' | 'g' | 'y'
 

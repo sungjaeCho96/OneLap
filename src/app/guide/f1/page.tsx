@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { SERIES, buildSchedule } from '@/lib/data'
-import { fetchF1Races, fetchF1DriverStandings } from '@/lib/f1Api'
-import TimingTower from './TimingTower'
-import TireSimulator from './TireSimulator'
-import FlagQuiz from './FlagQuiz'
-import TeamShowcase from './TeamShowcase'
-import DriverGallery from './DriverGallery'
+import { fetchF1Races, fetchF1DriverStandings } from '@/features/f1/api'
+import TimingTower from '@/features/f1/components/TimingTower'
+import TireSimulator from '@/features/f1/components/TireSimulator'
+import FlagQuiz from '@/features/f1/components/FlagQuiz'
+import TeamShowcase from '@/features/f1/components/TeamShowcase'
+import DriverGallery from '@/features/f1/components/DriverGallery'
 
 export const revalidate = 3600
 

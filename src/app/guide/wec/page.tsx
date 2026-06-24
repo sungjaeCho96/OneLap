@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { SERIES, buildSchedule } from '@/lib/data'
-import { fetchF1Races } from '@/lib/f1Api'
+import { fetchF1Races } from '@/features/f1/api'
 
 export const revalidate = 3600
 

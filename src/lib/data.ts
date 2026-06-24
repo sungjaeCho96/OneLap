@@ -1,8 +1,8 @@
 import type { Series, Race, NewsItem, SportId, RaceDisplay, NewsDisplay, RaceSession } from '@/types'
-import { WEC_RACES_2026 } from './wecData'
-import { WRC_RACES_2026 } from './wrcData'
-import { SUPERRACE_ROUNDS_2026 } from './superraceData'
-import { NFESTIVAL_ROUNDS_2026 } from './nfestivalData'
+import { WEC_RACES_2026 } from './sports/wecData'
+import { WRC_RACES_2026 } from './sports/wrcData'
+import { SUPERRACE_ROUNDS_2026 } from './sports/superraceData'
+import { NFESTIVAL_ROUNDS_2026 } from './sports/nfestivalData'
 
 export const SERIES: Series[] = [
   {

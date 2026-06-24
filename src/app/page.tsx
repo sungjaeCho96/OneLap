@@ -5,7 +5,7 @@ import SeriesGuideSection from '@/components/SeriesGuideSection'
 import NewsSection from '@/components/NewsSection'
 import Footer from '@/components/Footer'
 import { buildSchedule, SERIES, buildNews } from '@/lib/data'
-import { fetchF1Races } from '@/lib/f1Api'
+import { fetchF1Races } from '@/features/f1/api'
 
 export const revalidate = 3600
 
