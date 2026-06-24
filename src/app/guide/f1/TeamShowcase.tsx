@@ -31,14 +31,14 @@ const TEAMS: Team[] = [
     color: '#3671C6',
     country: '오스트리아',
     flag: '🇦🇹',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/f/f7/Red_Bull_Racing_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_fit,h_64/q_auto/v1740000001/common/f1/2025/redbullracing/2025redbullracinglogo.webp',
     abbr: 'RBR',
     drivers: [
-      { name: '막스 베르스타펜', num: '1' },
-      { name: '리암 로슨', num: '30' },
+      { name: '막스 베르스타펜', num: '3' },
+      { name: '아이작 하자르', num: '6' },
     ],
-    trait: '2021~2024 4연속 드라이버 챔피언을 배출한 최강팀. 베르스타펜이라는 압도적 에이스를 중심으로 굴러갑니다. 2026년에는 자체 개발 RB-Ford 파워유닛으로 전환하며 적응이 변수가 됩니다.',
-    watchPoint: '베르스타펜의 추월 라인을 보세요. 남들이 안 되는 자리에서 추월합니다. 1번 번호판은 직전 시즌 챔피언만 달 수 있는 자리예요.',
+    trait: '에너지드링크 회사 레드불이 2005년 재규어 레이싱을 인수해 만든 팀으로 베텔·베르스타펜 두 명의 월드 챔피언을 탄생시켰습니다. 2026년엔 혼다 파워유닛과 결별하고 포드와 함께 만든 첫 자체 파워유닛으로, 새 규정 첫해를 정면 돌파합니다.',
+    watchPoint: '챔피언에게 주어지는 1번을 노리스에게 내준 베르스타펜이 #3을 달고 반격합니다. 18세 최연소 우승, 한 시즌 19승의 기록 보유자죠. 21살 신예 하자르가 그 옆자리를 버텨낼지도 관전 포인트입니다.',
   },
   {
     id: 'ferrari',
@@ -47,7 +47,7 @@ const TEAMS: Team[] = [
     color: '#E8002D',
     country: '이탈리아',
     flag: '🇮🇹',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d1/Scuderia_Ferrari_Logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/ferrari/2026ferrarilogo.webp',
     abbr: 'SF',
     drivers: [
       { name: '샤를 르클레르', num: '16' },
@@ -63,7 +63,7 @@ const TEAMS: Team[] = [
     color: '#27F4D2',
     country: '독일',
     flag: '🇩🇪',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e8/Mercedes_AMG_Petronas_F1_Logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/mercedes/2026mercedeslogo.webp',
     abbr: 'MER',
     drivers: [
       { name: '조지 러셀', num: '63' },
@@ -79,10 +79,10 @@ const TEAMS: Team[] = [
     color: '#FF8000',
     country: '영국',
     flag: '🇬🇧',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/6/66/McLaren_Racing_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/mclaren/2026mclarenlogo.webp',
     abbr: 'MCL',
     drivers: [
-      { name: '란도 노리스', num: '4' },
+      { name: '랜도 노리스', num: '1' },
       { name: '오스카 피아스트리', num: '81' },
     ],
     trait: '2024~2025 컨스트럭터 챔피언을 거머쥔 현재의 최강팀. 노리스와 피아스트리, 둘 다 우승 가능한 젊은 듀오로 가장 균형 잡힌 라인업을 자랑합니다.',
@@ -95,7 +95,7 @@ const TEAMS: Team[] = [
     color: '#229971',
     country: '영국',
     flag: '🇬🇧',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d2/Aston_Martin_Aramco_F1_Team_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/astonmartin/2026astonmartinlogo.webp',
     abbr: 'AMR',
     drivers: [
       { name: '페르난도 알론소', num: '14' },
@@ -111,13 +111,13 @@ const TEAMS: Team[] = [
     color: '#0093CC',
     country: '프랑스',
     flag: '🇫🇷',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/3/33/Alpine_F1_Team_Logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/alpine/2026alpinelogo.webp',
     abbr: 'ALP',
     drivers: [
       { name: '피에르 가슬리', num: '10' },
       { name: '프랑코 콜라핀토', num: '43' },
     ],
-    trait: '르노 그룹이 소유한 프랑스 국적 팀. 2026년부터 자체 엔진을 포기하고 메르세데스 고객 엔진으로 전환해 중위권 반등을 노립니다.',
+    trait: '르노 그룹이 소유한 프랑스 국적 팀. 2026년부터 자체 엔진을 포기하고 메르세데스 엔진으로 전환해 중위권 반등을 노립니다.',
     watchPoint: '프랑스 유일의 팩토리 팀이라는 자존심. 가슬리가 중위권에서 보여주는 알뜰한 포인트 사냥을 지켜보세요.',
   },
   {
@@ -127,7 +127,7 @@ const TEAMS: Team[] = [
     color: '#64C4FF',
     country: '영국',
     flag: '🇬🇧',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/4/4c/Williams_Racing_2020_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_lfill,w_48/q_auto/v1740000001/common/f1/2026/williams/2026williamslogo.webp',
     abbr: 'WIL',
     drivers: [
       { name: '알렉스 알본', num: '23' },
@@ -143,11 +143,11 @@ const TEAMS: Team[] = [
     color: '#6692FF',
     country: '이탈리아',
     flag: '🇮🇹',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/8/82/Racing_Bulls_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_fit,h_64/q_auto/v1740000001/common/f1/2026/racingbulls/2026racingbullslogo.webp',
     abbr: 'RB',
     drivers: [
-      { name: '이사크 하자르', num: '6' },
-      { name: '아르빌 리켈벨리', num: '21' },
+      { name: '리암 로슨', num: '30' },
+      { name: '아비드 린드블라드', num: '41' },
     ],
     trait: '레드불의 자매팀(B팀). 레드불 본팀으로 올라갈 영 드라이버를 키우는 육성소 역할을 합니다. 본팀과 부품을 일부 공유해요.',
     watchPoint: '여기서 잘하면 레드불 본팀으로 승격됩니다. 미래의 스타가 누구인지 가장 먼저 볼 수 있는 팀이에요.',
@@ -159,11 +159,11 @@ const TEAMS: Team[] = [
     color: '#B6BABD',
     country: '미국',
     flag: '🇺🇸',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Haas_F1_Team_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_fit,h_64/q_auto/v1740000001/common/f1/2026/haas/2026haaslogo.webp',
     abbr: 'HAA',
     drivers: [
       { name: '에스테반 오콘', num: '31' },
-      { name: '올리버 베어먼', num: '50' },
+      { name: '올리버 베어먼', num: '87' },
     ],
     trait: '가장 작은 예산으로 운영되는 미국 팀. 페라리의 엔진과 다수 부품을 사 와 효율적으로 차를 만드는 알뜰 운영의 대명사입니다.',
     watchPoint: '적은 돈으로 거대 팀들과 싸우는 언더독. 가끔 터지는 깜짝 입상이 이 팀을 응원하게 만드는 매력이에요.',
@@ -172,10 +172,10 @@ const TEAMS: Team[] = [
     id: 'audi',
     name: '아우디',
     fullName: 'AUDI F1 TEAM (ex-SAUBER)',
-    color: '#00E701',
+    color: '#F50537',
     country: '독일',
     flag: '🇩🇪',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Audi-Logo_2016.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_fit,h_64/q_auto/v1740000001/common/f1/2026/audi/2026audilogo.webp',
     abbr: 'AUD',
     drivers: [
       { name: '니코 휠켄베르크', num: '27' },
@@ -191,7 +191,7 @@ const TEAMS: Team[] = [
     color: '#8B0000',
     country: '미국',
     flag: '🇺🇸',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Cadillac_logo.svg',
+    logoUrl: 'https://media.formula1.com/image/upload/c_fit,h_64/q_auto/v1740000001/common/f1/2026/cadillac/2026cadillaclogo.webp',
     abbr: 'CAD',
     drivers: [
       { name: '세르히오 페레스', num: '11' },
@@ -224,7 +224,7 @@ export default function TeamShowcase() {
 
       <div style={{ padding: '20px 20px 0' }}>
         {/* 로고 그리드 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(88px, 1fr))', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
           {TEAMS.map((team) => {
             const isActive = team.id === activeId
             const isHovered = hoveredId === team.id
@@ -255,7 +255,7 @@ export default function TeamShowcase() {
                 )}
                 <div style={{
                   width: 44, height: 44, borderRadius: 4, margin: '0 auto 8px',
-                  background: '#fff', border: '1px solid #E0D9CB',
+                  // background: team.color, border: '1px solid #E0D9CB',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   overflow: 'hidden',
                 }}>
