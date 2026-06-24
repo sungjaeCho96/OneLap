@@ -385,24 +385,31 @@ export default async function F1GuidePage() {
               { bg: '#3aa0ff', title: 'Blue Flag', desc: '선두권 차량 접근 — 랩 다운 드라이버는 길을 비켜야 함.' },
               { bg: '#1a1a1a', title: 'Black Flag', desc: '실격 또는 피트 복귀 명령 — 해당 드라이버에게만 제시.' },
               { bg: '#f0f0f0', title: 'White Flag', desc: '코스 위에 느린 차량(의료·안전) 존재 — 주의 요망.' },
-              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: 'Black And   White Flag', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 Black Flag로 이어질 수 있음.' },
+              { bg: 'linear-gradient(135deg, #1a1a1a 0 50%, #fff 50% 100%)', title: 'Black And White Flag', desc: '비신사적 행위 경고 — 옐로카드 개념. 반복 시 Black Flag로 이어질 수 있음.' },
               { bg: 'repeating-linear-gradient(90deg, #f4c13b 0px, #f4c13b 5px, #ff2e55 5px, #ff2e55 9px)', title: 'Yellow Flag With Red Striped', desc: '노면 변화 경고 — 기름·물·잔해로 미끄러울 수 있음.' },
               { bg: 'radial-gradient(circle at 50% 50%, #ff8c00 0% 30%, #1a1a1a 30% 100%)', title: 'Black Flag With An Orange Disc', desc: '차량 기계 결함 경고 — 해당 드라이버는 즉시 피트로 복귀.' },
               { bg: 'conic-gradient(#000 0 25%,#fff 0 50%,#000 0 75%,#fff 0)', title: 'Chequered Flag', desc: '세션 종료 — 결승에서 이걸 받으면 그 바퀴로 경기 끝.' },
             ].map((f) => (
-              <div key={f.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '16px 18px' }}>
-                {f.title === 'Double Yellow Flag' ? (
-                  <div style={{ position: 'relative', width: 38, height: 28, flexShrink: 0, marginTop: 3 }}>
-                    <div style={{ position: 'absolute', top: 4, left: 4, width: 34, height: 24, background: '#d4a012', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: 34, height: 24, background: '#f4c13b', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
-                  </div>
-                ) : (
-                  <div style={{ width: 34, height: 24, borderRadius: 3, flexShrink: 0, marginTop: 3, background: f.bg, border: '1px solid rgba(0,0,0,.08)' }} />
-                )}
-                <div>
-                  <h4 style={{ fontWeight: 700, fontSize: 15 }}>{f.title}</h4>
-                  <p style={{ fontSize: 13, color: '#4A4338', marginTop: 3, lineHeight: 1.55 }}>{f.desc}</p>
+              <div key={f.title} style={{
+                display: 'flex', flexDirection: 'column', gap: 10,
+                background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4,
+                padding: '16px 18px',
+                height: '100%', boxSizing: 'border-box',
+              }}>
+                {/* 플래그 아이콘 + 제목 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+                  {f.title === 'Double Yellow Flag' ? (
+                    <div style={{ position: 'relative', width: 38, height: 28, flexShrink: 0 }}>
+                      <div style={{ position: 'absolute', top: 4, left: 4, width: 34, height: 24, background: '#d4a012', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
+                      <div style={{ position: 'absolute', top: 0, left: 0, width: 34, height: 24, background: '#f4c13b', borderRadius: 3, border: '1px solid rgba(0,0,0,.08)' }} />
+                    </div>
+                  ) : (
+                    <div style={{ width: 34, height: 24, borderRadius: 3, flexShrink: 0, background: f.bg, border: '1px solid rgba(0,0,0,.08)' }} />
+                  )}
+                  <h4 style={{ fontWeight: 700, fontSize: 15, lineHeight: 1.2 }}>{f.title}</h4>
                 </div>
+                {/* 설명 */}
+                <p style={{ fontSize: 13, color: '#4A4338', lineHeight: 1.55, flex: 1 }}>{f.desc}</p>
               </div>
             ))}
           </div>
