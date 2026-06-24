@@ -13,7 +13,6 @@ F1·WEC·WRC·슈퍼레이스·현대 N 페스티벌 — 다섯 종목의 일정
 
 - 인터넷이 되는 컴퓨터 (macOS 또는 Windows)
 - 약 30~60분의 시간
-- (선택) 관리자 비밀번호 — 프로그램 설치 시 필요할 수 있습니다
 
 ### 1. 터미널이란?
 
@@ -32,23 +31,31 @@ F1·WEC·WRC·슈퍼레이스·현대 N 페스티벌 — 다섯 종목의 일정
 
 Node.js는 **이 프로젝트를 실행시켜주는 엔진**입니다. 버전 20 이상이 필요합니다.
 
-**macOS (일반 설치)**
+Node.js를 직접 설치하는 대신 **nvm(Node Version Manager)**을 사용하는 것을 권장합니다. nvm을 쓰면 Node.js 버전을 프로젝트마다 쉽게 바꿀 수 있고, 시스템을 깔끔하게 유지할 수 있습니다.
 
-1. 브라우저에서 [nodejs.org](https://nodejs.org) 접속
-2. 초록색 "LTS" 버튼 클릭하여 다운로드
-3. 다운로드된 `.pkg` 파일 실행
-4. "계속" → "계속" → "설치" 클릭하여 설치 완료
+**macOS / Linux**
 
-**macOS (Homebrew 사용자)**
+터미널에서 아래 명령어를 실행하세요:
 
 ```bash
-brew install node@20
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+```
+
+설치가 끝나면 **터미널을 완전히 닫고 새로 열어주세요.** 그다음 Node.js 20을 설치합니다:
+
+```bash
+nvm install 20
+nvm use 20
 ```
 
 **Windows**
 
-1. [nodejs.org](https://nodejs.org) 접속 → "LTS" 버튼으로 `.msi` 파일 다운로드
-2. 다운로드된 파일 실행 → "Next"를 계속 클릭하여 설치 완료
+[github.com/coreybutler/nvm-windows/releases](https://github.com/coreybutler/nvm-windows/releases) 에서 최신 `nvm-setup.exe`를 내려받아 설치한 뒤, PowerShell에서 실행합니다:
+
+```bash
+nvm install 20
+nvm use 20
+```
 
 ### 3. pnpm 설치하기
 
