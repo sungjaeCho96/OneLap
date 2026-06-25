@@ -592,7 +592,7 @@ function DriverModal({ driver, onClose, onPrev, onNext, isMobile }: DriverModalP
             lineHeight: 1.65,
             wordBreak: 'keep-all',
           }}>
-            "{driver.storyKr}"
+            &ldquo;{driver.storyKr}&rdquo;
           </div>
 
           {/* 경력 섹션 */}
