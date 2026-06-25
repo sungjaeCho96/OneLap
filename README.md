@@ -281,11 +281,29 @@ Green Flag 정답 피드백 설명이 바뀐 것을 볼 수 있습니다.
 
 **① Claude Code 설치**
 
+> 💳 **사전 준비**: [Claude Pro/Max/Team/Enterprise 구독](https://claude.com/pricing) 또는 [Anthropic Console](https://console.anthropic.com) 계정이 필요합니다.
+
+**macOS / Linux / WSL**
+
 터미널에서 아래 명령어를 실행하세요:
 
 ```bash
-npm install -g @anthropic-ai/claude-code
+curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+**Windows PowerShell**
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**Windows CMD**
+
+```batch
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+> 💡 macOS에서 Homebrew를 사용한다면 `brew install --cask claude-code` 로도 설치할 수 있습니다.
 
 **② 프로젝트 폴더에서 Claude Code 실행**
 
@@ -294,8 +312,7 @@ cd ~/Repo/onelap
 claude
 ```
 
-처음 실행하면 Anthropic 계정 로그인 또는 API 키 입력을 안내합니다.  
-[claude.ai](https://claude.ai)에서 무료로 계정을 만들 수 있습니다.
+처음 실행하면 브라우저가 열리며 계정 로그인을 안내합니다. 안내에 따라 인증을 완료하면 자격 증명이 저장되어 이후엔 자동으로 로그인됩니다.
 
 **③ 말로 변경 요청하기**
 
