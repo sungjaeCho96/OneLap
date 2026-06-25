@@ -34,16 +34,12 @@ export default function NewsSection({ news }: NewsSectionProps) {
         </div>
 
         {/* News grid */}
-        <div
-          className="grid gap-5"
-          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}
-        >
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2">
           {news.map((n, i) => (
             <a
               key={i}
               href="#news"
-              className="bg-white border border-border flex flex-col no-underline text-text overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover"
-              style={n.big ? { gridColumn: 'span 2' } : {}}
+              className={`bg-white border border-border flex flex-col no-underline text-text overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover${n.big ? ' sm:col-span-2' : ''}`}
             >
               {/* Image placeholder */}
               <div

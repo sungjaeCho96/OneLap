@@ -250,18 +250,18 @@ export default async function F1GuidePage() {
       <section style={{ background: '#EAE5DA', borderTop: '1px solid #E0D9CB', padding: '72px 0' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <SecHead num="03" title="레이스 주말은 이렇게 흘러갑니다" sub="하루짜리 이벤트가 아니에요. 보통 3일에 걸쳐 단계가 쌓입니다." />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 1, background: '#E0D9CB', border: '1px solid #E0D9CB', borderRadius: 4, overflow: 'hidden' }}>
             {([
               { phase: 'Practice', title: '연습 주행', desc: '팀이 차를 세팅하고 타이어·코스에 적응하는 시간. 순위에 직접 영향은 없지만 누가 빠른지 힌트를 줍니다.', arrow: true },
               { phase: 'Qualifying', title: '예선', desc: <>가장 빠른 한 바퀴로 결승 <Hl>출발 순서(그리드)</Hl>를 정합니다. Q1·Q2·Q3로 갈수록 느린 차가 탈락. 1위가 <Hl>폴 포지션</Hl>.</>, arrow: true },
               { phase: 'Race', title: '결승', desc: '본 경기. 정해진 바퀴 수를 가장 먼저 완주하면 우승. 상위 10위까지 점수를 받습니다.', arrow: false },
-            ] as { phase: string; title: string; desc: ReactNode; arrow: boolean }[]).map((step, i) => (
-              <div key={step.phase} style={{ background: '#fff', padding: '24px 22px', border: '1px solid #E0D9CB', borderRight: i < 2 ? 'none' : '1px solid #E0D9CB', borderRadius: i === 0 ? '4px 0 0 4px' : i === 2 ? '0 4px 4px 0' : 0, position: 'relative' }}>
+            ] as { phase: string; title: string; desc: ReactNode; arrow: boolean }[]).map((step) => (
+              <div key={step.phase} style={{ background: '#fff', padding: '24px 22px', position: 'relative' }}>
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: RED, textTransform: 'uppercase', marginBottom: 8 }}>{step.phase}</div>
                 <h4 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>{step.title}</h4>
                 <p style={{ fontSize: 14, color: '#4A4338', lineHeight: 1.6 }}>{step.desc}</p>
                 {step.arrow && (
-                  <div style={{ position: 'absolute', right: -11, top: '50%', transform: 'translateY(-50%)', zIndex: 2, width: 22, height: 22, borderRadius: '50%', background: '#EAE5DA', border: '1px solid #E0D9CB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: RED, fontSize: 11 }}>→</div>
+                  <div className="hidden sm:flex" style={{ position: 'absolute', right: -11, top: '50%', transform: 'translateY(-50%)', zIndex: 2, width: 22, height: 22, borderRadius: '50%', background: '#EAE5DA', border: '1px solid #E0D9CB', alignItems: 'center', justifyContent: 'center', color: RED, fontSize: 11 }}>→</div>
                 )}
               </div>
             ))}
@@ -277,7 +277,7 @@ export default async function F1GuidePage() {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <SecHead num="04" title="점수는 어떻게 매겨지나" sub="결승에서 상위 10위까지만 점수를 받습니다. 1등과 2등의 차이가 꽤 크죠." />
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#857A6A', marginBottom: 10 }}>A. 레이스 - 그랑프리의 본 경기</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6, marginBottom: 15 }}>
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 mb-4">
             {[
               { pos: 'P1',  pts: 25, valueColor: '#D4A017', borderColor: 'rgba(244,193,59,.5)' },
               { pos: 'P2',  pts: 18, valueColor: '#888' },
@@ -297,7 +297,7 @@ export default async function F1GuidePage() {
             ))}
           </div>
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.08em', color: '#857A6A', marginBottom: 10 }}>B. 스프린트 레이스 - 미니 레이스</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: 6, marginBottom: 15 }}>
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 mb-4">
             {[
               { pos: 'P1',  pts: 8, valueColor: '#D4A017', borderColor: 'rgba(244,193,59,.5)' },
               { pos: 'P2',  pts: 7, valueColor: '#888' },

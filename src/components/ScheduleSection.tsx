@@ -223,10 +223,7 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
                 {liveRaces.length}경기
               </span>
             </div>
-            <div
-              className="grid gap-4"
-              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))' }}
-            >
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
               {liveRaces.map((r) => (
                 <LiveCard key={`${r.sport}-${r.round}`} r={r} now={now} />
               ))}
