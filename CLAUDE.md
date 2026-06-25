@@ -10,7 +10,7 @@
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v3
 - **Package Manager**: pnpm (npm/yarn 사용 금지)
-- **Runtime**: Node.js 20+
+- **Runtime**: Node.js 24+
 
 ---
 
