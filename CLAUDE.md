@@ -124,12 +124,17 @@ docs: 새 종목 추가 절차 STRUCTURE.md에 명시
 
 ```
 main          ← 배포 브랜치 (직접 push 금지)
+develop       ← 통합 브랜치 (기능들이 여기 모임, 직접 push 금지)
 feat/{name}   ← 기능 개발
 fix/{name}    ← 버그 수정
 docs/{name}   ← 문서 작업
 ```
 
-`main`에 직접 push하지 않는다. PR을 통해 병합한다.
+**흐름:** `feat/xxx` → PR → `develop` → PR → `main`
+
+- `main`, `develop`에 직접 push하지 않는다. PR을 통해 병합한다.
+- 기능 브랜치는 항상 `develop`에서 분기하고, `develop`으로 머지한다.
+- `develop` → `main` 머지는 배포 준비가 완료됐을 때만 진행한다.
 
 ---
 
