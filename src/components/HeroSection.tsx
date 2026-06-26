@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { RaceDisplay, RaceSession } from '@/types'
 import CountdownTimer from './CountdownTimer'
 
@@ -69,7 +69,18 @@ function flagFor(loc: string, circuit: string): string {
 
 export default function HeroSection({ races }: HeroSectionProps) {
   const [idx, setIdx] = useState(0)
-  const [isFlipped, setIsFlipped] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(true)
+  const [animate, setAnimate] = useState(false)
+
+  useEffect(() => {
+    setAnimate(false)
+    setIsFlipped(true)
+    const timer = setTimeout(() => {
+      setAnimate(true)
+      setIsFlipped(false)
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [idx])
 
   if (races.length === 0) return null
 
@@ -81,7 +92,6 @@ export default function HeroSection({ races }: HeroSectionProps) {
 
   const goTo = (next: number) => {
     setIdx(next)
-    setIsFlipped(false)
   }
 
   const sessions = race.sessions ?? []
@@ -241,14 +251,15 @@ export default function HeroSection({ races }: HeroSectionProps) {
               role="button"
               tabIndex={0}
               aria-label={isFlipped ? '타임테이블 보기' : '그랑프리 정보 보기'}
-              onClick={() => setIsFlipped((f) => !f)}
+              onClick={() => { setAnimate(true); setIsFlipped((f) => !f) }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
+                  setAnimate(true)
                   setIsFlipped((f) => !f)
                 }
               }}
-              className="relative w-full cursor-pointer transition-transform duration-[600ms] ease-in-out"
+              className={`relative w-full cursor-pointer ease-in-out${animate ? ' transition-transform duration-[600ms]' : ''}`}
               style={{
                 transformStyle: 'preserve-3d',
                 transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -435,7 +446,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
                   <div className="flex items-center justify-between">
                     <span
                       className="font-mono text-[11px] font-black uppercase tracking-[0.16em] px-[7px] py-[3px] rounded-sm"
-                      style={{ background: race.color, color: '#15120D' }}
+                      style={{ background: race.color, color: '#ffffff' }}
                     >
                       {race.sportShort}
                     </span>
