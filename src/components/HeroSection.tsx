@@ -195,54 +195,119 @@ export default function HeroSection({ races }: HeroSectionProps) {
         {/* Right panel */}
         <div className="flex flex-col min-w-[280px]" style={{ flex: '1 1 380px' }}>
           {sessions.length > 0 ? (
-            <div className="flex-1 border border-[#DAD2C2] overflow-hidden bg-white">
-              <div className="px-5 py-[14px] border-b border-[#DAD2C2]">
-                <div className="font-mono text-[10px] text-text-muted tracking-[0.12em] uppercase mb-0.5">
-                  세션 일정 · KST
+            <div className="relative flex-1 overflow-hidden bg-[#15120D]">
+              {/* top accent bar — series color */}
+              <div className="h-[3px] w-full" style={{ background: race.color }} />
+
+              {/* Header — pit wall monitor */}
+              <div
+                className="flex items-center justify-between px-5 py-[15px] border-b border-white/10"
+                style={{ background: `linear-gradient(90deg, ${race.color}26, transparent 70%)` }}
+              >
+                <div>
+                  <div className="font-mono text-[10px] text-white/40 tracking-[0.16em] uppercase mb-[3px]">
+                    세션 일정 · KST
+                  </div>
+                  <div className="font-archivo font-bold text-[15px] uppercase leading-tight text-white tracking-[0.01em]">
+                    {race.circuit}
+                  </div>
                 </div>
-                <div className="font-archivo font-bold text-[14px] uppercase leading-tight">
-                  {race.circuit}
-                </div>
+                <span
+                  className="font-mono text-[10px] font-black uppercase tracking-[0.14em] px-[7px] py-[3px] rounded-sm flex-none"
+                  style={{ background: race.color, color: '#15120D' }}
+                >
+                  {race.sportShort}
+                </span>
               </div>
-              <div className="divide-y divide-[#EDE8DF]">
+
+              {/* Session rows */}
+              <div>
                 {sessions.map((session, i) => {
                   const status = sessionStatus(session)
                   const isNext = i === nextIdx
                   const { date, time } = formatKST(session.dateStart)
+                  const accent = status === 'live' ? '#E10600' : isNext ? race.color : undefined
+                  const rowBg =
+                    status === 'live'
+                      ? 'rgba(225,6,0,0.12)'
+                      : isNext
+                        ? `${race.color}1F`
+                        : undefined
                   return (
                     <div
                       key={i}
-                      className={`flex items-center gap-3 px-5 py-[11px] ${status === 'past' ? 'opacity-35' : ''}`}
-                      style={isNext && status !== 'live' ? { background: `${race.color}0D` } : undefined}
+                      className={`relative flex items-center gap-3 pl-[18px] pr-5 py-[12px] border-b border-white/[0.06] transition-colors ${status === 'past' ? 'opacity-40' : ''}`}
+                      style={rowBg ? { background: rowBg } : undefined}
                     >
-                      <div className="w-[8px] flex-none flex items-center justify-center">
+                      {/* left accent bar */}
+                      <span
+                        className="absolute left-0 top-0 bottom-0 w-[3px]"
+                        style={accent ? { background: accent } : undefined}
+                      />
+
+                      {/* status indicator */}
+                      <div className="w-[9px] flex-none flex items-center justify-center">
                         {status === 'live' ? (
                           <span
-                            className="w-[8px] h-[8px] rounded-full block bg-[#E10600]"
-                            style={{ animation: 'liveblink 1.2s infinite' }}
+                            className="w-[9px] h-[9px] rounded-full block bg-[#E10600]"
+                            style={{
+                              boxShadow: '0 0 8px 1px rgba(225,6,0,0.8)',
+                              animation: 'liveblink 1.2s infinite',
+                            }}
                           />
                         ) : isNext ? (
                           <span
                             className="w-[8px] h-[8px] rounded-full block"
-                            style={{ background: race.color }}
+                            style={{ background: race.color, boxShadow: `0 0 7px 0 ${race.color}` }}
                           />
                         ) : (
-                          <span className="w-[6px] h-[6px] rounded-full block bg-[#CFC7B6]" />
+                          <span className="w-[5px] h-[5px] rounded-full block bg-white/25" />
                         )}
                       </div>
+
+                      {/* session name */}
                       <span
-                        className={`font-mono text-[12px] font-bold flex-1 ${status === 'live' ? 'text-[#E10600]' : ''}`}
+                        className={`font-mono text-[12px] font-bold flex-1 flex items-center ${
+                          status === 'live'
+                            ? 'text-[#FF4D45]'
+                            : isNext
+                              ? 'text-white'
+                              : 'text-white/55'
+                        }`}
                       >
                         {session.name}
                         {status === 'live' && (
-                          <span className="ml-2 text-[9px] bg-[#E10600] text-white px-[5px] py-[2px] rounded-sm font-black tracking-[0.08em]">
+                          <span
+                            className="ml-2 text-[9px] bg-[#E10600] text-white px-[5px] py-[2px] rounded-sm font-black tracking-[0.08em]"
+                            style={{ animation: 'livepulse 1.6s infinite' }}
+                          >
                             LIVE
                           </span>
                         )}
+                        {isNext && status !== 'live' && (
+                          <span
+                            className="ml-2 text-[8px] font-black tracking-[0.1em] uppercase px-[5px] py-[2px] rounded-sm"
+                            style={{ background: `${race.color}2E`, color: race.color }}
+                          >
+                            NEXT
+                          </span>
+                        )}
                       </span>
-                      <div className="text-right flex-none">
-                        <div className="font-mono text-[10px] text-text-muted">{date}</div>
-                        <div className={`font-mono text-[12px] font-bold ${status === 'live' ? 'text-[#E10600]' : ''}`}>
+
+                      {/* time block */}
+                      <div className="text-right flex-none tabular-nums">
+                        <div className="font-mono text-[10px] text-white/35 leading-tight">
+                          {date}
+                        </div>
+                        <div
+                          className={`font-archivo font-bold text-[14px] leading-tight tracking-[0.02em] ${
+                            status === 'live'
+                              ? 'text-[#FF4D45]'
+                              : isNext
+                                ? 'text-white'
+                                : 'text-white/65'
+                          }`}
+                        >
                           {time}
                         </div>
                       </div>
@@ -283,11 +348,20 @@ export default function HeroSection({ races }: HeroSectionProps) {
           )}
 
           {/* Tip card */}
-          <div className="bg-white border border-[#DAD2C2] border-t-0 px-5 py-[18px]">
-            <div className="font-mono text-[11px] text-text-muted tracking-[0.08em] mb-2">
+          <div
+            className="relative px-5 py-[18px] overflow-hidden"
+            style={{
+              background: '#1C1812',
+              borderLeft: `3px solid ${race.color}`,
+            }}
+          >
+            <div
+              className="font-mono text-[11px] font-bold tracking-[0.12em] uppercase mb-2 flex items-center gap-1.5"
+              style={{ color: race.color }}
+            >
               💡 TIP
             </div>
-            <p className="text-[13px] leading-[1.5] text-text-mid">{race.tip}</p>
+            <p className="text-[13px] leading-[1.55] text-white/70">{race.tip}</p>
           </div>
         </div>
       </div>
