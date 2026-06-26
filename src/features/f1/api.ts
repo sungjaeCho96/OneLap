@@ -193,3 +193,82 @@ export async function fetchF1DriverStandings(): Promise<F1DriverStanding[]> {
     return []
   }
 }
+
+export interface F1DriverResult {
+  pos: number
+  grid: number
+  code: string
+  firstName: string
+  lastName: string
+  team: string
+  time: string
+  status: string
+  fastestLap: boolean
+  posChange: number
+}
+
+export interface F1RaceResult {
+  raceName: string
+  round: number
+  date: string
+  circuit: string
+  locality: string
+  country: string
+  results: F1DriverResult[]
+}
+
+const LAST_RESULT_URL = 'https://api.jolpi.ca/ergast/f1/current/last/results/'
+
+export async function fetchLatestRaceResult(): Promise<F1RaceResult | null> {
+  try {
+    const res = await fetch(LAST_RESULT_URL, { next: { revalidate: 3600 } })
+    if (!res.ok) throw new Error('Race result API error')
+
+    const json = await res.json()
+    const races: {
+      raceName: string
+      round: string
+      date: string
+      Circuit: { circuitName: string; Location: { locality: string; country: string } }
+      Results: {
+        position: string
+        grid: string
+        Driver: { code: string; givenName: string; familyName: string }
+        Constructor: { name: string }
+        Time?: { time: string }
+        status: string
+        FastestLap?: { rank: string }
+      }[]
+    }[] = json?.MRData?.RaceTable?.Races ?? []
+
+    if (races.length === 0) return null
+
+    const race = races[0]
+    return {
+      raceName: race.raceName,
+      round: parseInt(race.round),
+      date: race.date,
+      circuit: race.Circuit.circuitName,
+      locality: race.Circuit.Location.locality,
+      country: race.Circuit.Location.country,
+      results: race.Results.map((r) => {
+        const pos = parseInt(r.position)
+        const grid = parseInt(r.grid) || pos
+        return {
+          pos,
+          grid,
+          code: r.Driver.code ?? '???',
+          firstName: r.Driver.givenName,
+          lastName: r.Driver.familyName,
+          team: r.Constructor.name,
+          time: r.Time?.time ?? '',
+          status: r.status,
+          fastestLap: r.FastestLap?.rank === '1',
+          posChange: grid - pos,
+        }
+      }),
+    }
+  } catch {
+    return null
+  }
+}
