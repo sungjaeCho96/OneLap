@@ -33,8 +33,43 @@ function formatKST(dateStart: string): { date: string; time: string } {
   }
 }
 
+const FLAG_TABLE: ReadonlyArray<readonly [readonly string[], string]> = [
+  [['바레인', 'Bahrain', 'Sakhir'], '🇧🇭'],
+  [['사우디', 'Saudi', 'Jeddah'], '🇸🇦'],
+  [['호주', 'Australia', 'Melbourne', 'Albert Park'], '🇦🇺'],
+  [['일본', 'Japan', 'Suzuka'], '🇯🇵'],
+  [['중국', 'China', 'Shanghai'], '🇨🇳'],
+  [['마이애미', 'Miami'], '🇺🇸'],
+  [['라스베이거스', 'Las Vegas', 'Vegas'], '🇺🇸'],
+  [['오스틴', 'Austin', 'COTA', 'Americas'], '🇺🇸'],
+  [['이탈리아', 'Italy', 'Monza', 'Imola', 'Emilia'], '🇮🇹'],
+  [['모나코', 'Monaco', 'Monte Carlo'], '🇲🇨'],
+  [['캐나다', 'Canada', 'Montreal', 'Villeneuve'], '🇨🇦'],
+  [['스페인', 'Spain', 'Barcelona', 'Catalunya', 'Madrid'], '🇪🇸'],
+  [['오스트리아', 'Austria', 'Spielberg', 'Red Bull Ring'], '🇦🇹'],
+  [['영국', 'British', 'Britain', 'Silverstone'], '🇬🇧'],
+  [['헝가리', 'Hungar', 'Budapest', 'Hungaroring'], '🇭🇺'],
+  [['벨기에', 'Belgium', 'Spa'], '🇧🇪'],
+  [['네덜란드', 'Dutch', 'Netherlands', 'Zandvoort'], '🇳🇱'],
+  [['싱가포르', 'Singapore', 'Marina Bay'], '🇸🇬'],
+  [['멕시코', 'Mexico'], '🇲🇽'],
+  [['브라질', 'Brazil', 'Interlagos', 'Sao Paulo', 'São Paulo'], '🇧🇷'],
+  [['아부다비', 'Abu Dhabi', 'Yas Marina', 'UAE'], '🇦🇪'],
+  [['카타르', 'Qatar', 'Losail', 'Lusail'], '🇶🇦'],
+  [['아제르바이잔', 'Azerbaijan', 'Baku'], '🇦🇿'],
+]
+
+function flagFor(loc: string, circuit: string): string {
+  const haystack = `${loc} ${circuit}`
+  for (const [keys, flag] of FLAG_TABLE) {
+    if (keys.some((k) => haystack.includes(k))) return flag
+  }
+  return '🏁'
+}
+
 export default function HeroSection({ races }: HeroSectionProps) {
   const [idx, setIdx] = useState(0)
+  const [isFlipped, setIsFlipped] = useState(false)
 
   if (races.length === 0) return null
 
@@ -43,6 +78,11 @@ export default function HeroSection({ races }: HeroSectionProps) {
   const race = races[idx]
   const liveCount = races.filter((r) => r.isLive).length
   const pad = (n: number) => String(n).padStart(2, '0')
+
+  const goTo = (next: number) => {
+    setIdx(next)
+    setIsFlipped(false)
+  }
 
   const sessions = race.sessions ?? []
   const nextIdx = sessions.findIndex((s) => {
@@ -66,7 +106,8 @@ export default function HeroSection({ races }: HeroSectionProps) {
   }
 
   return (
-    <section className="mx-auto max-w-[1280px] px-6 py-14 pb-16">
+    <section className="bg-bg-alt">
+      <div className="mx-auto max-w-[1280px] px-6 py-14 pb-16">
       <div className="flex flex-wrap gap-12 items-center">
         {/* Left panel */}
         <div className="flex-1 min-w-[300px]" style={{ flexBasis: '480px' }}>
@@ -147,7 +188,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
             <div className="flex items-center gap-[18px] mt-[26px] flex-wrap">
               <div className="flex gap-2">
                 <button
-                  onClick={() => setIdx((i) => Math.max(0, i - 1))}
+                  onClick={() => goTo(Math.max(0, idx - 1))}
                   disabled={idx === 0}
                   aria-label="이전 경기"
                   className="w-[42px] h-[42px] flex items-center justify-center border text-[20px] leading-none rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
@@ -156,7 +197,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
                   ‹
                 </button>
                 <button
-                  onClick={() => setIdx((i) => Math.min(total - 1, i + 1))}
+                  onClick={() => goTo(Math.min(total - 1, idx + 1))}
                   disabled={idx === total - 1}
                   aria-label="다음 경기"
                   className="w-[42px] h-[42px] flex items-center justify-center border text-[20px] leading-none rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
@@ -176,7 +217,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
                   return (
                     <button
                       key={i}
-                      onClick={() => setIdx(i)}
+                      onClick={() => goTo(i)}
                       aria-label="경기 선택"
                       className="h-2 rounded-full border-none p-0 cursor-pointer transition-all duration-200"
                       style={{ width: dotW, background: dotColor }}
@@ -194,8 +235,29 @@ export default function HeroSection({ races }: HeroSectionProps) {
 
         {/* Right panel */}
         <div className="flex flex-col min-w-[280px]" style={{ flex: '1 1 380px' }}>
+          {/* Flip card — front: 타임테이블 / back: 그랑프리 상징 */}
+          <div className="relative flex-1" style={{ perspective: '1000px' }}>
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label={isFlipped ? '타임테이블 보기' : '그랑프리 정보 보기'}
+              onClick={() => setIsFlipped((f) => !f)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setIsFlipped((f) => !f)
+                }
+              }}
+              className="relative w-full cursor-pointer transition-transform duration-[600ms] ease-in-out"
+              style={{
+                transformStyle: 'preserve-3d',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              }}
+            >
+              {/* Front */}
+              <div className="relative" style={{ backfaceVisibility: 'hidden' }}>
           {sessions.length > 0 ? (
-            <div className="relative flex-1 overflow-hidden bg-[#15120D]">
+            <div className="relative flex-1 overflow-hidden bg-[#15120D] min-h-[360px]">
               {/* top accent bar — series color */}
               <div className="h-[3px] w-full" style={{ background: race.color }} />
 
@@ -347,6 +409,75 @@ export default function HeroSection({ races }: HeroSectionProps) {
             </div>
           )}
 
+                {/* flip hint */}
+                <div className="absolute bottom-3 right-3 flex items-center gap-[5px] font-mono text-[10px] uppercase tracking-[0.12em] text-white/35 pointer-events-none">
+                  <span className="text-[13px] leading-none">↻</span>
+                  정보 보기
+                </div>
+              </div>
+
+              {/* Back — 그랑프리 상징 */}
+              <div
+                className="absolute inset-0 flex flex-col overflow-hidden bg-[#15120D]"
+                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+              >
+                {/* top accent bar — series color */}
+                <div className="h-[3px] w-full flex-none" style={{ background: race.color }} />
+
+                {/* series color glow accent */}
+                <div
+                  className="pointer-events-none absolute -top-16 -right-16 w-56 h-56 rounded-full opacity-25 blur-2xl"
+                  style={{ background: race.color }}
+                />
+
+                <div className="relative flex-1 flex flex-col px-6 py-6">
+                  {/* round + series badge */}
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="font-mono text-[11px] font-black uppercase tracking-[0.16em] px-[7px] py-[3px] rounded-sm"
+                      style={{ background: race.color, color: '#15120D' }}
+                    >
+                      {race.sportShort}
+                    </span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
+                      {race.roundLabel}
+                    </span>
+                  </div>
+
+                  {/* flag + circuit */}
+                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
+                    <div className="text-[64px] leading-none drop-shadow-lg">
+                      {flagFor(race.loc, race.circuit)}
+                    </div>
+                    <div
+                      className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.01em] text-white"
+                      style={{ fontSize: 'clamp(24px, 3.4vw, 34px)' }}
+                    >
+                      {race.circuit}
+                    </div>
+                    <div
+                      className="font-mono text-[13px] uppercase tracking-[0.18em]"
+                      style={{ color: race.color }}
+                    >
+                      {race.loc}
+                    </div>
+                  </div>
+
+                  {/* date + hint */}
+                  <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+                    <span className="font-mono text-[12px] text-white/60 tabular-nums">
+                      {race.dateLong}
+                    </span>
+                    <span className="flex items-center gap-[5px] font-mono text-[10px] uppercase tracking-[0.12em] text-white/35">
+                      <span className="text-[13px] leading-none">↺</span>
+                      탭하여 일정 보기
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Tip card */}
           <div
             className="relative px-5 py-[18px] overflow-hidden"
@@ -364,6 +495,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
             <p className="text-[13px] leading-[1.55] text-white/70">{race.tip}</p>
           </div>
         </div>
+      </div>
       </div>
     </section>
   )
