@@ -43,7 +43,49 @@ jobs:
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
 
     steps:
-      - name: Deploy via SSH
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install production dependencies only
+        run: pnpm install --frozen-lockfile --prod
+
+      - name: Upload SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Sync build artifacts to server
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            .next/ \
+            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/.next/
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            node_modules/ \
+            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/node_modules/
+          rsync -az \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            public/ package.json pnpm-lock.yaml \
+            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/
+
+      - name: Restart PM2
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.ORACLE_HOST }}
@@ -51,10 +93,5 @@ jobs:
           key: ${{ secrets.ORACLE_SSH_KEY }}
           passphrase: ${{ secrets.ORACLE_SSH_PASSPHRASE }}
           script: |
-            set -e
-            cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin develop
-            pnpm install --frozen-lockfile
-            pnpm build
-            pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap
+            pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap --cwd ${{ secrets.DEPLOY_PATH }}
             pm2 save
