@@ -589,10 +589,67 @@ export async function fetchLatestRaceResult(): Promise<F1RaceResult | null> {
   }
 }
 
+async function fetchAllRaceResultsFromErgast(): Promise<F1RaceResult[]> {
+  const res = await fetch(
+    'https://api.jolpi.ca/ergast/f1/2026/results/?limit=500',
+    { next: { revalidate: 3600 } },
+  )
+  if (!res.ok) throw new Error('Ergast results error')
+
+  const json = await res.json()
+  const races: {
+    raceName: string
+    round: string
+    date: string
+    Circuit: { circuitName: string; Location: { locality: string; country: string } }
+    Results: {
+      position: string
+      grid: string
+      Driver: { code: string; givenName: string; familyName: string }
+      Constructor: { name: string }
+      Time?: { time: string }
+      status: string
+      FastestLap?: { rank: string }
+    }[]
+  }[] = json?.MRData?.RaceTable?.Races ?? []
+
+  if (races.length === 0) throw new Error('No Ergast results')
+
+  return races
+    .map((race) => {
+      const round = parseInt(race.round)
+      return {
+        raceName: race.raceName,
+        round,
+        date: race.date,
+        circuit: race.Circuit.circuitName,
+        locality: race.Circuit.Location.locality,
+        country: race.Circuit.Location.country,
+        results: race.Results.map((r) => {
+          const pos = parseInt(r.position)
+          const grid = parseInt(r.grid) || pos
+          return {
+            pos,
+            grid,
+            code: r.Driver.code ?? '???',
+            firstName: r.Driver.givenName,
+            lastName: r.Driver.familyName,
+            team: r.Constructor.name,
+            time: r.Time?.time ?? '',
+            status: r.status,
+            fastestLap: r.FastestLap?.rank === '1',
+            posChange: grid - pos,
+          }
+        }),
+      }
+    })
+    .reverse() // 최신 레이스가 index 0
+}
+
 export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
   try {
     return await fetchAllRaceResultsFromOpenF1()
   } catch {
-    return []
+    return fetchAllRaceResultsFromErgast().catch(() => [])
   }
 }
