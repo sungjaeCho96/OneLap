@@ -60,9 +60,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Install production dependencies only
-        run: pnpm install --frozen-lockfile --prod
-
       - name: Upload SSH key
         run: |
           mkdir -p ~/.ssh
@@ -76,16 +73,12 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             .next/ \
             ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/.next/
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            node_modules/ \
-            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/node_modules/
           rsync -az \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             public/ package.json pnpm-lock.yaml \
             ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/
 
-      - name: Restart PM2
+      - name: Install prod dependencies & restart PM2
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.ORACLE_HOST }}
@@ -95,5 +88,7 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd ${{ secrets.DEPLOY_PATH }}
+            pnpm install --prod --frozen-lockfile
             pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap --cwd ${{ secrets.DEPLOY_PATH }}
             pm2 save
