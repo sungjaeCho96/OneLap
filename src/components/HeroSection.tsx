@@ -82,7 +82,17 @@ export default function HeroSection({ races }: HeroSectionProps) {
     return () => clearTimeout(timer)
   }, [idx])
 
-  if (races.length === 0) return null
+  if (races.length === 0) {
+    return (
+      <section className="bg-bg-alt">
+        <div className="mx-auto max-w-[1280px] px-6 py-16 flex items-center justify-center min-h-[200px]">
+          <p className="font-mono text-sm text-text-muted tracking-[0.08em]">
+            예정된 경기가 없습니다
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   const now = Date.now()
   const total = races.length

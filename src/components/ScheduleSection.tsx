@@ -2,24 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import type { RaceDisplay } from '@/types'
-import { SERIES } from '@/lib/data'
 
 interface ScheduleSectionProps {
   schedule: RaceDisplay[]
-}
-
-const FILTERS = [
-  { id: 'all', label: '전체' },
-  { id: 'f1', label: 'F1' },
-  { id: 'wec', label: 'WEC' },
-]
-
-const SPORT_COLORS: Record<string, string> = Object.fromEntries(
-  SERIES.map((s) => [s.id, s.color])
-)
-
-function filterAccent(id: string) {
-  return id === 'all' ? '#E10600' : SPORT_COLORS[id]
 }
 
 function fmtElapsed(startTs: number, now: number): string {
@@ -144,7 +129,6 @@ function RaceItem({ r }: { r: RaceDisplay }) {
 }
 
 export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
-  const [filter, setFilter] = useState('all')
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
@@ -152,10 +136,8 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
     return () => clearInterval(t)
   }, [])
 
-  const visible = schedule.filter((r) => ['f1', 'wec'].includes(r.sport))
-  const filtered = filter === 'all' ? visible : visible.filter((r) => r.sport === filter)
-  const liveRaces = filtered.filter((r) => r.isLive)
-  const upcoming = filtered.filter((r) => !r.isLive)
+  const liveRaces = schedule.filter((r) => r.isLive)
+  const upcoming = schedule.filter((r) => !r.isLive)
   const groups = buildGroups(upcoming)
 
   return (
@@ -163,40 +145,16 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
       <div className="mx-auto max-w-[1280px] px-6">
 
         {/* Header */}
-        <div className="flex flex-wrap items-end justify-between gap-5 mb-9">
-          <div>
-            <div className="font-mono text-xs uppercase tracking-[0.18em] text-accent mb-3">
-              Calendar
-            </div>
-            <h2
-              className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em]"
-              style={{ fontSize: 'clamp(34px, 5vw, 60px)' }}
-            >
-              경기 일정
-            </h2>
+        <div className="mb-9">
+          <div className="font-mono text-xs uppercase tracking-[0.18em] text-accent mb-3">
+            Calendar
           </div>
-
-          {/* Filter buttons */}
-          <div className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => {
-              const active = f.id === filter
-              const color = filterAccent(f.id)
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className="font-mono text-xs font-bold uppercase tracking-[0.06em] px-4 py-[9px] border cursor-pointer transition-all duration-150"
-                  style={{
-                    background: active ? color : 'transparent',
-                    color: active ? (f.id === 'wrc' ? '#15120D' : '#fff') : '#C9C1B2',
-                    borderColor: active ? color : '#3A352C',
-                  }}
-                >
-                  {f.label}
-                </button>
-              )
-            })}
-          </div>
+          <h2
+            className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em]"
+            style={{ fontSize: 'clamp(34px, 5vw, 60px)' }}
+          >
+            경기 일정
+          </h2>
         </div>
 
         {/* LIVE NOW */}
