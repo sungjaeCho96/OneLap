@@ -15,10 +15,10 @@ interface HomeContentProps {
   schedule: RaceDisplay[]
   news: NewsDisplay[]
   series: Series[]
-  latestResult: F1RaceResult | null
+  allResults: F1RaceResult[]
 }
 
-export default function HomeContent({ schedule, news, latestResult }: HomeContentProps) {
+export default function HomeContent({ schedule, news, allResults }: HomeContentProps) {
   const [selectedSport, setSelectedSport] = useState<SportId>('f1')
 
   const filteredRaces = schedule.filter((r) => r.sport === selectedSport)
@@ -30,7 +30,7 @@ export default function HomeContent({ schedule, news, latestResult }: HomeConten
       <Navbar selectedSport={selectedSport} onSelectSport={setSelectedSport} />
       <main>
         <HeroSection key={selectedSport} races={filteredRaces} />
-        {selectedSport === 'f1' && latestResult && <RaceResultCard result={latestResult} />}
+        {selectedSport === 'f1' && allResults.length > 0 && <RaceResultCard results={allResults} />}
         <ScheduleSection schedule={filteredRaces} />
         <SeriesGuideSection series={selectedSeries} />
         {filteredNews.length > 0 && <NewsSection news={filteredNews} />}

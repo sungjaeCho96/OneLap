@@ -14,6 +14,24 @@ function fmtElapsed(startTs: number, now: number): string {
   return h > 0 ? `${h}시간 ${m}분 경과` : `${m}분 경과`
 }
 
+function clientEndTs(r: RaceDisplay): number {
+  if (r.sessions && r.sessions.length > 0) {
+    const last = r.sessions[r.sessions.length - 1]
+    const lastTs = new Date(last.dateStart).getTime()
+    if (last.dateEnd) {
+      const endTs = new Date(last.dateEnd).getTime()
+      if (endTs > lastTs) return endTs
+    }
+    if (last.tbc || last.dateStart.length === 10) return lastTs + 24 * 3_600_000
+    return lastTs + 4 * 3_600_000
+  }
+  return r.ts + 3 * 3_600_000
+}
+
+function clientIsLive(r: RaceDisplay, now: number): boolean {
+  return r.ts <= now && clientEndTs(r) > now
+}
+
 function LiveCard({ r, now }: { r: RaceDisplay; now: number }) {
   return (
     <div
@@ -136,8 +154,8 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
     return () => clearInterval(t)
   }, [])
 
-  const liveRaces = schedule.filter((r) => r.isLive)
-  const upcoming = schedule.filter((r) => !r.isLive)
+  const liveRaces = schedule.filter((r) => clientIsLive(r, now))
+  const upcoming = schedule.filter((r) => !clientIsLive(r, now) && r.ts > now)
   const groups = buildGroups(upcoming)
 
   return (

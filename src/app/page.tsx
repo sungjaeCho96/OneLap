@@ -1,14 +1,14 @@
 import HomeContent from '@/components/HomeContent'
 import Footer from '@/components/Footer'
 import { buildSchedule, SERIES, buildNews } from '@/lib/data'
-import { fetchF1Races, fetchLatestRaceResult } from '@/features/f1/api'
+import { fetchF1Races, fetchAllRaceResults } from '@/features/f1/api'
 
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [f1Races, latestResult] = await Promise.all([
+  const [f1Races, allResults] = await Promise.all([
     fetchF1Races(),
-    fetchLatestRaceResult(),
+    fetchAllRaceResults(),
   ])
   const schedule = buildSchedule(f1Races)
   const news = buildNews()
@@ -19,7 +19,7 @@ export default async function HomePage() {
         schedule={schedule}
         news={news}
         series={SERIES}
-        latestResult={latestResult}
+        allResults={allResults}
       />
       <Footer />
     </div>

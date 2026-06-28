@@ -291,58 +291,308 @@ export interface F1RaceResult {
   results: F1DriverResult[]
 }
 
+// ─── OpenF1 session result types ────────────────────────────────────────────
+
+interface OpenF1RaceSession {
+  session_key: number
+  meeting_key: number
+  date_start: string
+  date_end: string
+  location: string
+  country_name: string
+  circuit_short_name: string
+}
+
+interface OpenF1ResultEntry {
+  position: number | null
+  driver_number: number
+  number_of_laps: number
+  dnf: boolean
+  dns: boolean
+  dsq: boolean
+  duration: number | null
+  gap_to_leader: number | string | null
+}
+
+interface OpenF1DriverEntry {
+  driver_number: number
+  name_acronym: string
+  first_name: string
+  last_name: string
+  team_name: string
+}
+
+interface OpenF1MeetingEntry {
+  meeting_key: number
+  meeting_name: string
+  location: string
+  country_name: string
+  circuit_short_name: string
+}
+
+function formatRaceTime(totalSeconds: number): string {
+  const h = Math.floor(totalSeconds / 3600)
+  const m = Math.floor((totalSeconds % 3600) / 60)
+  const s = totalSeconds % 60
+  return `${h}:${String(m).padStart(2, '0')}:${s.toFixed(3).padStart(6, '0')}`
+}
+
+function gapToTimeStr(
+  gap: number | string | null,
+  isWinner: boolean,
+  duration: number | null,
+): string {
+  if (isWinner) return duration != null ? formatRaceTime(duration) : ''
+  if (gap == null) return ''
+  if (typeof gap === 'string') return gap.replace(/^\+/, '')
+  return gap.toFixed(3)
+}
+
+// ─── 공통 헬퍼 ───────────────────────────────────────────────────────────────
+
+function buildDriverResults(
+  results: OpenF1ResultEntry[],
+  driverMap: Map<number, OpenF1DriverEntry>,
+  gridMap: Map<number, number>,
+): F1DriverResult[] {
+  const finishers = results
+    .filter((r) => r.position != null)
+    .sort((a, b) => (a.position as number) - (b.position as number))
+  const dnfDrivers = results
+    .filter((r) => r.position == null)
+    .sort((a, b) => b.number_of_laps - a.number_of_laps)
+
+  return [...finishers, ...dnfDrivers].map((r, idx) => {
+    const driver = driverMap.get(r.driver_number)
+    const pos = r.position ?? (idx + 1)
+    const isWinner = pos === 1
+    const finished = !r.dnf && !r.dns && !r.dsq
+    const status = r.dsq
+      ? 'Disqualified'
+      : r.dns
+        ? 'Did not start'
+        : r.dnf
+          ? 'Retired'
+          : 'Finished'
+    const grid = gridMap.get(r.driver_number) ?? pos
+    return {
+      pos,
+      grid,
+      code: driver?.name_acronym ?? String(r.driver_number),
+      firstName: driver?.first_name ?? '',
+      lastName: driver?.last_name ?? '',
+      team: driver?.team_name ?? '',
+      time: finished ? gapToTimeStr(r.gap_to_leader, isWinner, r.duration) : '',
+      status,
+      fastestLap: false,
+      posChange: grid - pos,
+    }
+  })
+}
+
+// ─── 단일 레이스 (최신) ───────────────────────────────────────────────────────
+
+async function fetchCompletedRaceSessions(): Promise<{
+  sessions: OpenF1RaceSession[]
+  qualiKeyMap: Map<number, number>
+  meetingMap: Map<number, OpenF1MeetingEntry>
+}> {
+  const now = Date.now()
+
+  const [raceRes, qualiRes, meetingsRes] = await Promise.all([
+    fetch('https://api.openf1.org/v1/sessions?session_name=Race&year=2026', { next: { revalidate: 300 } }),
+    fetch('https://api.openf1.org/v1/sessions?session_name=Qualifying&year=2026', { next: { revalidate: 3600 } }),
+    fetch('https://api.openf1.org/v1/meetings?year=2026', { next: { revalidate: 3600 } }),
+  ])
+
+  if (!raceRes.ok || !qualiRes.ok || !meetingsRes.ok) throw new Error('OpenF1 metadata error')
+
+  const [allRaceSessions, allQualiSessions, allMeetings]: [
+    OpenF1RaceSession[],
+    OpenF1RaceSession[],
+    OpenF1MeetingEntry[],
+  ] = await Promise.all([raceRes.json(), qualiRes.json(), meetingsRes.json()])
+
+  if (!Array.isArray(allRaceSessions) || !Array.isArray(allQualiSessions) || !Array.isArray(allMeetings))
+    throw new Error('Invalid metadata')
+
+  const sessions = allRaceSessions
+    .filter((s) => s.date_end && new Date(s.date_end).getTime() < now)
+    .sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime())
+
+  const qualiKeyMap = new Map<number, number>(
+    allQualiSessions.map((s) => [s.meeting_key, s.session_key]),
+  )
+  const meetingMap = new Map<number, OpenF1MeetingEntry>(
+    allMeetings.map((m) => [m.meeting_key, m]),
+  )
+
+  return { sessions, qualiKeyMap, meetingMap }
+}
+
+async function fetchOneRaceResult(
+  session: OpenF1RaceSession,
+  round: number,
+  qualiKey: number | undefined,
+  meeting: OpenF1MeetingEntry | undefined,
+  isLatest = false,
+): Promise<F1RaceResult> {
+  // 과거 경기 결과는 바뀌지 않으므로 1일 캐시, 최신 경기만 1시간
+  const resultTtl = isLatest ? 3600 : 86400
+  const fetches: Promise<Response>[] = [
+    fetch(`https://api.openf1.org/v1/session_result?session_key=${session.session_key}`, { next: { revalidate: resultTtl } }),
+    fetch(`https://api.openf1.org/v1/drivers?session_key=${session.session_key}`, { next: { revalidate: 86400 } }),
+    ...(qualiKey
+      ? [fetch(`https://api.openf1.org/v1/session_result?session_key=${qualiKey}`, { next: { revalidate: 86400 } })]
+      : []),
+  ]
+
+  const responses = await Promise.all(fetches)
+  const [results, drivers]: [OpenF1ResultEntry[], OpenF1DriverEntry[]] = await Promise.all([
+    responses[0].json(),
+    responses[1].json(),
+  ])
+
+  if (!Array.isArray(results) || results.length === 0) throw new Error('No results')
+
+  const gridMap = new Map<number, number>()
+  if (qualiKey && responses[2]?.ok) {
+    const qualiResults: OpenF1ResultEntry[] = await responses[2].json()
+    if (Array.isArray(qualiResults)) {
+      for (const q of qualiResults) {
+        if (q.position != null) gridMap.set(q.driver_number, q.position)
+      }
+    }
+  }
+
+  const driverMap = new Map<number, OpenF1DriverEntry>(drivers.map((d) => [d.driver_number, d]))
+
+  return {
+    raceName: meeting?.meeting_name ?? `Race ${round}`,
+    round,
+    date: session.date_start,
+    circuit: meeting?.circuit_short_name ?? '',
+    locality: meeting?.location ?? '',
+    country: meeting?.country_name ?? '',
+    results: buildDriverResults(results, driverMap, gridMap),
+  }
+}
+
+async function fetchLatestRaceResultFromOpenF1(): Promise<F1RaceResult | null> {
+  const { sessions, qualiKeyMap, meetingMap } = await fetchCompletedRaceSessions()
+  if (sessions.length === 0) return null
+
+  const latest = sessions[sessions.length - 1]
+  const round = sessions.length
+
+  return fetchOneRaceResult(
+    latest,
+    round,
+    qualiKeyMap.get(latest.meeting_key),
+    meetingMap.get(latest.meeting_key),
+  )
+}
+
+// ─── 시즌 전체 레이스 결과 ────────────────────────────────────────────────────
+
+async function fetchAllRaceResultsFromOpenF1(): Promise<F1RaceResult[]> {
+  const { sessions, qualiKeyMap, meetingMap } = await fetchCompletedRaceSessions()
+  if (sessions.length === 0) return []
+
+  const latestIdx = sessions.length - 1
+
+  // 3개씩 배치 처리 — 33개 동시 요청 대신 배치당 ~9개로 rate limit 방지
+  const BATCH_SIZE = 3
+  const results: (F1RaceResult | null)[] = []
+
+  for (let i = 0; i < sessions.length; i += BATCH_SIZE) {
+    const batch = sessions.slice(i, i + BATCH_SIZE)
+    const batchResults = await Promise.all(
+      batch.map((session, batchIdx) => {
+        const idx = i + batchIdx
+        return fetchOneRaceResult(
+          session,
+          idx + 1,
+          qualiKeyMap.get(session.meeting_key),
+          meetingMap.get(session.meeting_key),
+          idx === latestIdx,
+        ).catch(() => null)
+      }),
+    )
+    results.push(...batchResults)
+  }
+
+  return results
+    .filter((r): r is F1RaceResult => r !== null)
+    .reverse() // 최신 레이스가 index 0
+}
+
+// ─── Ergast fallback ─────────────────────────────────────────────────────────
+
 const LAST_RESULT_URL = 'https://api.jolpi.ca/ergast/f1/current/last/results/'
+
+async function fetchLatestRaceResultFromErgast(): Promise<F1RaceResult | null> {
+  const res = await fetch(LAST_RESULT_URL, { next: { revalidate: 3600 } })
+  if (!res.ok) throw new Error('Race result API error')
+
+  const json = await res.json()
+  const races: {
+    raceName: string
+    round: string
+    date: string
+    Circuit: { circuitName: string; Location: { locality: string; country: string } }
+    Results: {
+      position: string
+      grid: string
+      Driver: { code: string; givenName: string; familyName: string }
+      Constructor: { name: string }
+      Time?: { time: string }
+      status: string
+      FastestLap?: { rank: string }
+    }[]
+  }[] = json?.MRData?.RaceTable?.Races ?? []
+
+  if (races.length === 0) return null
+
+  const race = races[0]
+  return {
+    raceName: race.raceName,
+    round: parseInt(race.round),
+    date: race.date,
+    circuit: race.Circuit.circuitName,
+    locality: race.Circuit.Location.locality,
+    country: race.Circuit.Location.country,
+    results: race.Results.map((r) => {
+      const pos = parseInt(r.position)
+      const grid = parseInt(r.grid) || pos
+      return {
+        pos,
+        grid,
+        code: r.Driver.code ?? '???',
+        firstName: r.Driver.givenName,
+        lastName: r.Driver.familyName,
+        team: r.Constructor.name,
+        time: r.Time?.time ?? '',
+        status: r.status,
+        fastestLap: r.FastestLap?.rank === '1',
+        posChange: grid - pos,
+      }
+    }),
+  }
+}
 
 export async function fetchLatestRaceResult(): Promise<F1RaceResult | null> {
   try {
-    const res = await fetch(LAST_RESULT_URL, { next: { revalidate: 3600 } })
-    if (!res.ok) throw new Error('Race result API error')
-
-    const json = await res.json()
-    const races: {
-      raceName: string
-      round: string
-      date: string
-      Circuit: { circuitName: string; Location: { locality: string; country: string } }
-      Results: {
-        position: string
-        grid: string
-        Driver: { code: string; givenName: string; familyName: string }
-        Constructor: { name: string }
-        Time?: { time: string }
-        status: string
-        FastestLap?: { rank: string }
-      }[]
-    }[] = json?.MRData?.RaceTable?.Races ?? []
-
-    if (races.length === 0) return null
-
-    const race = races[0]
-    return {
-      raceName: race.raceName,
-      round: parseInt(race.round),
-      date: race.date,
-      circuit: race.Circuit.circuitName,
-      locality: race.Circuit.Location.locality,
-      country: race.Circuit.Location.country,
-      results: race.Results.map((r) => {
-        const pos = parseInt(r.position)
-        const grid = parseInt(r.grid) || pos
-        return {
-          pos,
-          grid,
-          code: r.Driver.code ?? '???',
-          firstName: r.Driver.givenName,
-          lastName: r.Driver.familyName,
-          team: r.Constructor.name,
-          time: r.Time?.time ?? '',
-          status: r.status,
-          fastestLap: r.FastestLap?.rank === '1',
-          posChange: grid - pos,
-        }
-      }),
-    }
+    return await fetchLatestRaceResultFromOpenF1()
   } catch {
-    return null
+    return fetchLatestRaceResultFromErgast().catch(() => null)
+  }
+}
+
+export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
+  try {
+    return await fetchAllRaceResultsFromOpenF1()
+  } catch {
+    return []
   }
 }

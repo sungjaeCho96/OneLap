@@ -126,6 +126,10 @@ function getEventEndTs(r: Race & { sessions?: RaceSession[] }): number {
   if (r.sessions && r.sessions.length > 0) {
     const last = r.sessions[r.sessions.length - 1]
     const lastTs = new Date(last.dateStart).getTime()
+    if (last.dateEnd) {
+      const endTs = new Date(last.dateEnd).getTime()
+      if (endTs > lastTs) return endTs
+    }
     // 날짜만 있는 tbc 세션이면 그 날 자정 기준 +24h로 하루 전체 커버
     if (last.tbc || last.dateStart.length === 10) return lastTs + 24 * 3_600_000
     return lastTs + 4 * 3_600_000
