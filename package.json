@@ -15,6 +15,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
+  "pnpm": {
+    "allowBuild": ["sharp", "unrs-resolver"]
+  },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
