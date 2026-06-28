@@ -1,4 +1,5 @@
 import type { Race, RaceSession } from '@/types'
+import { loadStoredResults, saveResults } from '@/lib/raceResultStore'
 
 interface OpenF1Meeting {
   meeting_key: number
@@ -583,9 +584,26 @@ async function fetchLatestRaceResultFromErgast(): Promise<F1RaceResult | null> {
 
 export async function fetchLatestRaceResult(): Promise<F1RaceResult | null> {
   try {
-    return await fetchLatestRaceResultFromOpenF1()
+    const result = await fetchLatestRaceResultFromOpenF1()
+    if (result) {
+      // 최신 결과를 전체 저장소에 upsert
+      const { results: stored } = await loadStoredResults()
+      const updated = [
+        ...stored.filter((r) => r.round !== result.round),
+        result,
+      ].sort((a, b) => b.round - a.round)
+      await saveResults(updated)
+    }
+    return result
   } catch {
-    return fetchLatestRaceResultFromErgast().catch(() => null)
+    try {
+      const result = await fetchLatestRaceResultFromErgast()
+      return result
+    } catch {
+      // API 전부 실패 → 저장된 최신 레이스 반환
+      const { results: stored } = await loadStoredResults()
+      return stored[0] ?? null
+    }
   }
 }
 
@@ -647,9 +665,23 @@ async function fetchAllRaceResultsFromErgast(): Promise<F1RaceResult[]> {
 }
 
 export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
+  const { results: stored, isFresh } = await loadStoredResults()
+
+  // 저장된 데이터가 충분히 신선하면 API 호출 생략
+  if (isFresh && stored.length > 0) return stored
+
   try {
-    return await fetchAllRaceResultsFromOpenF1()
+    const fresh = await fetchAllRaceResultsFromOpenF1()
+    await saveResults(fresh)
+    return fresh
   } catch {
-    return fetchAllRaceResultsFromErgast().catch(() => [])
+    try {
+      const fresh = await fetchAllRaceResultsFromErgast()
+      await saveResults(fresh)
+      return fresh
+    } catch {
+      // API 전부 실패 → 저장된 데이터로 fallback
+      return stored
+    }
   }
 }
