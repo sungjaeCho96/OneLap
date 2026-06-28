@@ -8,7 +8,7 @@ const STORE_PATH =
   path.join(process.cwd(), 'data', 'f1-results-2026.json')
 
 // 저장소가 N분 이내에 업데이트됐으면 신선하다고 판단
-const FRESH_TTL_MS = 60 * 60 * 1000 // 1시간
+const FRESH_TTL_MS = 0 // 항상 재조회 (임시)
 
 interface RaceResultStore {
   updatedAt: string
