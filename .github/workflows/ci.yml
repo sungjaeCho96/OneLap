@@ -1,4 +1,4 @@
-name: CI
+name: CI / CD
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   ci:
+    name: Lint · Type Check · Build
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +34,27 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+  deploy:
+    name: Deploy to Oracle Cloud
+    needs: ci
+    runs-on: ubuntu-latest
+    # develop 브랜치 push 때만 배포 (PR은 제외)
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          passphrase: ${{ secrets.ORACLE_SSH_PASSPHRASE }}
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+            git pull origin develop
+            pnpm install --frozen-lockfile
+            pnpm build
+            pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap
+            pm2 save
