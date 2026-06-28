@@ -81,6 +81,77 @@ function getTip(circuitShortName: string, location: string): string {
 
 const MEETINGS_URL = 'https://api.openf1.org/v1/meetings?year=2026'
 const ALL_SESSIONS_URL = 'https://api.openf1.org/v1/sessions?year=2026'
+const ERGAST_RACES_URL = 'https://api.jolpi.ca/ergast/f1/2026/races/'
+
+interface ErgastSession {
+  date: string
+  time: string
+}
+
+interface ErgastRace {
+  round: string
+  raceName: string
+  Circuit: {
+    circuitName: string
+    Location: { locality: string; country: string }
+  }
+  date: string
+  time?: string
+  FirstPractice?: ErgastSession
+  SecondPractice?: ErgastSession
+  ThirdPractice?: ErgastSession
+  Qualifying?: ErgastSession
+  Sprint?: ErgastSession
+  SprintQualifying?: ErgastSession
+}
+
+function toIso(date: string, time?: string): string {
+  return time ? `${date}T${time}` : `${date}T00:00:00Z`
+}
+
+async function fetchF1RacesFromErgast(): Promise<F1RaceWithSessions[]> {
+  const res = await fetch(ERGAST_RACES_URL, { next: { revalidate: 3600 } })
+  if (!res.ok) throw new Error('Ergast API error')
+
+  const json = await res.json()
+  const races: ErgastRace[] = json?.MRData?.RaceTable?.Races ?? []
+
+  return races.map((race) => {
+    const sessions: RaceSession[] = []
+
+    const push = (name: string, s?: ErgastSession) => {
+      if (!s) return
+      sessions.push({ name, dateStart: toIso(s.date, s.time), dateEnd: toIso(s.date, s.time) })
+    }
+
+    push('FP1', race.FirstPractice)
+    push('FP2', race.SecondPractice)
+    push('스프린트 예선', race.SprintQualifying)
+    push('스프린트', race.Sprint)
+    push('FP3', race.ThirdPractice)
+    push('예선', race.Qualifying)
+    sessions.push({
+      name: '결승',
+      dateStart: toIso(race.date, race.time),
+      dateEnd: toIso(race.date, race.time),
+    })
+
+    const locality = race.Circuit.Location.locality
+
+    return {
+      sport: 'f1' as const,
+      round: parseInt(race.round),
+      name: race.raceName,
+      circuit: race.Circuit.circuitName,
+      loc: `${locality}, ${race.Circuit.Location.country}`,
+      date: toIso(race.date, race.time),
+      laps: 'F1 RACE',
+      extra: '퍼머넌트',
+      tip: getTip('', locality),
+      sessions,
+    }
+  })
+}
 
 export async function fetchF1Races(): Promise<F1RaceWithSessions[]> {
   try {
@@ -95,6 +166,9 @@ export async function fetchF1Races(): Promise<F1RaceWithSessions[]> {
       meetingsRes.json(),
       sessionsRes.json(),
     ])
+
+    // OpenF1가 에러 메시지 JSON을 200이 아닌 형태로 내려보내는 경우도 있어 배열 여부 확인
+    if (!Array.isArray(meetings) || !Array.isArray(allSessions)) throw new Error('OpenF1 API error')
 
     // Group all sessions by meeting_key
     const sessionsByMeeting = new Map<number, OpenF1Session[]>()
@@ -150,7 +224,7 @@ export async function fetchF1Races(): Promise<F1RaceWithSessions[]> {
       }
     })
   } catch {
-    return []
+    return fetchF1RacesFromErgast().catch(() => [])
   }
 }
 
