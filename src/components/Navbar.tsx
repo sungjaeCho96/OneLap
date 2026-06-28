@@ -80,7 +80,7 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
       <div className="border-t border-border">
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {SERIES.map((s) => {
+            {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
               const active = s.id === selectedSport
               return (
                 <button
