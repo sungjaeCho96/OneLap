@@ -217,7 +217,7 @@ function ResultRow({ d }: { d: F1DriverResult }) {
 
 function RaceDetail({ race }: { race: F1RaceResult }) {
   const podium = race.results.slice(0, 3)
-  const rest = race.results.slice(3, 10)
+  const rest = race.results.slice(3)
   const flDriver = race.results.find((r) => r.fastestLap)
 
   return (
@@ -256,16 +256,18 @@ function RaceDetail({ race }: { race: F1RaceResult }) {
         ))}
       </div>
 
-      {/* P4~P10 결과 테이블 */}
+      {/* P4+ 결과 테이블 */}
       <div style={{ background: '#fff', border: '1px solid #E0D9CB' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: TABLE_COLS, gap: 0, padding: '8px 16px', borderBottom: '1px solid #E0D9CB' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: TABLE_COLS, gap: 0, padding: '8px 16px', borderBottom: '1px solid #E0D9CB', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
           {['POS', 'GRD', '드라이버', '팀', '기록', '변동'].map((h) => (
             <span key={h} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A', letterSpacing: '0.08em' }}>{h}</span>
           ))}
         </div>
-        {rest.map((d) => (
-          <ResultRow key={d.code} d={d} />
-        ))}
+        <div style={{ maxHeight: 380, overflowY: 'auto' }}>
+          {rest.map((d) => (
+            <ResultRow key={d.code} d={d} />
+          ))}
+        </div>
       </div>
     </div>
   )
