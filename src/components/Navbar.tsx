@@ -35,7 +35,7 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
         {/* 데스크탑 앵커 링크 */}
         <nav className="hidden md:flex items-center gap-7 font-noto text-sm font-bold">
           <a href="#schedule" className="text-text hover:text-text-muted transition-colors">
-            경기 일정
+            경기 일정 | 테스트!!!
           </a>
           <a href="#series" className="text-text hover:text-text-muted transition-colors">
             시작하기
