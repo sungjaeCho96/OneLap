@@ -93,5 +93,7 @@ jobs:
           key: ${{ secrets.ORACLE_SSH_KEY }}
           passphrase: ${{ secrets.ORACLE_SSH_PASSPHRASE }}
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap --cwd ${{ secrets.DEPLOY_PATH }}
             pm2 save
