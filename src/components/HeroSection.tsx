@@ -118,9 +118,9 @@ export default function HeroSection({ races }: HeroSectionProps) {
   return (
     <section className="bg-bg-alt">
       <div className="mx-auto max-w-[1280px] px-6 py-14 pb-16">
-      <div className="flex flex-wrap gap-12 items-center">
+      <div className="flex flex-wrap gap-12 items-stretch md:flex-nowrap md:h-[560px]">
         {/* Left panel */}
-        <div className="flex-1 min-w-[300px]" style={{ flexBasis: '480px' }}>
+        <div className="flex-1 min-w-[300px] md:h-full md:overflow-hidden" style={{ flexBasis: '480px' }}>
 
           {/* Status badge row */}
           <div className="flex items-center gap-[10px] mb-6 flex-wrap">
@@ -164,7 +164,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
 
           {/* Race name */}
           <h1
-            className="font-archivo font-black uppercase leading-[0.93] tracking-[-0.03em] mb-4"
+            className="font-archivo font-black uppercase leading-[0.93] tracking-[-0.03em] mb-4 line-clamp-2"
             style={{ fontSize: 'clamp(42px, 6.4vw, 82px)' }}
           >
             {race.name}
@@ -244,9 +244,9 @@ export default function HeroSection({ races }: HeroSectionProps) {
         </div>
 
         {/* Right panel */}
-        <div className="flex flex-col min-w-[280px]" style={{ flex: '1 1 380px' }}>
+        <div className="flex flex-col min-w-[280px] md:h-full md:min-h-0" style={{ flex: '1 1 380px' }}>
           {/* Flip card — front: 타임테이블 / back: 그랑프리 상징 */}
-          <div className="relative flex-1" style={{ perspective: '1000px' }}>
+          <div className="relative flex-1 min-h-[360px] md:min-h-0" style={{ perspective: '1000px' }}>
             <div
               role="button"
               tabIndex={0}
@@ -259,22 +259,22 @@ export default function HeroSection({ races }: HeroSectionProps) {
                   setIsFlipped((f) => !f)
                 }
               }}
-              className={`relative w-full cursor-pointer ease-in-out${animate ? ' transition-transform duration-[600ms]' : ''}`}
+              className={`relative w-full h-full cursor-pointer ease-in-out${animate ? ' transition-transform duration-[600ms]' : ''}`}
               style={{
                 transformStyle: 'preserve-3d',
                 transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
               }}
             >
               {/* Front */}
-              <div className="relative" style={{ backfaceVisibility: 'hidden' }}>
+              <div className="relative h-full" style={{ backfaceVisibility: 'hidden' }}>
           {sessions.length > 0 ? (
-            <div className="relative flex-1 overflow-hidden bg-[#15120D] min-h-[360px]">
+            <div className="relative flex flex-col h-full overflow-hidden bg-[#15120D]">
               {/* top accent bar — series color */}
               <div className="h-[3px] w-full" style={{ background: race.color }} />
 
               {/* Header — pit wall monitor */}
               <div
-                className="flex items-center justify-between px-5 py-[15px] border-b border-white/10"
+                className="flex-none flex items-center justify-between px-5 py-[15px] border-b border-white/10"
                 style={{ background: `linear-gradient(90deg, ${race.color}26, transparent 70%)` }}
               >
                 <div>
@@ -294,7 +294,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
               </div>
 
               {/* Session rows */}
-              <div>
+              <div className="flex-1 overflow-y-auto">
                 {sessions.map((session, i) => {
                   const status = sessionStatus(session)
                   const isNext = i === nextIdx
@@ -391,7 +391,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
             </div>
           ) : (
             <div
-              className="relative flex-1 min-h-[360px] border border-[#DAD2C2] flex items-end overflow-hidden"
+              className="relative h-full border border-[#DAD2C2] flex items-end overflow-hidden"
               style={{
                 background:
                   'repeating-linear-gradient(48deg,#E4DFD3 0,#E4DFD3 11px,#ECE7DC 11px,#ECE7DC 22px)',
@@ -503,7 +503,7 @@ export default function HeroSection({ races }: HeroSectionProps) {
             >
               💡 TIP
             </div>
-            <p className="text-[13px] leading-[1.55] text-white/70">{race.tip}</p>
+            <p className="text-[13px] leading-[1.55] text-white/70 line-clamp-2">{race.tip}</p>
           </div>
         </div>
       </div>
