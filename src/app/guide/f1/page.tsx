@@ -522,6 +522,44 @@ export default async function F1GuidePage() {
         </section>
       )}
 
+      {/* 트랙 속도 비교 CTA */}
+      <section style={{ borderTop: '1px solid #E0D9CB', padding: '64px 0' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ background: '#15120D', borderRadius: 4, padding: '36px 32px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+            <div>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: RED, marginBottom: 10 }}>
+                데이터 도구
+              </div>
+              <h2 style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 900, fontSize: 'clamp(20px,2.8vw,28px)', lineHeight: 1.1, letterSpacing: '-0.01em', color: '#F5F0E8', marginBottom: 10 }}>
+                트랙 속도 비교
+              </h2>
+              <p style={{ fontSize: 14, color: '#857A6A', maxWidth: '52ch', lineHeight: 1.6 }}>
+                퀄리파잉 패스티스트 랩 — 두 드라이버의 속도를 SVG 트랙 위에 색상으로 표현합니다. 코너를 클릭해 구간별 속도·기어·스로틀을 비교해보세요.
+              </p>
+            </div>
+            <Link
+              href="/#track-speed"
+              style={{
+                display: 'inline-block',
+                fontFamily: "'Space Mono', monospace",
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                color: '#fff',
+                background: RED,
+                padding: '13px 28px',
+                borderRadius: 2,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              메인에서 비교하기 →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER CTA */}
       <section style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 24px', textAlign: 'center' }}>
         <div style={{ fontSize: 32, marginBottom: 16 }}>🏎️</div>
