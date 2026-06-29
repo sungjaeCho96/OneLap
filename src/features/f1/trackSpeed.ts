@@ -118,9 +118,13 @@ function openF1Url(endpoint: string, params: Record<string, string>): string {
   const base = `https://api.openf1.org/v1/${endpoint}`
   const qs = Object.entries(params)
     .map(([k, v]) => {
-      // date>= / date<= 같은 비교 연산자 키: 값이 연산자 바로 뒤에 붙어야 하고(= 없음),
-      // 날짜값의 콜론/플러스를 인코딩하면 OpenF1이 404 반환 → UTC 변환 후 그대로 사용
-      if (/[<>]/.test(k)) return `${k}${new Date(v).toISOString()}`
+      // date>= / date<= 비교 연산자: > < 를 %3E %3C 로 미리 인코딩.
+      // Node.js fetch는 %를 재인코딩하지 않으므로 버전 무관하게 OpenF1이 올바르게 수신.
+      // 날짜 값의 콜론/점은 쿼리스트링에서 안전하므로 그대로 사용.
+      if (/[<>]/.test(k)) {
+        const safeKey = k.replace(/>/g, '%3E').replace(/</g, '%3C')
+        return `${safeKey}${new Date(v).toISOString()}`
+      }
       return `${k}=${encodeURIComponent(v)}`
     })
     .join('&')
@@ -312,10 +316,9 @@ export async function buildTrackSpeedData(
   sessionKey: number,
   driverNumbers: [number, number],
 ): Promise<TrackSpeedData> {
-  const [traceA, traceB] = await Promise.all([
-    buildOneDriverTrace(sessionKey, driverNumbers[0]),
-    buildOneDriverTrace(sessionKey, driverNumbers[1]),
-  ])
+  // 드라이버별 순차 실행 — 동시 실행 시 OpenF1 rate limit(429) 유발
+  const traceA = await buildOneDriverTrace(sessionKey, driverNumbers[0])
+  const traceB = await buildOneDriverTrace(sessionKey, driverNumbers[1])
 
   const { aPts, bPts, bounds } = normalizeTraces(traceA.raw, traceB.raw)
 

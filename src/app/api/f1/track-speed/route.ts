@@ -1,8 +1,6 @@
 import { buildTrackSpeedData } from '@/features/f1/trackSpeed'
 import type { TrackSpeedResponse } from '@/features/f1/trackSpeed'
 
-export const revalidate = 86400
-
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url)
 
