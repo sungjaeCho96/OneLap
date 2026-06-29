@@ -394,7 +394,12 @@ function buildDriverResults(
 
 // ─── 단일 레이스 (최신) ───────────────────────────────────────────────────────
 
-async function fetchCompletedRaceSessions(): Promise<{
+// noCache=true 이면 Next.js Data Cache를 우회해 OpenF1 서버에 직접 요청
+function fetchOpts(ttl: number, noCache: boolean): RequestInit {
+  return noCache ? { cache: 'no-store' } : { next: { revalidate: ttl } }
+}
+
+async function fetchCompletedRaceSessions(noCache = false): Promise<{
   sessions: OpenF1RaceSession[]
   qualiKeyMap: Map<number, number>
   meetingMap: Map<number, OpenF1MeetingEntry>
@@ -402,9 +407,9 @@ async function fetchCompletedRaceSessions(): Promise<{
   const now = Date.now()
 
   const [raceRes, qualiRes, meetingsRes] = await Promise.all([
-    fetch('https://api.openf1.org/v1/sessions?session_name=Race&year=2026', { next: { revalidate: 300 } }),
-    fetch('https://api.openf1.org/v1/sessions?session_name=Qualifying&year=2026', { next: { revalidate: 3600 } }),
-    fetch('https://api.openf1.org/v1/meetings?year=2026', { next: { revalidate: 3600 } }),
+    fetch('https://api.openf1.org/v1/sessions?session_name=Race&year=2026', fetchOpts(300, noCache)),
+    fetch('https://api.openf1.org/v1/sessions?session_name=Qualifying&year=2026', fetchOpts(3600, noCache)),
+    fetch('https://api.openf1.org/v1/meetings?year=2026', fetchOpts(3600, noCache)),
   ])
 
   if (!raceRes.ok || !qualiRes.ok || !meetingsRes.ok) throw new Error('OpenF1 metadata error')
@@ -438,14 +443,14 @@ async function fetchOneRaceResult(
   qualiKey: number | undefined,
   meeting: OpenF1MeetingEntry | undefined,
   isLatest = false,
+  noCache = false,
 ): Promise<F1RaceResult> {
-  // 과거 경기 결과는 바뀌지 않으므로 1일 캐시, 최신 경기만 1시간
   const resultTtl = isLatest ? 3600 : 86400
   const fetches: Promise<Response>[] = [
-    fetch(`https://api.openf1.org/v1/session_result?session_key=${session.session_key}`, { next: { revalidate: resultTtl } }),
-    fetch(`https://api.openf1.org/v1/drivers?session_key=${session.session_key}`, { next: { revalidate: 86400 } }),
+    fetch(`https://api.openf1.org/v1/session_result?session_key=${session.session_key}`, fetchOpts(resultTtl, noCache)),
+    fetch(`https://api.openf1.org/v1/drivers?session_key=${session.session_key}`, fetchOpts(86400, noCache)),
     ...(qualiKey
-      ? [fetch(`https://api.openf1.org/v1/session_result?session_key=${qualiKey}`, { next: { revalidate: 86400 } })]
+      ? [fetch(`https://api.openf1.org/v1/session_result?session_key=${qualiKey}`, fetchOpts(86400, noCache))]
       : []),
   ]
 
@@ -497,8 +502,8 @@ async function fetchLatestRaceResultFromOpenF1(): Promise<F1RaceResult | null> {
 
 // ─── 시즌 전체 레이스 결과 ────────────────────────────────────────────────────
 
-async function fetchAllRaceResultsFromOpenF1(): Promise<F1RaceResult[]> {
-  const { sessions, qualiKeyMap, meetingMap } = await fetchCompletedRaceSessions()
+async function fetchAllRaceResultsFromOpenF1(noCache = false): Promise<F1RaceResult[]> {
+  const { sessions, qualiKeyMap, meetingMap } = await fetchCompletedRaceSessions(noCache)
   if (sessions.length === 0) return []
 
   const latestIdx = sessions.length - 1
@@ -518,6 +523,7 @@ async function fetchAllRaceResultsFromOpenF1(): Promise<F1RaceResult[]> {
           qualiKeyMap.get(session.meeting_key),
           meetingMap.get(session.meeting_key),
           idx === latestIdx,
+          noCache,
         ).catch(() => null)
       }),
     )
@@ -690,10 +696,10 @@ export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
   }
 }
 
-// 크론/외부에서 강제 갱신 시 호출 (TTL 체크 없이 즉시 fetch)
+// 크론/외부에서 강제 갱신 시 호출 (TTL 체크 없이, Next.js 캐시 우회해 직접 조회)
 export async function refreshAllRaceResults(ttlMs?: number): Promise<F1RaceResult[]> {
   try {
-    const fresh = await fetchAllRaceResultsFromOpenF1()
+    const fresh = await fetchAllRaceResultsFromOpenF1(true)
     await saveResults(fresh, ttlMs)
     return fresh
   } catch {
