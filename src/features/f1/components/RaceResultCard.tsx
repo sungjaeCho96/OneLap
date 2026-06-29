@@ -229,48 +229,37 @@ function RaceDetail({ race }: { race: F1RaceResult }) {
 
   return (
     <div>
-      {/* 상세 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: RED, marginBottom: 10 }}>
-            Round {race.round}
-          </div>
-          <h3 style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 900, fontSize: 'clamp(24px, 3vw, 40px)', lineHeight: 0.95, letterSpacing: '-0.03em', textTransform: 'uppercase' }}>
-            {race.raceName}
-          </h3>
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: '#857A6A', marginTop: 10 }}>
-            {race.locality}, {race.country} · {formatDate(race.date)}
+      {/* Fastest Lap 배지 */}
+      {flDriver && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '10px 16px', marginBottom: 16, width: 'fit-content' }}>
+          <span style={{ fontSize: 16 }}>⚡</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A', letterSpacing: '0.1em' }}>FASTEST LAP</span>
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, fontWeight: 700 }}>
+              {flDriver.code}
+              <span style={{ fontWeight: 400, color: '#857A6A', marginLeft: 6 }}>{flDriver.team}</span>
+            </span>
           </div>
         </div>
-        {flDriver && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff', border: '1px solid #E0D9CB', borderRadius: 4, padding: '10px 16px', flexShrink: 0 }}>
-            <span style={{ fontSize: 16 }}>⚡</span>
-            <div>
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A', letterSpacing: '0.1em', marginBottom: 3 }}>FASTEST LAP</div>
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, fontWeight: 700 }}>
-                {flDriver.code}
-                <span style={{ fontWeight: 400, color: '#857A6A', marginLeft: 6 }}>{flDriver.team}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
 
-      {/* 포디움 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 2 }}>
-        {podium.map((d, i) => (
-          <PodiumCard key={d.code} d={d} index={i} />
-        ))}
+      {/* 포디움 — 우측 패널 스크롤 시 상단 고정 */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 2, background: BG, paddingBottom: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+          {podium.map((d, i) => (
+            <PodiumCard key={d.code} d={d} index={i} />
+          ))}
+        </div>
       </div>
 
       {/* P4+ 결과 테이블 */}
       <div style={{ background: '#fff', border: '1px solid #E0D9CB' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: TABLE_COLS, gap: 0, padding: '8px 16px', borderBottom: '1px solid #E0D9CB', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: TABLE_COLS, gap: 0, padding: '8px 16px', borderBottom: '1px solid #E0D9CB', background: '#fff' }}>
           {['POS', 'GRD', '드라이버', '팀', '기록', '변동'].map((h) => (
             <span key={h} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A', letterSpacing: '0.08em' }}>{h}</span>
           ))}
         </div>
-        <div style={{ maxHeight: 380, overflowY: 'auto' }}>
+        <div>
           {rest.map((d) => (
             <ResultRow key={d.code} d={d} />
           ))}
@@ -302,9 +291,17 @@ export default function RaceResultCard({ results }: Props) {
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: RED, marginBottom: 10 }}>
             {new Date(results[0].date).getFullYear()} Season · Race Results
           </div>
-          <h2 style={{ fontFamily: "'Archivo', sans-serif", fontWeight: 900, fontSize: 'clamp(28px, 4vw, 48px)', lineHeight: 0.95, letterSpacing: '-0.03em', textTransform: 'uppercase' }}>
+          <h2 className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em]"
+            style={{ fontSize: 'clamp(20px, 2.6vw, 30px)', color: DARK, marginBottom: 10 }}>
             레이스 결과
           </h2>
+          <h2 className="font-archivo font-black uppercase leading-[0.95] tracking-[-0.03em]"
+            style={{ fontSize: 'clamp(34px, 5vw, 60px)' }}>
+            {selected.raceName}
+          </h2>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: '#857A6A', marginTop: 12 }}>
+            ROUND {selected.round} · {selected.locality}, {selected.country} · {formatDate(selected.date)}
+          </div>
         </div>
 
         {/* 목록 + 상세 레이아웃 */}
@@ -318,12 +315,15 @@ export default function RaceResultCard({ results }: Props) {
           className="f1-results-grid"
         >
           {/* 좌측: 시즌 레이스 목록 */}
-          <div style={{
-            background: '#fff',
-            border: '1px solid #E0D9CB',
-            maxHeight: 720,
-            overflowY: 'auto',
-          }}>
+          <div
+            className="f1-results-list"
+            style={{
+              background: '#fff',
+              border: '1px solid #E0D9CB',
+              height: 640,
+              overflowY: 'auto',
+            }}
+          >
             <div style={{
               fontFamily: "'Space Mono', monospace",
               fontSize: 10,
@@ -349,7 +349,12 @@ export default function RaceResultCard({ results }: Props) {
           </div>
 
           {/* 우측: 선택된 레이스 상세 */}
-          <RaceDetail race={selected} />
+          <div
+            className="f1-results-detail"
+            style={{ height: 640, overflowY: 'auto' }}
+          >
+            <RaceDetail race={selected} />
+          </div>
         </div>
       </div>
 
@@ -358,8 +363,12 @@ export default function RaceResultCard({ results }: Props) {
           .f1-results-grid {
             grid-template-columns: 1fr !important;
           }
-          .f1-results-grid > div:first-child {
-            max-height: 320px !important;
+          .f1-results-list {
+            height: 320px !important;
+          }
+          .f1-results-detail {
+            height: auto !important;
+            overflow: visible !important;
           }
         }
       `}</style>
