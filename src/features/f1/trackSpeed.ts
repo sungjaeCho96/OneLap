@@ -112,6 +112,20 @@ interface DriverRawTrace {
   lapDuration: number
 }
 
+// ─── Fetch with retry ────────────────────────────────────────────────────────
+
+const OF1_FETCH_OPTS = { next: { revalidate: 86400 } } as const
+
+async function fetchOF1(url: string, attempt = 0): Promise<Response> {
+  const res = await fetch(url, OF1_FETCH_OPTS)
+  // 429 Rate Limit: 1회 재시도 (1s 대기)
+  if (res.status === 429 && attempt < 1) {
+    await new Promise((r) => setTimeout(r, 1000))
+    return fetchOF1(url, attempt + 1)
+  }
+  return res
+}
+
 // ─── URL builder ─────────────────────────────────────────────────────────────
 
 function openF1Url(endpoint: string, params: Record<string, string>): string {
@@ -233,12 +247,11 @@ async function buildOneDriverTrace(
   sessionKey: number,
   driverNumber: number,
 ): Promise<DriverRawTrace> {
-  const lapsRes = await fetch(
+  const lapsRes = await fetchOF1(
     openF1Url('laps', {
       session_key: String(sessionKey),
       driver_number: String(driverNumber),
     }),
-    { next: { revalidate: 86400 } },
   )
   if (!lapsRes.ok) throw new Error('Failed to fetch laps')
 
@@ -259,34 +272,26 @@ async function buildOneDriverTrace(
   const end = new Date(endMs).toISOString()
 
   const [locRes, carRes, driverRes] = await Promise.all([
-    fetch(
-      openF1Url('location', {
-        session_key: String(sessionKey),
-        driver_number: String(driverNumber),
-        'date>=': start,
-        'date<=': end,
-      }),
-      { next: { revalidate: 86400 } },
-    ),
-    fetch(
-      openF1Url('car_data', {
-        session_key: String(sessionKey),
-        driver_number: String(driverNumber),
-        'date>=': start,
-        'date<=': end,
-      }),
-      { next: { revalidate: 86400 } },
-    ),
-    fetch(
-      openF1Url('drivers', {
-        session_key: String(sessionKey),
-        driver_number: String(driverNumber),
-      }),
-      { next: { revalidate: 86400 } },
-    ),
+    fetchOF1(openF1Url('location', {
+      session_key: String(sessionKey),
+      driver_number: String(driverNumber),
+      'date>=': start,
+      'date<=': end,
+    })),
+    fetchOF1(openF1Url('car_data', {
+      session_key: String(sessionKey),
+      driver_number: String(driverNumber),
+      'date>=': start,
+      'date<=': end,
+    })),
+    fetchOF1(openF1Url('drivers', {
+      session_key: String(sessionKey),
+      driver_number: String(driverNumber),
+    })),
   ])
 
   if (!locRes.ok || !carRes.ok || !driverRes.ok) {
+    console.error('[track-speed] fetch failed', { loc: locRes.status, car: carRes.status, driver: driverRes.status })
     throw new Error('Failed to fetch trace data')
   }
 
@@ -322,9 +327,8 @@ export async function buildTrackSpeedData(
 
   const { aPts, bPts, bounds } = normalizeTraces(traceA.raw, traceB.raw)
 
-  const sessionRes = await fetch(
+  const sessionRes = await fetchOF1(
     openF1Url('sessions', { session_key: String(sessionKey) }),
-    { next: { revalidate: 86400 } },
   )
   const sessionMetas: OpenF1SessionMeta[] = sessionRes.ok ? await sessionRes.json() : []
   const meta = Array.isArray(sessionMetas) ? sessionMetas[0] : null
