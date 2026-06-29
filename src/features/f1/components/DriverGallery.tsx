@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { F1_TEAMS, type F1Driver, type F1Team } from '@/lib/sports/f1Data'
 
@@ -38,12 +39,14 @@ interface DriverModalProps {
 
 function DriverModal({ driver, onClose, onPrev, onNext, isMobile }: DriverModalProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [photoError, setPhotoError] = useState(false)
 
-  // 드라이버 바뀔 때 스크롤 리셋
+  // 드라이버 바뀔 때 스크롤 리셋 + 사진 에러 초기화
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = 0
     }
+    setPhotoError(false)
   }, [driver.nameEn])
 
   const stopProp = (e: React.MouseEvent) => e.stopPropagation()
@@ -95,21 +98,16 @@ function DriverModal({ driver, onClose, onPrev, onNext, isMobile }: DriverModalP
       <div style={modalStyle} onClick={stopProp}>
         {/* 사진 영역 */}
         <div style={photoAreaStyle}>
-          <img
-            src={driver.image}
-            alt={driver.nameKr}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'top center',
-              display: 'block',
-            }}
-            onError={(e) => {
-              const t = e.currentTarget
-              t.style.display = 'none'
-            }}
-          />
+          {!photoError && (
+            <Image
+              src={driver.image}
+              alt={driver.nameKr}
+              fill
+              sizes="(max-width: 640px) 92vw, 41vw"
+              style={{ objectFit: 'cover', objectPosition: 'top center' }}
+              onError={() => setPhotoError(true)}
+            />
+          )}
           {/* 번호 뱃지 — 우하단 */}
           <div style={{
             position: 'absolute',
@@ -370,17 +368,13 @@ function DriverCard({ driver, teamColor, onClick }: DriverCardProps) {
       }}
     >
       {!imgError && (
-        <img
+        <Image
           src={driver.image}
           alt={driver.nameKr}
+          fill
+          sizes="(max-width: 640px) 50vw, 25vw"
+          style={{ objectFit: 'cover', objectPosition: 'top center' }}
           onError={() => setImgError(true)}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'top center',
-            display: 'block',
-          }}
         />
       )}
       {imgError && (
@@ -490,16 +484,13 @@ function TeamLogo({ team }: TeamLogoProps) {
   }
 
   return (
-    <img
+    <Image
       src={team.logo}
       alt={team.nameShort}
+      width={28}
+      height={28}
       onError={() => setImgError(true)}
-      style={{
-        width: 28,
-        height: 28,
-        objectFit: 'contain',
-        flexShrink: 0,
-      }}
+      style={{ objectFit: 'contain', flexShrink: 0 }}
     />
   )
 }

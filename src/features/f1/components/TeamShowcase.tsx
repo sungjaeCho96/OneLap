@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { F1_TEAMS } from '@/lib/sports/f1Data'
 
@@ -70,12 +71,13 @@ export default function TeamShowcase() {
                       {team.nameShort}
                     </div>
                   ) : (
-                    <img
+                    <Image
                       src={team.logo}
                       alt={team.nameKr}
-                      loading="lazy"
+                      width={36}
+                      height={36}
                       onError={() => setImgError((prev) => ({ ...prev, [team.id]: true }))}
-                      style={{ width: 36, height: 36, objectFit: 'contain' }}
+                      style={{ objectFit: 'contain' }}
                     />
                   )}
                 </div>

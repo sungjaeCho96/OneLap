@@ -76,7 +76,8 @@ export default async function F1GuidePage() {
 
       {/* HERO */}
       <section style={{ background: RED, padding: '60px 24px 56px', overflow: 'hidden', position: 'relative', minHeight: 420 }}>
-        {/* 베르스타펜 이미지 */}
+        {/* 베르스타펜 이미지 — 복잡한 CSS(height:115%, mask)로 fill 미적용 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/f1/Max-Verstappen-Hero-Section.webp"
           alt=""
