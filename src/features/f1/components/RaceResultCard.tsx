@@ -25,6 +25,13 @@ function teamColor(team: string): string {
   return TEAM_COLORS[team] ?? '#857A6A'
 }
 
+function formatStatus(status: string): string {
+  if (status === 'Retired') return 'DNF'
+  if (status === 'Did not start') return 'DNS'
+  if (status === 'Disqualified') return 'DSQ'
+  return status
+}
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
@@ -170,7 +177,7 @@ function PodiumCard({ d, index }: { d: F1DriverResult; index: number }) {
         <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: isWinner ? '#9A9081' : '#857A6A' }}>{d.team}</span>
       </div>
       <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, fontWeight: 700, marginTop: 14, color: isWinner ? BG : DARK }}>
-        {index === 0 ? d.time : d.time ? `+${d.time}` : d.status}
+        {index === 0 ? d.time : d.time ? `+${d.time}` : formatStatus(d.status)}
       </div>
       <div style={{ marginTop: 8 }}>
         <PosChangeBadge change={d.posChange} />
@@ -208,7 +215,7 @@ function ResultRow({ d }: { d: F1DriverResult }) {
         <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#4A4338', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.team}</span>
       </div>
       <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#4A4338' }}>
-        {d.time ? `+${d.time}` : d.status}
+        {d.time ? `+${d.time}` : formatStatus(d.status)}
       </span>
       <PosChangeBadge change={d.posChange} />
     </div>
