@@ -6,8 +6,8 @@ const STORE_PATH =
   process.env.RACE_RESULTS_STORE_PATH ??
   path.join(process.cwd(), 'data', 'f1-results-2026.json')
 
-export const DEFAULT_TTL_MS = 12 * 60 * 60 * 1000  // 12시간
-export const RACE_DAY_TTL_MS = 30 * 60 * 1000     // 30분 (레이스 당일)
+export const DEFAULT_TTL_MS = 0  // 임시: 매 요청마다 재조회
+export const RACE_DAY_TTL_MS = 15 * 60 * 1000     // 15분 (레이스 당일)
 
 interface RaceResultStore {
   updatedAt: string
