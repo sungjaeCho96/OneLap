@@ -1,4 +1,4 @@
-name: CI / CD
+name: CI
 
 on:
   push:
@@ -34,61 +34,3 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-  deploy:
-    name: Deploy to Oracle Cloud
-    needs: ci
-    runs-on: ubuntu-latest
-    # develop 브랜치 push 때만 배포 (PR은 제외)
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm build
-
-      - name: Upload SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Sync build artifacts to server
-        run: |
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            .next/ \
-            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/.next/
-          rsync -az \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            public/ package.json pnpm-lock.yaml \
-            ${{ secrets.ORACLE_USER }}@${{ secrets.ORACLE_HOST }}:${{ secrets.DEPLOY_PATH }}/
-
-      - name: Install prod dependencies & restart PM2
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.ORACLE_HOST }}
-          username: ${{ secrets.ORACLE_USER }}
-          key: ${{ secrets.ORACLE_SSH_KEY }}
-          passphrase: ${{ secrets.ORACLE_SSH_PASSPHRASE }}
-          script: |
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ${{ secrets.DEPLOY_PATH }}
-            pnpm install --prod --frozen-lockfile
-            pm2 reload onelap --update-env || pm2 start "pnpm start" --name onelap --cwd ${{ secrets.DEPLOY_PATH }}
-            pm2 save
