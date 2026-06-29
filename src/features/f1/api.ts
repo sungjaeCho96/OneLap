@@ -1,5 +1,6 @@
 import type { Race, RaceSession } from '@/types'
 import { loadStoredResults, saveResults } from '@/lib/raceResultStore'
+import staticResultsData from '@/data/f1-results-2026.json'
 
 interface OpenF1Meeting {
   meeting_key: number
@@ -680,8 +681,25 @@ export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
       await saveResults(fresh)
       return fresh
     } catch {
-      // API 전부 실패 → 저장된 데이터로 fallback
-      return stored
+      // API 전부 실패 → 저장된 데이터 → 정적 스냅샷 순으로 fallback
+      return stored.length > 0 ? stored : (staticResultsData as F1RaceResult[])
+    }
+  }
+}
+
+// 크론/외부에서 강제 갱신 시 호출 (TTL 체크 없이 즉시 fetch)
+export async function refreshAllRaceResults(ttlMs?: number): Promise<F1RaceResult[]> {
+  try {
+    const fresh = await fetchAllRaceResultsFromOpenF1()
+    await saveResults(fresh, ttlMs)
+    return fresh
+  } catch {
+    try {
+      const fresh = await fetchAllRaceResultsFromErgast()
+      await saveResults(fresh, ttlMs)
+      return fresh
+    } catch {
+      return []
     }
   }
 }
