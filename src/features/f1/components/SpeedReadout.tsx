@@ -284,18 +284,20 @@ function DataRow({ label, aVal, bVal, delta, unit, aColour, bColour, aCode, bCod
       >
         {label}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: aColour }}>
-          {aCode} {aVal}
-        </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: aColour }}>{aCode}</span>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: aColour, whiteSpace: 'nowrap' }}>{aVal}</span>
+        </div>
         {ahead && absDelta > 0 && (
-          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A' }}>
-            {ahead} +{absDelta.toFixed(unit === 'km/h' ? 0 : 0)}{unit}
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#857A6A', alignSelf: 'center', whiteSpace: 'nowrap' }}>
+            {ahead} +{absDelta.toFixed(0)}{unit}
           </span>
         )}
-        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: bColour }}>
-          {bCode} {bVal}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-end' }}>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: bColour }}>{bCode}</span>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: bColour, whiteSpace: 'nowrap' }}>{bVal}</span>
+        </div>
       </div>
     </div>
   )
