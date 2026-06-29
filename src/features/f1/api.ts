@@ -673,11 +673,14 @@ export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
 
   try {
     const fresh = await fetchAllRaceResultsFromOpenF1()
+    // 빈 배열은 성공으로 처리하지 않음 → Ergast로 fallback
+    if (fresh.length === 0) throw new Error('OpenF1 returned empty results')
     await saveResults(fresh)
     return fresh
   } catch {
     try {
       const fresh = await fetchAllRaceResultsFromErgast()
+      if (fresh.length === 0) throw new Error('Ergast returned empty results')
       await saveResults(fresh)
       return fresh
     } catch {
