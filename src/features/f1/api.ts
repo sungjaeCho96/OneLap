@@ -1,5 +1,5 @@
 import type { Race, RaceSession } from '@/types'
-import { loadStoredResults, saveResults } from '@/lib/raceResultStore'
+import { loadStoredResults, upsertResults } from '@/lib/raceResultStore'
 import staticResultsData from '@/data/f1-results-2026.json'
 
 interface OpenF1Meeting {
@@ -592,22 +592,12 @@ async function fetchLatestRaceResultFromErgast(): Promise<F1RaceResult | null> {
 export async function fetchLatestRaceResult(): Promise<F1RaceResult | null> {
   try {
     const result = await fetchLatestRaceResultFromOpenF1()
-    if (result) {
-      // 최신 결과를 전체 저장소에 upsert
-      const { results: stored } = await loadStoredResults()
-      const updated = [
-        ...stored.filter((r) => r.round !== result.round),
-        result,
-      ].sort((a, b) => b.round - a.round)
-      await saveResults(updated)
-    }
+    if (result) await upsertResults([result])
     return result
   } catch {
     try {
-      const result = await fetchLatestRaceResultFromErgast()
-      return result
+      return await fetchLatestRaceResultFromErgast()
     } catch {
-      // API 전부 실패 → 저장된 최신 레이스 반환
       const { results: stored } = await loadStoredResults()
       return stored[0] ?? null
     }
@@ -672,40 +662,39 @@ async function fetchAllRaceResultsFromErgast(): Promise<F1RaceResult[]> {
 }
 
 export async function fetchAllRaceResults(): Promise<F1RaceResult[]> {
-  const { results: stored, isFresh } = await loadStoredResults()
+  const { results: stored } = await loadStoredResults()
 
-  // 저장된 데이터가 충분히 신선하면 API 호출 생략
-  if (isFresh && stored.length > 0) return stored
+  // DB에 데이터가 있으면 즉시 반환 (크론이 백그라운드에서 최신 상태 유지)
+  if (stored.length > 0) return stored
 
+  // DB 비어있을 때만 API 직접 조회로 초기화
   try {
     const fresh = await fetchAllRaceResultsFromOpenF1()
-    // 빈 배열은 성공으로 처리하지 않음 → Ergast로 fallback
     if (fresh.length === 0) throw new Error('OpenF1 returned empty results')
-    await saveResults(fresh)
+    await upsertResults(fresh)
     return fresh
   } catch {
     try {
       const fresh = await fetchAllRaceResultsFromErgast()
       if (fresh.length === 0) throw new Error('Ergast returned empty results')
-      await saveResults(fresh)
+      await upsertResults(fresh)
       return fresh
     } catch {
-      // API 전부 실패 → 저장된 데이터 → 정적 스냅샷 순으로 fallback
-      return stored.length > 0 ? stored : (staticResultsData as F1RaceResult[])
+      return staticResultsData as F1RaceResult[]
     }
   }
 }
 
-// 크론/외부에서 강제 갱신 시 호출 (TTL 체크 없이, Next.js 캐시 우회해 직접 조회)
-export async function refreshAllRaceResults(ttlMs?: number): Promise<F1RaceResult[]> {
+// 크론에서 호출 — Next.js 캐시 우회, 기존 DB에 upsert (삭제 없음)
+export async function refreshAllRaceResults(checkTtlMs?: number): Promise<F1RaceResult[]> {
   try {
     const fresh = await fetchAllRaceResultsFromOpenF1(true)
-    await saveResults(fresh, ttlMs)
+    if (fresh.length > 0) await upsertResults(fresh, checkTtlMs)
     return fresh
   } catch {
     try {
       const fresh = await fetchAllRaceResultsFromErgast()
-      await saveResults(fresh, ttlMs)
+      if (fresh.length > 0) await upsertResults(fresh, checkTtlMs)
       return fresh
     } catch {
       return []
