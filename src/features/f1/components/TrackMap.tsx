@@ -80,18 +80,23 @@ export default function TrackMap({
         )
       })}
 
-      {/* Hover highlight circle */}
-      {hoveredIdx != null && (
-        <circle
-          cx={ref[hoveredIdx].x}
-          cy={ref[hoveredIdx].y}
-          r={14}
-          fill="none"
-          stroke="#fff"
-          strokeWidth={2}
-          style={{ pointerEvents: 'none' }}
-        />
-      )}
+      {/* Always-visible comparison markers */}
+      {ref.map((p, i) => {
+        if (i % 20 !== 0) return null
+        const isActive = i === hoveredIdx
+        return (
+          <circle
+            key={`marker-${p.d}`}
+            cx={p.x}
+            cy={p.y}
+            r={isActive ? 10 : 6}
+            fill="#15120D"
+            stroke={isActive ? '#fff' : 'rgba(255,255,255,0.85)'}
+            strokeWidth={isActive ? 2.5 : 2}
+            style={{ pointerEvents: 'none' }}
+          />
+        )
+      })}
 
       {/* Hit targets — every ~20th point to avoid overlap */}
       {ref
