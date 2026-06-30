@@ -275,10 +275,12 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
               레이스를 선택하면 피트 전략을 확인할 수 있습니다.
             </div>
           )}
-        </div>
 
-        {/* 범례 */}
-        <PitStrategyLegend />
+          {/* 범례 — 위젯 내부 다크 영역 */}
+          <div style={{ borderTop: `1px solid ${WIDGET_BORDER}`, padding: '0 20px 20px' }}>
+            <PitStrategyLegend />
+          </div>
+        </div>
       </div>
     </section>
   )

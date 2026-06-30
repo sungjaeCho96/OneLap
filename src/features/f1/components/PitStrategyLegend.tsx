@@ -1,10 +1,10 @@
 import { TYRE_COLORS, TYRE_LABELS } from '@/features/f1/pitStrategy'
 import type { TyreCompound } from '@/features/f1/pitStrategy'
 
-const CARD_BG = '#FFFFFF'
-const BORDER = '#E0D9CB'
-const TEXT = '#15120D'
-const MUTED = '#4A4338'
+const CARD_BG = '#1E1A13'
+const BORDER = '#2C271F'
+const TEXT = '#F5F0E8'
+const MUTED = '#857A6A'
 const RED = '#E10600'
 
 const DISPLAY_COMPOUNDS: TyreCompound[] = ['SOFT', 'MEDIUM', 'HARD', 'INTERMEDIATE', 'WET']
@@ -60,7 +60,7 @@ export default function PitStrategyLegend() {
                 borderRadius: '50%',
                 background: TYRE_COLORS[compound],
                 flexShrink: 0,
-                border: '1px solid #E0D9CB',
+                border: '1px solid rgba(255,255,255,0.2)',
               }}
             />
             <span
