@@ -1,6 +1,6 @@
 'use client'
 
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useRef } from 'react'
 import type { QualifyingSessionOption, DriverOption, TrackSpeedData } from '@/features/f1/trackSpeed'
 import { resolveDriverColors } from '@/features/f1/speedColor'
 import type { DriverColorPair } from '@/features/f1/speedColor'
@@ -91,6 +91,7 @@ interface TrackSpeedComparisonProps {
 
 export default function TrackSpeedComparison({ sessions }: TrackSpeedComparisonProps) {
   const [state, dispatch] = useReducer(reducer, { phase: 'idle' })
+  const readoutRef = useRef<HTMLDivElement>(null)
 
   const sessionKeyForDrivers = state.phase === 'driversLoading' ? state.sessionKey : null
   const sessionKeyForData = state.phase === 'loading' ? state.sessionKey : null
@@ -303,16 +304,20 @@ export default function TrackSpeedComparison({ sessions }: TrackSpeedComparisonP
                 <TrackMap
                   data={state.data}
                   driverColors={state.driverColors}
-                  hoveredD={state.cornerD}
-                  onHover={(d) => dispatch({ type: 'SET_CORNER', d })}
-                  onPick={(d) => dispatch({ type: 'SET_CORNER', d })}
+                  pinnedD={state.cornerD}
+                  onPick={(d) => {
+                    dispatch({ type: 'SET_CORNER', d })
+                    readoutRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+                  }}
                 />
               </div>
-              <SpeedReadout
-                data={state.data}
-                driverColors={state.driverColors}
-                cornerD={state.cornerD}
-              />
+              <div ref={readoutRef}>
+                <SpeedReadout
+                  data={state.data}
+                  driverColors={state.driverColors}
+                  cornerD={state.cornerD}
+                />
+              </div>
             </div>
           </div>
         )}

@@ -52,6 +52,13 @@ export type TrackSpeedResponse =
   | { success: true; data: TrackSpeedData }
   | { success: false; error: string }
 
+/** points 배열에서 d값이 가장 가까운 TrackPoint를 반환 */
+export function findClosestByD(points: TrackPoint[], d: number): TrackPoint {
+  return points.reduce((best, p) =>
+    Math.abs(p.d - d) < Math.abs(best.d - d) ? p : best,
+  )
+}
+
 // ─── OpenF1 internal types ────────────────────────────────────────────────────
 
 interface OpenF1Lap {
