@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: docker.io/postgres:16
+    container_name: onelap-postgres
+    environment:
+      POSTGRES_USER: onelap
+      POSTGRES_PASSWORD: onelap
+      POSTGRES_DB: onelap
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data:Z
+      - ./drizzle/0000_initial.sql:/docker-entrypoint-initdb.d/0000_initial.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onelap -d onelap"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  pgadmin:
+    image: docker.io/dpage/pgadmin4:latest
+    container_name: onelap-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-volume:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgadmin-volume:
