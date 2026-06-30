@@ -111,7 +111,13 @@ export default function SessionDriverPicker({
                 gap: 8,
               }}
             >
-              {drivers.map((d) => {
+              {[...drivers]
+                .sort((a, b) => {
+                  const teamCmp = a.teamName.localeCompare(b.teamName)
+                  if (teamCmp !== 0) return teamCmp
+                  return a.driverNumber - b.driverNumber
+                })
+                .map((d) => {
                 const isPicked = picked.includes(d.driverNumber)
                 const isDisabled = !isPicked && picked.length >= 2
                 return (
