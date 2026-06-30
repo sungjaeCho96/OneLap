@@ -1,13 +1,14 @@
 'use client'
 
 import type { TrackSpeedData } from '@/features/f1/trackSpeed'
-import { SPEED_STOPS } from '@/features/f1/speedColor'
+import { TIE_COLOR } from '@/features/f1/speedColor'
+import type { DriverColorPair } from '@/features/f1/speedColor'
 
 interface SpeedReadoutProps {
   data: TrackSpeedData
-  activeIdx: 0 | 1
+  driverColors: DriverColorPair
+  tieColor?: string
   cornerD: number | null
-  onToggleActive: (idx: 0 | 1) => void
 }
 
 function findClosestPoint(
@@ -31,18 +32,14 @@ function LapTime({ seconds }: { seconds: number }) {
 
 export default function SpeedReadout({
   data,
-  activeIdx,
+  driverColors,
+  tieColor = TIE_COLOR,
   cornerD,
-  onToggleActive,
 }: SpeedReadoutProps) {
   const [dA, dB] = data.drivers
+  const [colorA, colorB] = driverColors
   const ptA = cornerD != null ? findClosestPoint(dA.points, cornerD) : null
   const ptB = cornerD != null ? findClosestPoint(dB.points, cornerD) : null
-  const { speedMin, speedMax } = data.bounds
-
-  const gradientStops = SPEED_STOPS.map(
-    (s) => `${s.c} ${(s.t * 100).toFixed(0)}%`,
-  ).join(', ')
 
   return (
     <div
@@ -56,43 +53,7 @@ export default function SpeedReadout({
         gap: 20,
       }}
     >
-      {/* Speed legend */}
-      <div>
-        <div
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: 10,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: '#857A6A',
-            marginBottom: 8,
-          }}
-        >
-          속도 범례
-        </div>
-        <div
-          style={{
-            height: 10,
-            borderRadius: 2,
-            background: `linear-gradient(to right, ${gradientStops})`,
-            marginBottom: 6,
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontFamily: "'Space Mono', monospace",
-            fontSize: 10,
-            color: '#857A6A',
-          }}
-        >
-          <span>{speedMin} km/h</span>
-          <span>{speedMax} km/h</span>
-        </div>
-      </div>
-
-      {/* Driver toggle */}
+      {/* Driver legend — 3 chips */}
       <div>
         <div
           style={{
@@ -104,50 +65,12 @@ export default function SpeedReadout({
             marginBottom: 10,
           }}
         >
-          표시 드라이버 선택
+          드라이버 범례
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {([dA, dB] as const).map((d, i) => {
-            const idx = i as 0 | 1
-            const isActive = activeIdx === idx
-            return (
-              <button
-                key={d.driverNumber}
-                onClick={() => onToggleActive(idx)}
-                style={{
-                  flex: 1,
-                  padding: '10px 12px',
-                  borderRadius: 2,
-                  border: `2px solid ${isActive ? d.teamColour : '#2C271F'}`,
-                  background: isActive ? `${d.teamColour}22` : 'transparent',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    color: isActive ? d.teamColour : '#857A6A',
-                    marginBottom: 2,
-                  }}
-                >
-                  {d.code}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 10,
-                    color: '#857A6A',
-                  }}
-                >
-                  LAP {d.lapNumber} · <LapTime seconds={d.lapDuration} />
-                </div>
-              </button>
-            )
-          })}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <LegendChip color={colorA} label={dA.code} />
+          <LegendChip color={colorB} label={dB.code} />
+          <LegendChip color={tieColor} label="동률" />
         </div>
       </div>
 
@@ -187,8 +110,8 @@ export default function SpeedReadout({
               bVal={`${ptB.speed} km/h`}
               delta={ptA.speed - ptB.speed}
               unit="km/h"
-              aColour={dA.teamColour}
-              bColour={dB.teamColour}
+              aColour={colorA}
+              bColour={colorB}
               aCode={dA.code}
               bCode={dB.code}
             />
@@ -199,8 +122,8 @@ export default function SpeedReadout({
               bVal={`${ptB.gear}`}
               delta={ptA.gear - ptB.gear}
               unit=""
-              aColour={dA.teamColour}
-              bColour={dB.teamColour}
+              aColour={colorA}
+              bColour={colorB}
               aCode={dA.code}
               bCode={dB.code}
             />
@@ -211,8 +134,8 @@ export default function SpeedReadout({
               bVal={`${ptB.throttle}%`}
               delta={ptA.throttle - ptB.throttle}
               unit="%"
-              aColour={dA.teamColour}
-              bColour={dB.teamColour}
+              aColour={colorA}
+              bColour={colorB}
               aCode={dA.code}
               bCode={dB.code}
             />
@@ -238,13 +161,50 @@ export default function SpeedReadout({
                 브레이크
               </span>
               <div style={{ display: 'flex', gap: 16 }}>
-                <BrakeIndicator code={dA.code} active={ptA.brake > 0} colour={dA.teamColour} />
-                <BrakeIndicator code={dB.code} active={ptB.brake > 0} colour={dB.teamColour} />
+                <BrakeIndicator code={dA.code} active={ptA.brake > 0} colour={colorA} />
+                <BrakeIndicator code={dB.code} active={ptB.brake > 0} colour={colorB} />
               </div>
             </div>
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function LegendChip({ color, label }: { color: string; label: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        padding: '6px 10px',
+        background: '#15120D',
+        borderRadius: 2,
+        border: `1px solid ${color}44`,
+      }}
+    >
+      <div
+        style={{
+          width: 10,
+          height: 10,
+          borderRadius: '50%',
+          background: color,
+          flexShrink: 0,
+        }}
+      />
+      <span
+        style={{
+          fontFamily: "'Space Mono', monospace",
+          fontSize: 11,
+          fontWeight: 700,
+          color: color,
+          letterSpacing: '0.05em',
+        }}
+      >
+        {label}
+      </span>
     </div>
   )
 }

@@ -1,69 +1,41 @@
 'use client'
 
 import type { TrackSpeedData } from '@/features/f1/trackSpeed'
-import { speedToColor } from '@/features/f1/speedColor'
+import {
+  interpolateSpeedAtD,
+  pickFasterColor,
+  TIE_COLOR,
+  SPEED_TIE_THRESHOLD,
+} from '@/features/f1/speedColor'
+import type { DriverColorPair } from '@/features/f1/speedColor'
 
 interface TrackMapProps {
   data: TrackSpeedData
-  activeIdx: 0 | 1
+  driverColors: DriverColorPair
+  tieColor?: string
   hoveredD: number | null
   onHover: (d: number | null) => void
   onPick: (d: number) => void
 }
 
-function TrackLines({
-  points,
-  isActive,
-  speedMin,
-  speedMax,
-}: {
-  points: TrackSpeedData['drivers'][0]['points']
-  isActive: boolean
-  speedMin: number
-  speedMax: number
-}) {
-  return (
-    <>
-      {points.slice(0, -1).map((p, i) => {
-        const next = points[i + 1]
-        const avgSpeed = (p.speed + next.speed) / 2
-        const stroke = isActive
-          ? speedToColor(avgSpeed, speedMin, speedMax)
-          : '#2a2520'
-        return (
-          <line
-            key={i}
-            x1={p.x}
-            y1={p.y}
-            x2={next.x}
-            y2={next.y}
-            stroke={stroke}
-            strokeWidth={isActive ? 10 : 6}
-            strokeLinecap="round"
-          />
-        )
-      })}
-    </>
-  )
-}
-
 export default function TrackMap({
   data,
-  activeIdx,
+  driverColors,
+  tieColor = TIE_COLOR,
   hoveredD,
   onHover,
   onPick,
 }: TrackMapProps) {
   const { bounds } = data
-  const inactiveIdx: 0 | 1 = activeIdx === 0 ? 1 : 0
-  const activeDriver = data.drivers[activeIdx]
-  const inactiveDriver = data.drivers[inactiveIdx]
+  const ref = data.drivers[0].points
+  const other = data.drivers[1].points
+  const [colorRef, colorOther] = driverColors
 
-  // Find the closest point index by d-value for highlight
+  // drivers[0] 기준 지오메트리로 hover 포인트 탐색
   const hoveredIdx = hoveredD != null
-    ? activeDriver.points.reduce<number>((best, p, i) => {
+    ? ref.reduce<number>((best, p, i) => {
         const diff = Math.abs(p.d - hoveredD)
-        const bestDiff = Math.abs(activeDriver.points[best].d - hoveredD)
+        const bestDiff = Math.abs(ref[best].d - hoveredD)
         return diff < bestDiff ? i : best
       }, 0)
     : null
@@ -80,27 +52,39 @@ export default function TrackMap({
       }}
       aria-label="트랙 속도 맵"
     >
-      {/* Inactive driver rendered first (below) */}
-      <TrackLines
-        points={inactiveDriver.points}
-        isActive={false}
-        speedMin={bounds.speedMin}
-        speedMax={bounds.speedMax}
-      />
-
-      {/* Active driver on top with speed colors */}
-      <TrackLines
-        points={activeDriver.points}
-        isActive
-        speedMin={bounds.speedMin}
-        speedMax={bounds.speedMax}
-      />
+      {/* 세그먼트별 색상 — 더 빠른 드라이버 고정색 방식 */}
+      {ref.slice(0, -1).map((p, i) => {
+        const next = ref[i + 1]
+        const refSpeed = (p.speed + next.speed) / 2
+        const dMid = (p.d + next.d) / 2
+        const otherSpeed = interpolateSpeedAtD(other, dMid)
+        const stroke = pickFasterColor(
+          refSpeed,
+          otherSpeed,
+          colorRef,
+          colorOther,
+          tieColor,
+          SPEED_TIE_THRESHOLD,
+        )
+        return (
+          <line
+            key={i}
+            x1={p.x}
+            y1={p.y}
+            x2={next.x}
+            y2={next.y}
+            stroke={stroke}
+            strokeWidth={10}
+            strokeLinecap="round"
+          />
+        )
+      })}
 
       {/* Hover highlight circle */}
       {hoveredIdx != null && (
         <circle
-          cx={activeDriver.points[hoveredIdx].x}
-          cy={activeDriver.points[hoveredIdx].y}
+          cx={ref[hoveredIdx].x}
+          cy={ref[hoveredIdx].y}
           r={14}
           fill="none"
           stroke="#fff"
@@ -110,7 +94,7 @@ export default function TrackMap({
       )}
 
       {/* Hit targets — every ~20th point to avoid overlap */}
-      {activeDriver.points
+      {ref
         .filter((_, i) => i % 20 === 0)
         .map((p) => (
           <circle

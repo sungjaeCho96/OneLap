@@ -2,6 +2,8 @@
 
 import { useReducer, useEffect } from 'react'
 import type { QualifyingSessionOption, DriverOption, TrackSpeedData } from '@/features/f1/trackSpeed'
+import { resolveDriverColors } from '@/features/f1/speedColor'
+import type { DriverColorPair } from '@/features/f1/speedColor'
 import SessionDriverPicker from './SessionDriverPicker'
 import TrackMap from './TrackMap'
 import SpeedReadout from './SpeedReadout'
@@ -13,7 +15,7 @@ type Phase =
   | { phase: 'driversLoading'; sessionKey: number }
   | { phase: 'selecting'; sessionKey: number; drivers: DriverOption[]; picked: number[] }
   | { phase: 'loading'; sessionKey: number; pair: [number, number] }
-  | { phase: 'ready'; data: TrackSpeedData; activeIdx: 0 | 1; cornerD: number | null }
+  | { phase: 'ready'; data: TrackSpeedData; driverColors: DriverColorPair; cornerD: number | null }
   | { phase: 'error'; message: string }
 
 type Action =
@@ -23,7 +25,6 @@ type Action =
   | { type: 'COMPARE' }
   | { type: 'DATA_LOADED'; data: TrackSpeedData }
   | { type: 'SET_ERROR'; message: string }
-  | { type: 'SET_ACTIVE'; idx: 0 | 1 }
   | { type: 'SET_CORNER'; d: number | null }
   | { type: 'RESET' }
 
@@ -57,14 +58,18 @@ function reducer(state: Phase, action: Action): Phase {
 
     case 'DATA_LOADED':
       if (state.phase !== 'loading') return state
-      return { phase: 'ready', data: action.data, activeIdx: 0, cornerD: null }
+      return {
+        phase: 'ready',
+        data: action.data,
+        driverColors: resolveDriverColors(
+          action.data.drivers[0].teamColour,
+          action.data.drivers[1].teamColour,
+        ),
+        cornerD: null,
+      }
 
     case 'SET_ERROR':
       return { phase: 'error', message: action.message }
-
-    case 'SET_ACTIVE':
-      if (state.phase !== 'ready') return state
-      return { ...state, activeIdx: action.idx }
 
     case 'SET_CORNER':
       if (state.phase !== 'ready') return state
@@ -297,7 +302,7 @@ export default function TrackSpeedComparison({ sessions }: TrackSpeedComparisonP
               <div style={{ aspectRatio: '1 / 1', minHeight: 300 }}>
                 <TrackMap
                   data={state.data}
-                  activeIdx={state.activeIdx}
+                  driverColors={state.driverColors}
                   hoveredD={state.cornerD}
                   onHover={(d) => dispatch({ type: 'SET_CORNER', d })}
                   onPick={(d) => dispatch({ type: 'SET_CORNER', d })}
@@ -305,9 +310,8 @@ export default function TrackSpeedComparison({ sessions }: TrackSpeedComparisonP
               </div>
               <SpeedReadout
                 data={state.data}
-                activeIdx={state.activeIdx}
+                driverColors={state.driverColors}
                 cornerD={state.cornerD}
-                onToggleActive={(idx) => dispatch({ type: 'SET_ACTIVE', idx })}
               />
             </div>
           </div>
