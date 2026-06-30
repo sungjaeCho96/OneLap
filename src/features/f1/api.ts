@@ -2,6 +2,7 @@ import type { Race, RaceSession } from '@/types'
 import { loadStoredResults, upsertResults } from '@/lib/raceResultStore'
 import staticResultsData from '@/data/f1-results-2026.json'
 import type { QualifyingSessionOption } from './trackSpeed'
+import type { RaceSession as PitRaceSession } from './pitStrategy'
 
 interface OpenF1Meeting {
   meeting_key: number
@@ -704,6 +705,40 @@ export async function refreshAllRaceResults(checkTtlMs?: number): Promise<F1Race
 }
 
 // ─── Track speed: qualifying session list ────────────────────────────────────
+
+export async function fetchRaceSessionList(): Promise<PitRaceSession[]> {
+  try {
+    const res = await fetch(
+      'https://api.openf1.org/v1/sessions?session_name=Race&year=2026',
+      { next: { revalidate: 3600 } },
+    )
+    if (!res.ok) throw new Error('OpenF1 race sessions error')
+
+    const sessions: {
+      session_key: number
+      circuit_short_name: string
+      country_name: string
+      date_start: string
+      date_end: string
+    }[] = await res.json()
+
+    if (!Array.isArray(sessions)) return []
+
+    const now = Date.now()
+    return sessions
+      .filter((s) => s.date_end && new Date(s.date_end).getTime() < now)
+      .sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime())
+      .map((s, idx) => ({
+        sessionKey: s.session_key,
+        circuitShortName: s.circuit_short_name,
+        countryName: s.country_name,
+        dateStart: s.date_start,
+        round: idx + 1,
+      }))
+  } catch {
+    return []
+  }
+}
 
 interface OpenF1QualiSession {
   session_key: number

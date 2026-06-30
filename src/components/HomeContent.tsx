@@ -8,10 +8,12 @@ import SeriesGuideSection from './SeriesGuideSection'
 import NewsSection from './NewsSection'
 import RaceResultCard from '@/features/f1/components/RaceResultCard'
 import TrackSpeedSection from '@/features/f1/components/TrackSpeedSection'
+import PitStrategySection from '@/features/f1/components/PitStrategySection'
 import { SERIES_MAP } from '@/lib/data'
 import type { RaceDisplay, NewsDisplay, Series, SportId } from '@/types'
 import type { F1RaceResult } from '@/features/f1/api'
 import type { QualifyingSessionOption } from '@/features/f1/trackSpeed'
+import type { RaceSession, PitStrategyData } from '@/features/f1/pitStrategy'
 
 interface HomeContentProps {
   schedule: RaceDisplay[]
@@ -19,9 +21,18 @@ interface HomeContentProps {
   series: Series[]
   allResults: F1RaceResult[]
   sessions: QualifyingSessionOption[]
+  pitRaces: readonly RaceSession[]
+  pitInitialData: PitStrategyData | null
 }
 
-export default function HomeContent({ schedule, news, allResults, sessions }: HomeContentProps) {
+export default function HomeContent({
+  schedule,
+  news,
+  allResults,
+  sessions,
+  pitRaces,
+  pitInitialData,
+}: HomeContentProps) {
   const [selectedSport, setSelectedSport] = useState<SportId>('f1')
 
   const filteredRaces = schedule.filter((r) => r.sport === selectedSport)
@@ -35,6 +46,9 @@ export default function HomeContent({ schedule, news, allResults, sessions }: Ho
         <HeroSection key={selectedSport} races={filteredRaces} />
         {selectedSport === 'f1' && allResults.length > 0 && <RaceResultCard results={allResults} />}
         {selectedSport === 'f1' && sessions.length > 0 && <TrackSpeedSection sessions={sessions} />}
+        {selectedSport === 'f1' && pitRaces.length > 0 && (
+          <PitStrategySection races={pitRaces} initialData={pitInitialData} />
+        )}
         <ScheduleSection schedule={filteredRaces} />
         <SeriesGuideSection series={selectedSeries} />
         {filteredNews.length > 0 && <NewsSection news={filteredNews} />}
