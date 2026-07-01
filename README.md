@@ -385,6 +385,9 @@ git restore .                         # 모든 변경 내용 되돌리기
 **홈 (`/`)**
 - 진행 중·예정 경기 통합 일정 (실시간 Live 표시)
 - 종목 소개 카드 및 뉴스 섹션
+- 최근 경기 결과 섹션 (PostgreSQL DB 연동)
+- 트랙 속도 비교 위젯 (드라이버 두 명의 퀄리파잉 구간별 속도·기어·스로틀 시각화)
+- 피트스톱 전략 위젯 (최근 레이스 드라이버별 stint 차트)
 
 **F1 입문 가이드 (`/guide/f1`)**
 - 라이브 드라이버 스탠딩 타이밍 보드 위젯
@@ -392,13 +395,15 @@ git restore .                         # 모든 변경 내용 되돌리기
 - 플래그 퀴즈 (11가지 플래그 학습)
 - 2026 팀 인터랙티브 소개 (11팀)
 - 2026 드라이버 갤러리 (22명 모달)
+- 트랙 속도 비교 CTA (메인 위젯으로 연결)
+- 피트스톱 전략 시각화 (드라이버별 stint 차트)
 
 **WEC 입문 가이드 (`/guide/wec`)**
 - 24시간 르망 다이얼 위젯
 - 하이퍼카·LMGT3 클래스 설명, 용어집
 
 **종목별 공통 가이드 (`/guide/[series]`)**
-- WRC·슈퍼레이스·현대 N 페스티벌 — 개요, 용어집, 시청 가이드, FAQ
+- WRC·슈퍼레이스·현대 N 페스티벌 — 개요, 용어집, 시청 가이드, FAQ, 예정 경기 일정
 
 ### 기술 스택
 
@@ -406,9 +411,10 @@ git restore .                         # 모든 변경 내용 되돌리기
 |---|---|
 | 프레임워크 | Next.js 15 (App Router) |
 | 언어 | TypeScript |
-| 스타일 | Tailwind CSS + inline style |
+| 스타일 | Tailwind CSS v3 + inline style |
 | 패키지 매니저 | pnpm |
-| 외부 API | [OpenF1](https://openf1.org) (경기 일정·세션), [Jolpi Ergast](https://api.jolpi.ca/ergast) (드라이버 스탠딩) |
+| DB | PostgreSQL (Railway) — 트랙 속도 캐시·경기 결과 영구 저장 |
+| 외부 API | [OpenF1](https://openf1.org) (경기 일정·세션·텔레메트리), [Jolpi Ergast](https://api.jolpi.ca/ergast) (드라이버 스탠딩) |
 
 ### 폴더 구조
 
@@ -431,11 +437,25 @@ src/
 |---|---|
 | F1 경기 일정 · 세션 | 1시간 (`revalidate: 3600`) |
 | 드라이버 스탠딩 | 24시간 (`revalidate: 86400`) |
+| 트랙 속도 데이터 | PostgreSQL 캐시 (세션 키 기준 영구 저장, OpenF1 재조회 없음) |
+| 경기 결과 | PostgreSQL DB (upsert, 요청 시 갱신) |
 | WEC·WRC·슈퍼레이스·N페스티벌 | 정적 (코드 내 하드코딩, 시즌별 업데이트) |
 
 ### 환경 변수
 
-별도의 API 키 없이 동작합니다. OpenF1·Jolpi Ergast 모두 공개 API입니다.
+OpenF1·Jolpi Ergast는 공개 API라 별도 키가 없지만, **PostgreSQL DB 연결이 필요합니다.**
+
+`.env.local.example`을 복사해 `.env.local`을 만들고 값을 채우세요:
+
+```bash
+cp .env.local.example .env.local
+```
+
+| 변수 | 설명 |
+|---|---|
+| `DATABASE_URL` | Railway PostgreSQL 연결 문자열 (트랙 속도 캐시·경기 결과 저장) |
+
+> 로컬에서 PostgreSQL 없이 실행하면 트랙 속도 비교·경기 결과 기능이 비활성화됩니다. 나머지 기능은 정상 동작합니다.
 
 ### 빌드 / 린트 명령어
 
