@@ -18,22 +18,46 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
       className="sticky top-0 z-50 border-b border-border"
       style={{ background: 'rgba(242,239,232,0.85)', backdropFilter: 'blur(12px)' }}
     >
-      {/* 1행: 로고 + 앵커 링크 */}
+      {/* 1행: 로고 + 종목 탭 + 앵커 링크 */}
       <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-6 px-6 py-4">
-        <div className="flex items-center gap-3.5">
-          <Logo variant="light" size={40} />
-          <div>
-            <div className="font-archivo font-black text-2xl leading-none tracking-tight text-text">
-              OneLap
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="flex items-center gap-3.5 flex-none">
+            <Logo variant="light" size={40} />
+            <div>
+              <div className="font-archivo font-black text-2xl leading-none tracking-tight text-text">
+                OneLap
+              </div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted mt-0.5">
+                모터스포츠
+              </div>
             </div>
-            <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted mt-0.5">
-              모터스포츠
-            </div>
+          </div>
+
+          <span className="w-px h-6 bg-border flex-none" aria-hidden="true" />
+
+          {/* 종목 탭 */}
+          <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
+              const active = s.id === selectedSport
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => onSelectSport(s.id)}
+                  className="font-mono text-xs font-bold uppercase tracking-[0.06em] px-3 py-1.5 rounded-full whitespace-nowrap flex-none cursor-pointer transition-colors duration-150"
+                  style={{
+                    background: active ? s.color : 'transparent',
+                    color: active ? '#fff' : '#857A6A',
+                  }}
+                >
+                  {s.short}
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* 데스크탑 앵커 링크 */}
-        <nav className="hidden md:flex items-center gap-7 font-noto text-sm font-bold">
+        <nav className="hidden md:flex items-center gap-7 font-noto text-sm font-bold flex-none">
           {selectedSport === 'f1' && (
             <a href="#analysis" className="text-text hover:text-text-muted transition-colors">
               분석
@@ -66,7 +90,7 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? '메뉴 닫기' : '메뉴 열기'}
           aria-expanded={open}
-          className="md:hidden flex flex-col justify-center gap-[5px] p-2 -mr-2 cursor-pointer"
+          className="md:hidden flex flex-none flex-col justify-center gap-[5px] p-2 -mr-2 cursor-pointer"
         >
           <span
             className={`block w-[22px] h-[2px] bg-text transition-all duration-200 origin-center ${
@@ -84,35 +108,6 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
             }`}
           />
         </button>
-      </div>
-
-      {/* 2행: 종목 탭 (데스크탑 + 모바일 공통 — 모바일은 가로 스크롤) */}
-      <div className="border-t border-border">
-        <div className="mx-auto max-w-[1280px] px-6">
-          <div className="flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {SERIES.filter((s) => ['f1', 'wec'].includes(s.id)).map((s) => {
-              const active = s.id === selectedSport
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => onSelectSport(s.id)}
-                  className="flex flex-col items-center gap-[2px] px-4 py-2.5 cursor-pointer whitespace-nowrap flex-none transition-colors duration-150"
-                  style={{
-                    borderBottom: `3px solid ${active ? s.color : 'transparent'}`,
-                    color: active ? '#15120D' : '#857A6A',
-                  }}
-                >
-                  <span className="font-mono text-[12px] font-bold uppercase tracking-[0.06em]">
-                    {s.short}
-                  </span>
-                  <span className="font-noto text-[10px] tracking-[-0.01em]">
-                    {s.kr}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
       </div>
 
       {/* 모바일 드롭다운 메뉴 */}

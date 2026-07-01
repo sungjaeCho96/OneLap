@@ -63,10 +63,10 @@ export default function HomeContent({
       <main>
         <HeroSection key={selectedSport} races={filteredRaces} />
         {selectedSport === 'f1' && allResults.length > 0 && <RaceResultCard results={allResults} />}
+        <ScheduleSection schedule={filteredRaces} />
         {selectedSport === 'f1' && (
           <AnalysisSection tabs={analysisTabs} />
         )}
-        <ScheduleSection schedule={filteredRaces} />
         <SeriesGuideSection series={selectedSeries} />
         {selectedSport === 'f1' && <GuideSection />}
         {filteredNews.length > 0 && <NewsSection news={filteredNews} />}
