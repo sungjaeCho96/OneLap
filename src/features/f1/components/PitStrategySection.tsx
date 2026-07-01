@@ -5,17 +5,12 @@ import type { RaceSession, PitStrategyData } from '@/features/f1/pitStrategy'
 import StintChart from './StintChart'
 import PitStrategyLegend from './PitStrategyLegend'
 
-// 섹션(라이트) 토큰
-const BG = '#F2EFE8'
-const BORDER = '#E0D9CB'
-const TEXT = '#15120D'
+const BG = '#15120D'
+const CARD_BG = '#1E1A13'
+const BORDER = '#2C271F'
+const TEXT = '#F5F0E8'
 const MUTED = '#857A6A'
 const RED = '#E10600'
-
-// 위젯(다크) 토큰 — 기존 다크 테마 유지
-const WIDGET_BG = '#1E1A13'
-const WIDGET_BORDER = '#2C271F'
-const WIDGET_TEXT = '#F5F0E8'
 
 interface PitStrategySectionProps {
   races: readonly RaceSession[]
@@ -107,6 +102,7 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
         background: BG,
         padding: '64px 0',
         borderBottom: `1px solid ${BORDER}`,
+        color: TEXT,
       }}
     >
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
@@ -169,7 +165,7 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
             }}
             style={{
               padding: '10px 14px',
-              background: BG,
+              background: CARD_BG,
               border: `1px solid ${BORDER}`,
               borderRadius: 2,
               color: TEXT,
@@ -192,13 +188,13 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
           </select>
         </div>
 
-        {/* 위젯 — 다크 테마 유지 */}
+        {/* 위젯 */}
         <div
           style={{
-            border: `1px solid ${WIDGET_BORDER}`,
+            border: `1px solid ${BORDER}`,
             borderRadius: 4,
             overflow: 'hidden',
-            background: WIDGET_BG,
+            background: CARD_BG,
           }}
         >
           {state.phase === 'loading' && (
@@ -208,7 +204,7 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
                 textAlign: 'center',
                 fontFamily: "'Space Mono', monospace",
                 fontSize: 13,
-                color: WIDGET_TEXT,
+                color: TEXT,
               }}
             >
               피트 스톱 데이터 로딩 중…
@@ -221,7 +217,7 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
                 padding: '24px',
                 border: '1px solid rgba(225,6,0,0.3)',
                 borderRadius: 4,
-                background: 'rgba(225,6,0,0.04)',
+                background: 'rgba(225,6,0,0.06)',
                 margin: 16,
               }}
             >
@@ -269,15 +265,15 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
                 textAlign: 'center',
                 fontFamily: "'Space Mono', monospace",
                 fontSize: 13,
-                color: WIDGET_TEXT,
+                color: TEXT,
               }}
             >
               레이스를 선택하면 피트 전략을 확인할 수 있습니다.
             </div>
           )}
 
-          {/* 범례 — 위젯 내부 다크 영역 */}
-          <div style={{ borderTop: `1px solid ${WIDGET_BORDER}`, padding: '0 20px 20px' }}>
+          {/* 범례 */}
+          <div style={{ borderTop: `1px solid ${BORDER}`, padding: '0 20px 20px' }}>
             <PitStrategyLegend />
           </div>
         </div>

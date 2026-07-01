@@ -9,6 +9,8 @@ import NewsSection from './NewsSection'
 import RaceResultCard from '@/features/f1/components/RaceResultCard'
 import TrackSpeedSection from '@/features/f1/components/TrackSpeedSection'
 import PitStrategySection from '@/features/f1/components/PitStrategySection'
+import AnalysisSection from '@/features/f1/components/analysis/AnalysisSection'
+import type { AnalysisTabItem } from '@/features/f1/components/analysis/types'
 import { SERIES_MAP } from '@/lib/data'
 import type { RaceDisplay, NewsDisplay, Series, SportId } from '@/types'
 import type { F1RaceResult } from '@/features/f1/api'
@@ -39,15 +41,29 @@ export default function HomeContent({
   const filteredNews = news.filter((n) => n.sport === selectedSport)
   const selectedSeries = [SERIES_MAP[selectedSport]]
 
+  const analysisTabs: AnalysisTabItem[] = [
+    sessions.length > 0 && {
+      id: 'track-speed',
+      label: '트랙 속도 비교',
+      eyebrow: 'QUALIFYING',
+      content: <TrackSpeedSection sessions={sessions} />,
+    },
+    pitRaces.length > 0 && {
+      id: 'pit-strategy',
+      label: '피트스톱 전략',
+      eyebrow: 'PIT STRATEGY',
+      content: <PitStrategySection races={pitRaces} initialData={pitInitialData} />,
+    },
+  ].filter(Boolean) as AnalysisTabItem[]
+
   return (
     <>
       <Navbar selectedSport={selectedSport} onSelectSport={setSelectedSport} />
       <main>
         <HeroSection key={selectedSport} races={filteredRaces} />
         {selectedSport === 'f1' && allResults.length > 0 && <RaceResultCard results={allResults} />}
-        {selectedSport === 'f1' && sessions.length > 0 && <TrackSpeedSection sessions={sessions} />}
-        {selectedSport === 'f1' && pitRaces.length > 0 && (
-          <PitStrategySection races={pitRaces} initialData={pitInitialData} />
+        {selectedSport === 'f1' && (
+          <AnalysisSection key={selectedSport} tabs={analysisTabs} />
         )}
         <ScheduleSection schedule={filteredRaces} />
         <SeriesGuideSection series={selectedSeries} />

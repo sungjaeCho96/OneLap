@@ -34,6 +34,11 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
 
         {/* 데스크탑 앵커 링크 */}
         <nav className="hidden md:flex items-center gap-7 font-noto text-sm font-bold">
+          {selectedSport === 'f1' && (
+            <a href="#analysis" className="text-text hover:text-text-muted transition-colors">
+              분석
+            </a>
+          )}
           <a href="#schedule" className="text-text hover:text-text-muted transition-colors">
             경기 일정
           </a>
@@ -111,6 +116,15 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
           className="md:hidden border-t border-border px-6 py-4 flex flex-col gap-1 font-noto text-sm font-bold"
           style={{ background: 'rgba(242,239,232,0.97)' }}
         >
+          {selectedSport === 'f1' && (
+            <a
+              href="#analysis"
+              onClick={() => setOpen(false)}
+              className="text-text py-3 border-b border-border hover:text-text-muted transition-colors"
+            >
+              분석
+            </a>
+          )}
           <a
             href="#schedule"
             onClick={() => setOpen(false)}
