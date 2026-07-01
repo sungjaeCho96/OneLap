@@ -10,6 +10,7 @@ import RaceResultCard from '@/features/f1/components/RaceResultCard'
 import TrackSpeedSection from '@/features/f1/components/TrackSpeedSection'
 import PitStrategySection from '@/features/f1/components/PitStrategySection'
 import AnalysisSection from '@/features/f1/components/analysis/AnalysisSection'
+import GuideSection from '@/features/f1/components/guide/GuideSection'
 import type { AnalysisTabItem } from '@/features/f1/components/analysis/types'
 import { SERIES_MAP } from '@/lib/data'
 import type { RaceDisplay, NewsDisplay, Series, SportId } from '@/types'
@@ -67,6 +68,7 @@ export default function HomeContent({
         )}
         <ScheduleSection schedule={filteredRaces} />
         <SeriesGuideSection series={selectedSeries} />
+        {selectedSport === 'f1' && <GuideSection />}
         {filteredNews.length > 0 && <NewsSection news={filteredNews} />}
       </main>
     </>

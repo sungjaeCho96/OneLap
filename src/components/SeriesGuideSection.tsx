@@ -27,7 +27,7 @@ export default function SeriesGuideSection({ series }: SeriesGuideSectionProps) 
         {series.map((s) => (
           <Link
             key={s.id}
-            href={`/guide/${s.id}`}
+            href={s.id === 'f1' ? '#guide' : `/guide/${s.id}`}
             className="bg-white border border-border flex flex-col overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover no-underline text-inherit"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
