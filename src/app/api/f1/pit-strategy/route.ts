@@ -38,6 +38,13 @@ interface OpenF1SessionMeta {
   country_name: string
 }
 
+interface OpenF1ResultEntry {
+  driver_number: number
+  dnf: boolean
+  dns: boolean
+  dsq: boolean
+}
+
 // 429(rate limit)·5xx(일시 장애) 재시도 — trackSpeed의 fetchOF1과 동일 패턴
 async function fetchWithRetry(url: string, attempt = 0): Promise<Response> {
   const res = await fetch(url, { next: { revalidate: 3600 } } as const)
@@ -98,6 +105,7 @@ export async function GET(request: Request): Promise<Response> {
     const pitsRes = await fetchWithRetry(`${base}/pit?session_key=${sessionKey}`)
     const driversRes = await fetchWithRetry(`${base}/drivers?session_key=${sessionKey}`)
     const sessionRes = await fetchWithRetry(`${base}/sessions?session_key=${sessionKey}`)
+    const resultRes = await fetchWithRetry(`${base}/session_result?session_key=${sessionKey}`)
 
     if (!stintsRes.ok || !pitsRes.ok || !driversRes.ok) {
       throw new Error(`OpenF1 fetch failed — stints:${stintsRes.status} pit:${pitsRes.status} drivers:${driversRes.status}`)
@@ -107,12 +115,22 @@ export async function GET(request: Request): Promise<Response> {
     const rawPits: OpenF1Pit[] = await pitsRes.json()
     const rawDrivers: OpenF1Driver[] = await driversRes.json()
     const sessionMetas: OpenF1SessionMeta[] = sessionRes.ok ? await sessionRes.json() : []
+    const rawResults: OpenF1ResultEntry[] = resultRes.ok ? await resultRes.json() : []
 
     if (!Array.isArray(rawStints) || !Array.isArray(rawPits) || !Array.isArray(rawDrivers)) {
       throw new Error('Invalid data format from OpenF1')
     }
 
     const meta = Array.isArray(sessionMetas) && sessionMetas.length > 0 ? sessionMetas[0] : null
+
+    // 공식 DNF/DNS/DSQ 판정 — race-results와 동일하게 session_result를 신뢰 소스로 사용.
+    // (마지막 스틴트의 lap_end를 totalLaps와 비교하는 방식은 랩 다운된 정상 완주자를
+    //  DNF로 오판하는 문제가 있어 폐기)
+    const resultMap = new Map<number, { dnf: boolean; dns: boolean; dsq: boolean }>(
+      Array.isArray(rawResults)
+        ? rawResults.map((r) => [r.driver_number, { dnf: r.dnf, dns: r.dns, dsq: r.dsq }])
+        : [],
+    )
 
     // driverMap: driverNumber → driver info (normalise teamColour '#' prefix)
     const driverMap = new Map<
@@ -183,8 +201,10 @@ export async function GET(request: Request): Promise<Response> {
         }
       })
 
-      const driverMaxLap = Math.max(...sortedStints.map((s) => s.lap_end))
-      const isDnf = driverMaxLap < totalLaps - 1
+      const result = resultMap.get(driverNumber)
+      const isDnf = result
+        ? result.dnf || result.dns || result.dsq
+        : Math.max(...sortedStints.map((s) => s.lap_end)) < totalLaps - 1
 
       drivers.push({
         driverNumber,
