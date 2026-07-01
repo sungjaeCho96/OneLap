@@ -32,7 +32,7 @@ export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionP
   }
 
   return (
-    <section id="analysis">
+    <section id="analysis" style={{ scrollMarginTop: 120 }}>
       {showTabBar && (
         <div
           style={{

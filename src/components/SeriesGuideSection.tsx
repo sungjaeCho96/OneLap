@@ -7,7 +7,7 @@ interface SeriesGuideSectionProps {
 
 export default function SeriesGuideSection({ series }: SeriesGuideSectionProps) {
   return (
-    <section id="series" className="mx-auto max-w-[1280px] px-6 py-[72px]">
+    <section id="series" className="mx-auto max-w-[1280px] px-6 py-[72px] scroll-mt-[120px]">
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 mb-3.5">
         <div className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">

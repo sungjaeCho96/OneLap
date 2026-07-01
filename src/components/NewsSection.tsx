@@ -8,7 +8,7 @@ export default function NewsSection({ news }: NewsSectionProps) {
   return (
     <section
       id="news"
-      className="py-[72px] border-t border-border"
+      className="py-[72px] border-t border-border scroll-mt-[120px]"
       style={{ background: '#EAE5DA' }}
     >
       <div className="mx-auto max-w-[1280px] px-6">

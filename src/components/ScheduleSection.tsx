@@ -159,7 +159,7 @@ export default function ScheduleSection({ schedule }: ScheduleSectionProps) {
   const groups = buildGroups(upcoming)
 
   return (
-    <section id="schedule" className="bg-bg-dark text-text-inv py-16">
+    <section id="schedule" className="bg-bg-dark text-text-inv py-16 scroll-mt-[120px]">
       <div className="mx-auto max-w-[1280px] px-6">
 
         {/* Header */}
