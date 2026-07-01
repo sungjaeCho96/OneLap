@@ -11,6 +11,7 @@ services:
     volumes:
       - ./.postgres-data:/var/lib/postgresql/data:Z
       - ./drizzle/0000_initial.sql:/docker-entrypoint-initdb.d/0000_initial.sql:ro
+      - ./drizzle/0001_pit_strategy_cache.sql:/docker-entrypoint-initdb.d/0001_pit_strategy_cache.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U onelap -d onelap"]
       interval: 5s

@@ -5,4 +5,4 @@ cmds = ["NODE_ENV=development pnpm install --frozen-lockfile"]
 cmds = ["pnpm run build"]
 
 [start]
-cmd = "pnpm start"
+cmd = "pnpm db:migrate && pnpm start"
