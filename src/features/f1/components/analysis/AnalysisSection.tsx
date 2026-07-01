@@ -32,7 +32,35 @@ export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionP
   }
 
   return (
-    <section id="analysis" style={{ scrollMarginTop: 120 }}>
+    <section id="analysis" style={{ scrollMarginTop: 120, background: BG }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 24px 28px' }}>
+        <div
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: 12,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: RED,
+            marginBottom: 12,
+          }}
+        >
+          Analysis
+        </div>
+        <h2
+          style={{
+            fontFamily: "'Archivo', sans-serif",
+            fontWeight: 900,
+            textTransform: 'uppercase',
+            lineHeight: 0.95,
+            letterSpacing: '-0.03em',
+            fontSize: 'clamp(34px, 5vw, 60px)',
+            color: TEXT,
+          }}
+        >
+          레이스 분석
+        </h2>
+      </div>
+
       {showTabBar && (
         <div
           style={{
