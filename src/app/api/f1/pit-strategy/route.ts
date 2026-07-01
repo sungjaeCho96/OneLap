@@ -38,6 +38,20 @@ interface OpenF1SessionMeta {
   country_name: string
 }
 
+// 429(rate limit)·5xx(일시 장애) 재시도 — trackSpeed의 fetchOF1과 동일 패턴
+async function fetchWithRetry(url: string, attempt = 0): Promise<Response> {
+  const res = await fetch(url, { next: { revalidate: 3600 } } as const)
+  if (res.status === 429 && attempt < 2) {
+    await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)))
+    return fetchWithRetry(url, attempt + 1)
+  }
+  if (res.status >= 500 && attempt < 2) {
+    await new Promise((r) => setTimeout(r, 500 * (attempt + 1)))
+    return fetchWithRetry(url, attempt + 1)
+  }
+  return res
+}
+
 function normalizeColour(colour: string): string {
   return colour.startsWith('#') ? colour : '#' + colour
 }
@@ -78,31 +92,21 @@ export async function GET(request: Request): Promise<Response> {
       return Response.json(body, { headers: { 'Cache-Control': 'public, max-age=3600' } })
     }
 
-    const fetchOpts = { next: { revalidate: 3600 } } as const
-
-    // 3 parallel fetches: stints, pit stops, drivers + session meta
-    const [stintsRes, pitsRes, driversRes, sessionRes] = await Promise.all([
-      fetch(`https://api.openf1.org/v1/stints?session_key=${sessionKey}`, fetchOpts),
-      fetch(`https://api.openf1.org/v1/pit?session_key=${sessionKey}`, fetchOpts),
-      fetch(`https://api.openf1.org/v1/drivers?session_key=${sessionKey}`, fetchOpts),
-      fetch(`https://api.openf1.org/v1/sessions?session_key=${sessionKey}`, fetchOpts),
-    ])
+    // 동시 요청 시 OpenF1 rate limit(429) 유발 — 순차 실행
+    const base = `https://api.openf1.org/v1`
+    const stintsRes = await fetchWithRetry(`${base}/stints?session_key=${sessionKey}`)
+    const pitsRes = await fetchWithRetry(`${base}/pit?session_key=${sessionKey}`)
+    const driversRes = await fetchWithRetry(`${base}/drivers?session_key=${sessionKey}`)
+    const sessionRes = await fetchWithRetry(`${base}/sessions?session_key=${sessionKey}`)
 
     if (!stintsRes.ok || !pitsRes.ok || !driversRes.ok) {
-      throw new Error('OpenF1 fetch failed')
+      throw new Error(`OpenF1 fetch failed — stints:${stintsRes.status} pit:${pitsRes.status} drivers:${driversRes.status}`)
     }
 
-    const [rawStints, rawPits, rawDrivers, sessionMetas]: [
-      OpenF1Stint[],
-      OpenF1Pit[],
-      OpenF1Driver[],
-      OpenF1SessionMeta[],
-    ] = await Promise.all([
-      stintsRes.json(),
-      pitsRes.json(),
-      driversRes.json(),
-      sessionRes.ok ? sessionRes.json() : Promise.resolve([]),
-    ])
+    const rawStints: OpenF1Stint[] = await stintsRes.json()
+    const rawPits: OpenF1Pit[] = await pitsRes.json()
+    const rawDrivers: OpenF1Driver[] = await driversRes.json()
+    const sessionMetas: OpenF1SessionMeta[] = sessionRes.ok ? await sessionRes.json() : []
 
     if (!Array.isArray(rawStints) || !Array.isArray(rawPits) || !Array.isArray(rawDrivers)) {
       throw new Error('Invalid data format from OpenF1')
