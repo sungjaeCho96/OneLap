@@ -311,7 +311,7 @@ export default function TrackSpeedComparison({ sessions }: TrackSpeedComparisonP
                   }}
                 />
               </div>
-              <div ref={readoutRef}>
+              <div ref={readoutRef} style={{ position: 'sticky', top: 120 }}>
                 <SpeedReadout
                   data={state.data}
                   driverColors={state.driverColors}

@@ -77,7 +77,7 @@ export default function TrackSpeedSection({ sessions }: TrackSpeedSectionProps) 
         </div>
 
         {/* 위젯 */}
-        <div style={{ border: `1px solid ${BORDER}`, borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ border: `1px solid ${BORDER}`, borderRadius: 4, overflow: 'clip' }}>
           <TrackSpeedComparison sessions={sessions} />
         </div>
 
