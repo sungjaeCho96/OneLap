@@ -6,6 +6,7 @@ import GuideGrid from './GuideGrid'
 import GuideRules from './GuideRules'
 import GuideFlags from './GuideFlags'
 import GuideWatching from './GuideWatching'
+import GuideHeroCard from './GuideHeroCard'
 import type { AnalysisTabItem } from '../analysis/types'
 
 // AnalysisSection과 달리 챕터 전환 시 상태 보존이 필요 없어
@@ -43,6 +44,9 @@ export default function GuideSection() {
 
   return (
     <section id="guide" className="bg-bg scroll-mt-[120px]">
+      {/* /guide/wec 등 외부 페이지의 /#series 딥링크·Footer 링크 보존용 별칭 앵커 (WEC 등은 SeriesGuideSection의 #series를 그대로 사용) */}
+      <span id="series" className="block scroll-mt-[120px]" aria-hidden="true" />
+
       <div className="max-w-[1280px] mx-auto px-6 pt-16 pb-8">
         <div className="font-mono text-[11px] tracking-[0.24em] uppercase text-accent mb-3">초심자 가이드</div>
         <h2
@@ -54,6 +58,10 @@ export default function GuideSection() {
         <p className="text-text-muted text-base leading-[1.7] mt-4 max-w-[64ch]">
           규칙을 몰라도 레이스는 보입니다. 궁금한 챕터부터 골라 필요한 만큼만 읽어보세요.
         </p>
+      </div>
+
+      <div className="max-w-[1280px] mx-auto px-6 pb-10">
+        <GuideHeroCard />
       </div>
 
       <div className="bg-bg-dark border-y border-border-dark">

@@ -66,12 +66,13 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
           <a href="#schedule" className="text-text hover:text-text-muted transition-colors">
             경기 일정
           </a>
-          <a href="#series" className="text-text hover:text-text-muted transition-colors">
-            시작하기
-          </a>
-          {selectedSport === 'f1' && (
+          {selectedSport === 'f1' ? (
             <a href="#guide" className="text-text hover:text-text-muted transition-colors">
               가이드
+            </a>
+          ) : (
+            <a href="#series" className="text-text hover:text-text-muted transition-colors">
+              시작하기
             </a>
           )}
           <a href="#news" className="text-text hover:text-text-muted transition-colors">
@@ -132,20 +133,21 @@ export default function Navbar({ selectedSport, onSelectSport }: NavbarProps) {
           >
             경기 일정
           </a>
-          <a
-            href="#series"
-            onClick={() => setOpen(false)}
-            className="text-text py-3 border-b border-border hover:text-text-muted transition-colors"
-          >
-            시작하기
-          </a>
-          {selectedSport === 'f1' && (
+          {selectedSport === 'f1' ? (
             <a
               href="#guide"
               onClick={() => setOpen(false)}
               className="text-text py-3 border-b border-border hover:text-text-muted transition-colors"
             >
               가이드
+            </a>
+          ) : (
+            <a
+              href="#series"
+              onClick={() => setOpen(false)}
+              className="text-text py-3 border-b border-border hover:text-text-muted transition-colors"
+            >
+              시작하기
             </a>
           )}
           <a

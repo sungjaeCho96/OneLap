@@ -40,12 +40,6 @@ const WHY_CARDS: { c: string; num: string; icon: string; title: string; moment: 
   },
 ]
 
-const STATS = [
-  { big: '11', lab: '참가 팀 (컨스트럭터)', note: '2026 · Cadillac 합류로 +1' },
-  { big: '22', lab: '드라이버 (팀당 2명)', note: '2026 시즌 기준' },
-  { big: '22', lab: '그랑프리 (3월~12월)', note: '원래 24경기 → 2경기 취소' },
-]
-
 const ROLE_CARDS = [
   {
     title: '드라이버',
@@ -109,21 +103,12 @@ export default function GuideIntro() {
         <div className="max-w-[1280px] mx-auto px-6">
           <SecHead num="01" title="F1, 한 줄로 말하면" sub="세계에서 가장 빠른 자동차 경주. 한 시즌 동안 전 세계를 돌며 우승을 다투는 챔피언십입니다." />
           <p className="text-base leading-[1.75] text-text-mid max-w-[64ch]">
-            F1은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요.<br /> 차 한 대가 시속 300km를 넘나들고, 순위는 <Hl>0.001초</Hl> 단위로 갈립니다. <br />하지만 F1의 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요<br />언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
+            F1은 <Hl>오픈휠</Hl>(바퀴가 차체 밖으로 드러난) 경주차로 겨루는 모터스포츠의 최고 무대예요.<br />하지만 진짜 재미는 속도만이 아니라 <Hl>팀과 팀의 전략 싸움</Hl>에 있어요<br />언제 타이어를 갈지, 언제 추월을 시도할지의 두뇌 게임이죠.
           </p>
           <p className="text-base leading-[1.75] text-text-mid max-w-[64ch] mt-3.5">
             한 시즌은 여러 나라에서 열리는 경주(그랑프리)의 모음이고, <br />매 경주에서 쌓은 점수로 연말 챔피언을 가립니다.
           </p>
-          <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-            {STATS.map((s) => (
-              <div key={s.lab} className="bg-white border-l-[3px] border-accent rounded px-5 py-[22px]">
-                <div className="font-archivo font-black text-[44px] leading-none">{s.big}</div>
-                <div className="text-sm text-text-mid mt-2">{s.lab}</div>
-                <div className="font-mono text-[11px] text-text-muted mt-1">{s.note}</div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-[22px] flex gap-4 items-start bg-[rgba(244,193,59,.06)] border border-[rgba(244,193,59,.3)] rounded px-5 py-[18px]">
+          <div className="mt-8 flex gap-4 items-start bg-[rgba(244,193,59,.06)] border border-[rgba(244,193,59,.3)] rounded px-5 py-[18px]">
             <div className="flex-shrink-0 text-lg mt-0.5 text-[#E8842B]">⚠</div>
             <div>
               <div className="font-bold text-[15px] text-[#E8842B] mb-[7px]">2026 시즌 특이사항 — 바레인 · 사우디아라비아 GP 취소</div>

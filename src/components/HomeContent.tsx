@@ -67,8 +67,11 @@ export default function HomeContent({
         {selectedSport === 'f1' && (
           <AnalysisSection tabs={analysisTabs} />
         )}
-        <SeriesGuideSection series={selectedSeries} />
-        {selectedSport === 'f1' && <GuideSection />}
+        {selectedSport === 'f1' ? (
+          <GuideSection />
+        ) : (
+          <SeriesGuideSection series={selectedSeries} />
+        )}
         {filteredNews.length > 0 && <NewsSection news={filteredNews} />}
       </main>
     </>
