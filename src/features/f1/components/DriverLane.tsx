@@ -55,7 +55,7 @@ function DriverTag({ driver }: DriverTagProps) {
         >
           {driver.nameAcronym}
         </span>
-        {driver.isDnf && (
+        {driver.raceStatus && (
           <span
             style={{
               fontFamily: "'Space Mono', monospace",
@@ -65,7 +65,7 @@ function DriverTag({ driver }: DriverTagProps) {
               flexShrink: 0,
             }}
           >
-            DNF
+            {driver.raceStatus}
           </span>
         )}
       </div>

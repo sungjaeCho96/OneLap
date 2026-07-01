@@ -36,6 +36,8 @@ export interface Stint {
   pitDuration: number | null // 첫 스틴트는 null
 }
 
+export type RaceStatus = 'DNF' | 'DNS' | 'DSQ' | null
+
 export interface DriverStrategy {
   driverNumber: number
   nameAcronym: string
@@ -44,7 +46,7 @@ export interface DriverStrategy {
   stints: readonly Stint[]
   pitCount: number
   totalLaps: number
-  isDnf: boolean
+  raceStatus: RaceStatus // 완주는 null
 }
 
 export interface PitStrategyData {

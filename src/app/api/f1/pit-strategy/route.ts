@@ -4,6 +4,7 @@ import type {
   TyreCompound,
   Stint,
   DriverStrategy,
+  RaceStatus,
 } from '@/features/f1/pitStrategy'
 import { getCachedPitStrategy, savePitStrategyCache } from '@/lib/db/pitStrategyCache'
 
@@ -202,9 +203,17 @@ export async function GET(request: Request): Promise<Response> {
       })
 
       const result = resultMap.get(driverNumber)
-      const isDnf = result
-        ? result.dnf || result.dns || result.dsq
+      const raceStatus: RaceStatus = result
+        ? result.dsq
+          ? 'DSQ'
+          : result.dns
+            ? 'DNS'
+            : result.dnf
+              ? 'DNF'
+              : null
         : Math.max(...sortedStints.map((s) => s.lap_end)) < totalLaps - 1
+          ? 'DNF'
+          : null
 
       drivers.push({
         driverNumber,
@@ -214,7 +223,7 @@ export async function GET(request: Request): Promise<Response> {
         stints: mappedStints,
         pitCount: mappedStints.length - 1,
         totalLaps,
-        isDnf,
+        raceStatus,
       })
     }
 

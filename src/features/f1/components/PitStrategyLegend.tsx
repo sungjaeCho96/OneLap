@@ -12,7 +12,7 @@ const DISPLAY_COMPOUNDS: TyreCompound[] = ['SOFT', 'MEDIUM', 'HARD', 'INTERMEDIA
 const READING_GUIDE = [
   '가로 막대 = 한 드라이버의 레이스 전체. 색이 바뀌는 지점이 피트스톱입니다.',
   '막대 길이 = 해당 타이어로 달린 랩 수.',
-  'DNF = 완주하지 못한 드라이버.',
+  'DNF = 완주하지 못한 드라이버, DNS = 출전하지 않은 드라이버, DSQ = 실격된 드라이버.',
 ]
 
 export default function PitStrategyLegend() {
