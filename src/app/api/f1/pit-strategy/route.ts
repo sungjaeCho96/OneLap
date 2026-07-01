@@ -5,6 +5,7 @@ import type {
   Stint,
   DriverStrategy,
 } from '@/features/f1/pitStrategy'
+import { getCachedPitStrategy, savePitStrategyCache } from '@/lib/db/pitStrategyCache'
 
 interface OpenF1Stint {
   session_key: number
@@ -71,6 +72,12 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
+    const cached = await getCachedPitStrategy(sessionKey)
+    if (cached) {
+      const body: PitStrategyResponse = { success: true, data: cached }
+      return Response.json(body, { headers: { 'Cache-Control': 'public, max-age=3600' } })
+    }
+
     const fetchOpts = { next: { revalidate: 3600 } } as const
 
     // 3 parallel fetches: stints, pit stops, drivers + session meta
@@ -197,6 +204,10 @@ export async function GET(request: Request): Promise<Response> {
       totalLaps,
       drivers: sortedDrivers,
     }
+
+    savePitStrategyCache(data).catch((err: unknown) => {
+      console.error('[pit-strategy] DB 캐시 저장 실패:', err)
+    })
 
     const body: PitStrategyResponse = { success: true, data }
     return Response.json(body, {
