@@ -41,6 +41,8 @@ interface OpenF1SessionMeta {
 
 interface OpenF1ResultEntry {
   driver_number: number
+  position: number | null
+  number_of_laps: number
   dnf: boolean
   dns: boolean
   dsq: boolean
@@ -127,9 +129,15 @@ export async function GET(request: Request): Promise<Response> {
     // 공식 DNF/DNS/DSQ 판정 — race-results와 동일하게 session_result를 신뢰 소스로 사용.
     // (마지막 스틴트의 lap_end를 totalLaps와 비교하는 방식은 랩 다운된 정상 완주자를
     //  DNF로 오판하는 문제가 있어 폐기)
-    const resultMap = new Map<number, { dnf: boolean; dns: boolean; dsq: boolean }>(
+    const resultMap = new Map<
+      number,
+      { position: number | null; numberOfLaps: number; dnf: boolean; dns: boolean; dsq: boolean }
+    >(
       Array.isArray(rawResults)
-        ? rawResults.map((r) => [r.driver_number, { dnf: r.dnf, dns: r.dns, dsq: r.dsq }])
+        ? rawResults.map((r) => [
+            r.driver_number,
+            { position: r.position, numberOfLaps: r.number_of_laps, dnf: r.dnf, dns: r.dns, dsq: r.dsq },
+          ])
         : [],
     )
 
@@ -175,7 +183,8 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     // Build DriverStrategy[] — immutable transforms, no in-place mutation
-    const drivers: DriverStrategy[] = []
+    // 정렬 기준(등수)을 함께 들고 있다가 최종 정렬 후 버림
+    const drivers: Array<{ strategy: DriverStrategy; position: number | null; numberOfLaps: number }> = []
     for (const [driverNumber, stints] of stintsByDriver.entries()) {
       if (stints.length === 0) continue
 
@@ -202,6 +211,7 @@ export async function GET(request: Request): Promise<Response> {
         }
       })
 
+      const maxLapEnd = Math.max(...sortedStints.map((s) => s.lap_end))
       const result = resultMap.get(driverNumber)
       const raceStatus: RaceStatus = result
         ? result.dsq
@@ -211,24 +221,35 @@ export async function GET(request: Request): Promise<Response> {
             : result.dnf
               ? 'DNF'
               : null
-        : Math.max(...sortedStints.map((s) => s.lap_end)) < totalLaps - 1
+        : maxLapEnd < totalLaps - 1
           ? 'DNF'
           : null
 
       drivers.push({
-        driverNumber,
-        nameAcronym: info.nameAcronym,
-        teamName: info.teamName,
-        teamColour: info.teamColour,
-        stints: mappedStints,
-        pitCount: mappedStints.length - 1,
-        totalLaps,
-        raceStatus,
+        strategy: {
+          driverNumber,
+          nameAcronym: info.nameAcronym,
+          teamName: info.teamName,
+          teamColour: info.teamColour,
+          stints: mappedStints,
+          pitCount: mappedStints.length - 1,
+          totalLaps,
+          raceStatus,
+        },
+        position: result?.position ?? null,
+        numberOfLaps: result?.numberOfLaps ?? maxLapEnd,
       })
     }
 
-    // Sort by driver_number ascending (new array, no mutation)
-    const sortedDrivers = [...drivers].sort((a, b) => a.driverNumber - b.driverNumber)
+    // 완주자는 등수(1~22등) 오름차순, 리타이어한 드라이버는 완주 랩 수 내림차순으로 뒤에 붙임
+    // (race-results 화면의 buildDriverResults와 동일한 정렬 규칙)
+    const finishers = drivers
+      .filter((d) => d.position != null)
+      .sort((a, b) => (a.position as number) - (b.position as number))
+    const nonFinishers = drivers
+      .filter((d) => d.position == null)
+      .sort((a, b) => b.numberOfLaps - a.numberOfLaps)
+    const sortedDrivers = [...finishers, ...nonFinishers].map((d) => d.strategy)
 
     const data: PitStrategyData = {
       sessionKey,
