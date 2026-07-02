@@ -64,6 +64,9 @@ export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionP
       {showTabBar && (
         <div
           style={{
+            position: 'sticky',
+            top: 73,
+            zIndex: 40,
             background: BG,
             borderBottom: `1px solid ${BORDER}`,
           }}

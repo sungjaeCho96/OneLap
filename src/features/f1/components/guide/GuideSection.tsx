@@ -64,7 +64,7 @@ export default function GuideSection() {
         <GuideHeroCard />
       </div>
 
-      <div className="bg-bg-dark border-y border-border-dark">
+      <div className="sticky top-[73px] z-40 bg-bg-dark border-y border-border-dark">
         <div className="max-w-[1280px] mx-auto px-6">
           <div
             role="tablist"
