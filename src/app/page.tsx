@@ -29,9 +29,12 @@ export default async function HomePage() {
   if (latestRace) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+      // no-store: 실제 캐싱은 route.ts의 DB 캐시(pitStrategyCache)가 담당한다.
+      // 여기서 Data Cache까지 걸면 라우트 로직이 바뀌어도 배포 후 최대 1시간 동안
+      // 옛 응답이 그대로 남아있는 문제가 생긴다(force-dynamic의 의도와도 상충).
       const res = await fetch(
         `${baseUrl}/api/f1/pit-strategy?session_key=${latestRace.sessionKey}`,
-        { next: { revalidate: 3600 } },
+        { cache: 'no-store' },
       )
       const json: { success: boolean; data?: PitStrategyData } = await res.json()
       pitInitialData = json.success ? (json.data ?? null) : null
