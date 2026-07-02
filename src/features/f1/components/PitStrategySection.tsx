@@ -20,13 +20,13 @@ interface PitStrategySectionProps {
 // ─── State machine ────────────────────────────────────────────────────────────
 
 type State =
-  | { phase: 'idle'; selectedKey: number | null }
+  | { phase: 'idle'; selectedKey: null }
   | { phase: 'loading'; selectedKey: number }
   | { phase: 'ready'; selectedKey: number; data: PitStrategyData }
   | { phase: 'error'; selectedKey: number | null; message: string }
 
 type Action =
-  | { type: 'SELECT_RACE'; sessionKey: number }
+  | { type: 'SELECT_RACE'; sessionKey: number; cachedData?: PitStrategyData }
   | { type: 'DATA_LOADED'; data: PitStrategyData }
   | { type: 'SET_ERROR'; message: string }
 
@@ -34,6 +34,9 @@ function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SELECT_RACE':
       if (state.selectedKey === action.sessionKey) return state
+      if (action.cachedData) {
+        return { phase: 'ready', selectedKey: action.sessionKey, data: action.cachedData }
+      }
       return { phase: 'loading', selectedKey: action.sessionKey }
 
     case 'DATA_LOADED':
@@ -48,25 +51,11 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-function buildInitialState(
-  races: readonly RaceSession[],
-  initialData: PitStrategyData | null,
-): State {
-  const lastKey = races.at(-1)?.sessionKey ?? null
-  if (initialData && lastKey !== null) {
-    return { phase: 'ready', selectedKey: lastKey, data: initialData }
-  }
-  return { phase: 'idle', selectedKey: lastKey }
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PitStrategySection({ races, initialData }: PitStrategySectionProps) {
-  const [state, dispatch] = useReducer(
-    reducer,
-    undefined,
-    () => buildInitialState(races, initialData),
-  )
+  const [state, dispatch] = useReducer(reducer, { phase: 'idle', selectedKey: null } as State)
+  const prefetchedKey = races.at(-1)?.sessionKey ?? null
 
   const loadingKey = state.phase === 'loading' ? state.selectedKey : null
 
@@ -161,7 +150,10 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
             value={state.selectedKey ?? ''}
             onChange={(e) => {
               const val = parseInt(e.target.value, 10)
-              if (!isNaN(val)) dispatch({ type: 'SELECT_RACE', sessionKey: val })
+              if (isNaN(val)) return
+              const cachedData =
+                val === prefetchedKey && initialData ? initialData : undefined
+              dispatch({ type: 'SELECT_RACE', sessionKey: val, cachedData })
             }}
             style={{
               padding: '10px 14px',
@@ -176,6 +168,9 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
               minWidth: 280,
             }}
           >
+            <option value="" disabled hidden>
+              레이스 선택
+            </option>
             {races.map((race) => {
               const date = new Date(race.dateStart)
               const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
