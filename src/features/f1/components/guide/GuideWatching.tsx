@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { SecHead, Hl } from './primitives'
+import GuideUndercutOvercut from './GuideUndercutOvercut'
 
 const CHANGE_CARDS: { title: string; tag: string; body: ReactNode }[] = [
   {
@@ -16,7 +17,7 @@ const CHANGE_CARDS: { title: string; tag: string; body: ReactNode }[] = [
     tag: '≈ 2초',
     body: (
       <>
-        타이어를 갈러 정비 구역에 들어오는 것. 숙련된 팀은 <Hl>2초대</Hl>에 끝냅니다. 상대보다 먼저 들어와 새 타이어로 앞서는 <Hl>언더컷</Hl> 같은 전략이 여기서 나와요.
+        타이어를 갈러 정비 구역에 들어오는 것. 숙련된 팀은 <Hl>2초대</Hl>에 끝냅니다. 상대보다 먼저 들어와 새 타이어로 앞서는 <Hl>언더컷</Hl>, 반대로 버티다 나중에 들어가는 <Hl>오버컷</Hl> 같은 전략이 여기서 나와요.
       </>
     ),
   },
@@ -46,6 +47,7 @@ const TERMS = [
   { kr: '그리드', en: 'Grid', def: '결승 출발 대형. 예선 결과로 자리가 정해짐.' },
   { kr: '박스, 박스', en: 'Box', def: '"피트로 들어와라"라는 팀 무전 신호.' },
   { kr: '언더컷', en: 'Undercut', def: '상대보다 먼저 새 타이어로 갈아 앞서는 전략.' },
+  { kr: '오버컷', en: 'Overcut', def: '상대가 먼저 피트하는 동안 트랙에 남아 깨끗한 공기에서 시간을 버는 전략.' },
   { kr: '패스티스트 랩', en: 'Fastest Lap', def: '그 경기에서 가장 빠른 한 바퀴 기록.' },
   { kr: '포메이션 랩', en: 'Formation Lap', def: '출발 직전, 대형을 갖추며 도는 준비 바퀴.' },
   { kr: '라이트 아웃', en: 'Lights Out', def: '출발 신호등이 모두 꺼지는 순간 = 레이스 시작!' },
@@ -77,6 +79,8 @@ export default function GuideWatching() {
               </div>
             ))}
           </div>
+
+          <GuideUndercutOvercut />
         </div>
       </section>
 
