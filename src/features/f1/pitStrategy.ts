@@ -49,12 +49,24 @@ export interface DriverStrategy {
   raceStatus: RaceStatus // 완주는 null
 }
 
+export type PitDuelOutcome = 'UNDERCUT_SUCCESS' | 'UNDERCUT_FAILED'
+
+export interface PitDuel {
+  undercutterDriverNumber: number
+  defenderDriverNumber: number
+  undercutLap: number
+  defenderPitLap: number | null
+  gapAtUndercutSec: number
+  outcome: PitDuelOutcome
+}
+
 export interface PitStrategyData {
   sessionKey: number
   circuitShortName: string
   countryName: string
   totalLaps: number
   drivers: readonly DriverStrategy[]
+  duels: readonly PitDuel[]
 }
 
 export interface PitStrategyResponse {
