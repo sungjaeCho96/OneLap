@@ -7,7 +7,6 @@ import type {
   RaceStatus,
 } from '@/features/f1/pitStrategy'
 import { getCachedPitStrategy, savePitStrategyCache } from '@/lib/db/pitStrategyCache'
-import { detectPitDuels, buildSafetyCarPeriods } from '@/features/f1/pitDuels'
 
 interface OpenF1Stint {
   session_key: number
@@ -26,25 +25,6 @@ interface OpenF1Pit {
   driver_number: number
   lap_number: number
   pit_duration: number
-  date: string
-}
-
-interface OpenF1Position {
-  date: string
-  driver_number: number
-  position: number
-}
-
-interface OpenF1Interval {
-  date: string
-  driver_number: number
-  interval: number | null
-}
-
-interface OpenF1RaceControl {
-  date: string
-  category: string
-  message: string | null
 }
 
 interface OpenF1Driver {
@@ -118,9 +98,7 @@ export async function GET(request: Request): Promise<Response> {
   try {
     const cached = await getCachedPitStrategy(sessionKey)
     if (cached) {
-      // 구버전 캐시(듀얼 필드 추가 이전)에 대한 안전한 기본값
-      const data: PitStrategyData = { ...cached, duels: cached.duels ?? [] }
-      const body: PitStrategyResponse = { success: true, data }
+      const body: PitStrategyResponse = { success: true, data: cached }
       return Response.json(body, { headers: { 'Cache-Control': 'public, max-age=3600' } })
     }
 
@@ -131,10 +109,6 @@ export async function GET(request: Request): Promise<Response> {
     const driversRes = await fetchWithRetry(`${base}/drivers?session_key=${sessionKey}`)
     const sessionRes = await fetchWithRetry(`${base}/sessions?session_key=${sessionKey}`)
     const resultRes = await fetchWithRetry(`${base}/session_result?session_key=${sessionKey}`)
-    // 언더컷/오버컷 듀얼 판정용 — 실패해도 스틴트 차트는 정상 동작해야 하므로 소프트 폴백
-    const positionRes = await fetchWithRetry(`${base}/position?session_key=${sessionKey}`)
-    const intervalsRes = await fetchWithRetry(`${base}/intervals?session_key=${sessionKey}`)
-    const raceControlRes = await fetchWithRetry(`${base}/race_control?session_key=${sessionKey}`)
 
     if (!stintsRes.ok || !pitsRes.ok || !driversRes.ok) {
       throw new Error(`OpenF1 fetch failed — stints:${stintsRes.status} pit:${pitsRes.status} drivers:${driversRes.status}`)
@@ -145,9 +119,6 @@ export async function GET(request: Request): Promise<Response> {
     const rawDrivers: OpenF1Driver[] = await driversRes.json()
     const sessionMetas: OpenF1SessionMeta[] = sessionRes.ok ? await sessionRes.json() : []
     const rawResults: OpenF1ResultEntry[] = resultRes.ok ? await resultRes.json() : []
-    const rawPositions: OpenF1Position[] = positionRes.ok ? await positionRes.json() : []
-    const rawIntervals: OpenF1Interval[] = intervalsRes.ok ? await intervalsRes.json() : []
-    const rawRaceControl: OpenF1RaceControl[] = raceControlRes.ok ? await raceControlRes.json() : []
 
     if (!Array.isArray(rawStints) || !Array.isArray(rawPits) || !Array.isArray(rawDrivers)) {
       throw new Error('Invalid data format from OpenF1')
@@ -280,45 +251,12 @@ export async function GET(request: Request): Promise<Response> {
       .sort((a, b) => b.numberOfLaps - a.numberOfLaps)
     const sortedDrivers = [...finishers, ...nonFinishers].map((d) => d.strategy)
 
-    const duels = Array.isArray(rawPositions) && Array.isArray(rawIntervals)
-      ? detectPitDuels({
-          pitEvents: rawPits.map((p) => ({
-            driverNumber: p.driver_number,
-            lapNumber: p.lap_number,
-            dateMs: new Date(p.date).getTime(),
-          })),
-          positionSamples: rawPositions.map((p) => ({
-            driverNumber: p.driver_number,
-            dateMs: new Date(p.date).getTime(),
-            position: p.position,
-          })),
-          intervalSamples: rawIntervals.map((i) => ({
-            driverNumber: i.driver_number,
-            dateMs: new Date(i.date).getTime(),
-            interval: i.interval,
-          })),
-          finalPositions: new Map(
-            [...resultMap.entries()].map(([driverNumber, r]) => [driverNumber, r.position]),
-          ),
-          safetyCarPeriods: Array.isArray(rawRaceControl)
-            ? buildSafetyCarPeriods(
-                rawRaceControl.map((r) => ({
-                  dateMs: new Date(r.date).getTime(),
-                  category: r.category,
-                  message: r.message ?? '',
-                })),
-              )
-            : [],
-        })
-      : []
-
     const data: PitStrategyData = {
       sessionKey,
       circuitShortName: meta?.circuit_short_name ?? 'Unknown',
       countryName: meta?.country_name ?? 'Unknown',
       totalLaps,
       drivers: sortedDrivers,
-      duels,
     }
 
     savePitStrategyCache(data).catch((err: unknown) => {

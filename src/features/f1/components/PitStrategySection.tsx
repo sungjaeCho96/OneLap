@@ -4,7 +4,6 @@ import { useReducer, useEffect } from 'react'
 import type { RaceSession, PitStrategyData } from '@/features/f1/pitStrategy'
 import StintChart from './StintChart'
 import PitStrategyLegend from './PitStrategyLegend'
-import PitDuelPanel from './PitDuelPanel'
 
 const BG = '#15120D'
 const CARD_BG = '#1E1A13'
@@ -252,12 +251,7 @@ export default function PitStrategySection({ races, initialData }: PitStrategySe
             </div>
           )}
 
-          {state.phase === 'ready' && (
-            <>
-              <StintChart data={state.data} />
-              <PitDuelPanel duels={state.data.duels} drivers={state.data.drivers} />
-            </>
-          )}
+          {state.phase === 'ready' && <StintChart data={state.data} />}
 
           {state.phase === 'idle' && (
             <div
