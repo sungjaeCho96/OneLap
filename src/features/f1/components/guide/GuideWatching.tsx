@@ -4,7 +4,7 @@ import GuideUndercutOvercut from './GuideUndercutOvercut'
 
 const CHANGE_CARDS: { title: string; tag: string; body: ReactNode }[] = [
   {
-    title: '추월 보조',
+    title: '오버테이크 모드',
     tag: '2026 신규',
     body: (
       <>
