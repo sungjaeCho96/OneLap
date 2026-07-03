@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useId } from 'react'
+import { useState, useId, useRef } from 'react'
 import type { AnalysisTabItem } from './types'
 
 const BG = '#15120D'
@@ -16,11 +16,17 @@ export interface AnalysisSectionProps {
 
 export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionProps) {
   const baseId = useId()
+  const tabBarRef = useRef<HTMLDivElement>(null)
   const [activeId, setActiveId] = useState(() => defaultTabId ?? tabs[0]?.id ?? '')
 
   if (tabs.length === 0) return null
 
   const showTabBar = tabs.length > 1
+
+  function selectTab(tabId: string) {
+    setActiveId(tabId)
+    tabBarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   function handleKeyDown(e: React.KeyboardEvent, tabId: string) {
     const idx = tabs.findIndex((t) => t.id === tabId)
@@ -63,9 +69,11 @@ export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionP
 
       {showTabBar && (
         <div
+          ref={tabBarRef}
           style={{
             position: 'sticky',
             top: 73,
+            scrollMarginTop: 73,
             zIndex: 40,
             background: BG,
             borderBottom: `1px solid ${BORDER}`,
@@ -92,7 +100,7 @@ export default function AnalysisSection({ tabs, defaultTabId }: AnalysisSectionP
                     aria-selected={isActive}
                     aria-controls={`${baseId}-panel-${tab.id}`}
                     tabIndex={isActive ? 0 : -1}
-                    onClick={() => setActiveId(tab.id)}
+                    onClick={() => selectTab(tab.id)}
                     onKeyDown={(e) => handleKeyDown(e, tab.id)}
                     style={{
                       display: 'flex',

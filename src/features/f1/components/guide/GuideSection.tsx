@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState, type KeyboardEvent } from 'react'
+import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import GuideIntro from './GuideIntro'
 import GuideGrid from './GuideGrid'
 import GuideRules from './GuideRules'
@@ -30,8 +30,14 @@ const CHAPTERS: AnalysisTabItem[] = [
 
 export default function GuideSection() {
   const baseId = useId()
+  const tabBarRef = useRef<HTMLDivElement>(null)
   const [activeId, setActiveId] = useState(CHAPTERS[0].id)
   const activeChapter = CHAPTERS.find((c) => c.id === activeId) ?? CHAPTERS[0]
+
+  function selectTab(tabId: string) {
+    setActiveId(tabId)
+    tabBarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   function handleKeyDown(e: KeyboardEvent<HTMLButtonElement>, tabId: string) {
     const idx = CHAPTERS.findIndex((c) => c.id === tabId)
@@ -64,7 +70,7 @@ export default function GuideSection() {
         <GuideHeroCard />
       </div>
 
-      <div className="sticky top-[73px] z-40 bg-bg-dark border-y border-border-dark">
+      <div ref={tabBarRef} className="sticky top-[73px] z-40 scroll-mt-[73px] bg-bg-dark border-y border-border-dark">
         <div className="max-w-[1280px] mx-auto px-6">
           <div
             role="tablist"
@@ -81,7 +87,7 @@ export default function GuideSection() {
                   aria-selected={isActive}
                   aria-controls={`${baseId}-panel-${tab.id}`}
                   tabIndex={isActive ? 0 : -1}
-                  onClick={() => setActiveId(tab.id)}
+                  onClick={() => selectTab(tab.id)}
                   onKeyDown={(e) => handleKeyDown(e, tab.id)}
                   className={`flex flex-col items-center gap-[3px] px-6 py-4 cursor-pointer bg-transparent border-0 border-b-[3px] whitespace-nowrap flex-shrink-0 transition-colors duration-150 ${
                     isActive ? 'border-accent text-text-inv' : 'border-transparent text-text-muted'
