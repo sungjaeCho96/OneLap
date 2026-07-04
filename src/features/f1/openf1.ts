@@ -56,12 +56,16 @@ export interface RawPoint {
 
 const OF1_FETCH_OPTS = { next: { revalidate: 86400 } } as const
 
-export async function fetchOF1(url: string, attempt = 0): Promise<Response> {
-  const res = await fetch(url, OF1_FETCH_OPTS)
+// 레이스 전체 구간 location/car_data는 응답이 수 MB에 달해 Next.js Data Cache의
+// 2MB 제한("items over 2MB can not be cached")에 걸린다 — 이런 대용량 응답은
+// noStore=true로 호출해 Data Cache 시도 자체를 건너뛴다(원본 fetch 실패가 아니라
+// 캐시 저장 실패였을 뿐이지만, 매 요청마다 실패 로그가 반복되는 걸 막기 위함).
+export async function fetchOF1(url: string, attempt = 0, noStore = false): Promise<Response> {
+  const res = await fetch(url, noStore ? { cache: 'no-store' } : OF1_FETCH_OPTS)
   // 429 Rate Limit: 1회 재시도 (1s 대기)
   if (res.status === 429 && attempt < 1) {
     await new Promise((r) => setTimeout(r, 1000))
-    return fetchOF1(url, attempt + 1)
+    return fetchOF1(url, attempt + 1, noStore)
   }
   return res
 }

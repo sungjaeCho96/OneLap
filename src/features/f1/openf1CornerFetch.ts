@@ -33,8 +33,8 @@ interface OpenF1RaceControl {
   date: string
 }
 
-async function fetchJsonArray<T>(url: string, label: string): Promise<T[]> {
-  const res = await fetchOF1(url)
+async function fetchJsonArray<T>(url: string, label: string, noStore = false): Promise<T[]> {
+  const res = await fetchOF1(url, 0, noStore)
   if (!res.ok) throw new Error(`OpenF1 fetch failed(${label}): ${res.status}`)
   const json: unknown = await res.json()
   if (!Array.isArray(json)) throw new Error(`Invalid ${label} data from OpenF1`)
@@ -139,6 +139,7 @@ export async function fetchDriverLaps(sessionKey: number, driverNumber: number):
   )
 }
 
+// 레이스 전체 구간 응답(수 MB)이라 Next.js Data Cache 용량 제한을 피하려 noStore로 호출
 export async function fetchDriverLocation(
   sessionKey: number,
   driverNumber: number,
@@ -146,6 +147,7 @@ export async function fetchDriverLocation(
   return fetchJsonArray<OpenF1Location>(
     openF1Url('location', { session_key: String(sessionKey), driver_number: String(driverNumber) }),
     'location',
+    true,
   )
 }
 
@@ -156,5 +158,6 @@ export async function fetchDriverCarData(
   return fetchJsonArray<OpenF1CarData>(
     openF1Url('car_data', { session_key: String(sessionKey), driver_number: String(driverNumber) }),
     'car_data',
+    true,
   )
 }
