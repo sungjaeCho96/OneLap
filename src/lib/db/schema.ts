@@ -1,6 +1,7 @@
 import { pgTable, serial, integer, text, real, jsonb, timestamp, unique } from 'drizzle-orm/pg-core'
 import type { TrackPoint } from '@/features/f1/trackSpeed'
 import type { PitStrategyData } from '@/features/f1/pitStrategy'
+import type { CornerAnalysisData } from '@/features/f1/cornerAnalysisBuild'
 
 export const f1Sessions = pgTable('f1_sessions', {
   sessionKey: integer('session_key').primaryKey(),
@@ -32,6 +33,15 @@ export const f1PitStrategyCache = pgTable('f1_pit_strategy_cache', {
   data: jsonb('data').notNull().$type<PitStrategyData>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 })
+
+export const f1CornerAnalysisCache = pgTable('f1_corner_analysis_cache', {
+  sessionKey: integer('session_key').notNull(),
+  algoVersion: integer('algo_version').notNull(),
+  data: jsonb('data').notNull().$type<CornerAnalysisData>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+}, (table) => [
+  unique().on(table.sessionKey, table.algoVersion),
+])
 
 export const f1TrackSpeedCache = pgTable('f1_track_speed_cache', {
   id: serial('id').primaryKey(),
