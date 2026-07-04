@@ -9,6 +9,7 @@ import NewsSection from './NewsSection'
 import RaceResultCard from '@/features/f1/components/RaceResultCard'
 import TrackSpeedSection from '@/features/f1/components/TrackSpeedSection'
 import PitStrategySection from '@/features/f1/components/PitStrategySection'
+import CornerAnalysisSection from '@/features/f1/components/CornerAnalysisSection'
 import AnalysisSection from '@/features/f1/components/analysis/AnalysisSection'
 import GuideSection from '@/features/f1/components/guide/GuideSection'
 import type { AnalysisTabItem } from '@/features/f1/components/analysis/types'
@@ -54,6 +55,12 @@ export default function HomeContent({
       label: '피트스톱 전략',
       eyebrow: 'PIT STRATEGY',
       content: <PitStrategySection races={pitRaces} initialData={pitInitialData} />,
+    },
+    pitRaces.length > 0 && {
+      id: 'corner-analysis',
+      label: '코너 강점 분석',
+      eyebrow: 'RACE PACE',
+      content: <CornerAnalysisSection races={pitRaces} />,
     },
   ].filter(Boolean) as AnalysisTabItem[]
 
