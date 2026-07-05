@@ -26,6 +26,20 @@ import { buildDriverTrace, type DriverTraceAccumulator } from './cornerAnalysisD
 import { pickReferenceLap, normalizeAll } from './cornerAnalysisNormalize'
 import { buildTeamGroups, replaceSoloDriverCodes } from './cornerAnalysisTeams'
 
+// OpenF1 fetch가 필요한 부분(세션/드라이버/결과/스틴트/세이프티카/드라이버별 텔레메트리)만 담는다.
+// algoVersion(코너 탐지 상수)과 무관하므로 sessionKey만으로 DB에 영구 캐시해, 알고리즘을
+// 튜닝할 때마다 OpenF1을 다시 두들기지 않도록 한다. resultMap은 Map이라 JSON 직렬화가 안 되어
+// 배열로 풀어서 담는다.
+export interface RawSessionBundle {
+  sessionKey: number
+  circuitShortName: string
+  countryName: string
+  totalLaps: number
+  drivers: OpenF1Driver[]
+  resultEntries: { driverNumber: number; info: DriverResultInfo }[]
+  traces: DriverTraceAccumulator[]
+}
+
 export interface CornerAnalysisData {
   sessionKey: number
   circuitShortName: string
@@ -85,7 +99,8 @@ function buildTeamProfiles(
   })
 }
 
-export async function buildCornerAnalysisData(sessionKey: number): Promise<CornerAnalysisData> {
+// OpenF1 네트워크 호출이 발생하는 부분 전체 — sessionKey만으로 캐시 가능한 원본 번들을 만든다.
+export async function fetchRawSessionBundle(sessionKey: number): Promise<RawSessionBundle> {
   // 1~5: 메타/드라이버/결과/스틴트/세이프티카 — 순차 실행
   const meta = await fetchSessionMeta(sessionKey)
   const drivers = await fetchSessionDrivers(sessionKey)
@@ -98,26 +113,49 @@ export async function buildCornerAnalysisData(sessionKey: number): Promise<Corne
   const traces = await collectDriverTraces(sessionKey, drivers, resultMap, stintsByDriver, scPeriods)
   if (traces.length === 0) throw new Error('유효한 랩 데이터를 가진 드라이버가 없습니다.')
 
+  return {
+    sessionKey,
+    circuitShortName: meta.circuitShortName,
+    countryName: meta.countryName,
+    totalLaps,
+    drivers,
+    resultEntries: [...resultMap.entries()].map(([driverNumber, info]) => ({ driverNumber, info })),
+    traces,
+  }
+}
+
+// 네트워크 호출 없는 순수 계산 — 코너 탐지 상수(algoVersion)가 바뀌어도 이 함수만 다시 돌리면 된다.
+export function computeCornerAnalysisFromBundle(bundle: RawSessionBundle): CornerAnalysisData {
+  const resultMap = new Map(bundle.resultEntries.map((e) => [e.driverNumber, e.info]))
+
   // 7: 기준 랩 선정 (전체 유효 랩 중 lap_duration 최소)
-  const refKey = pickReferenceLap(traces)
+  const refKey = pickReferenceLap(bundle.traces)
   if (!refKey) throw new Error('기준 랩을 선정할 수 없습니다.')
 
   // 8: 전체 세션 취합 좌표로 SVG 정규화
-  const { validLapsByDriver, refLapTrackPoints, trackPath, bounds } = normalizeAll(traces, refKey)
+  const { validLapsByDriver, refLapTrackPoints, trackPath, bounds } = normalizeAll(bundle.traces, refKey)
 
   // 9: 코너/직선 탐지
   const corners = detectCorners(refLapTrackPoints)
   const straights = detectStraights(corners)
 
   // 10~12: 팀 그룹핑 + 집계 + soloDriverCode 치환
-  const teams = buildTeamProfiles(drivers, traces, resultMap, corners, straights, totalLaps, validLapsByDriver)
+  const teams = buildTeamProfiles(
+    bundle.drivers,
+    bundle.traces,
+    resultMap,
+    corners,
+    straights,
+    bundle.totalLaps,
+    validLapsByDriver,
+  )
 
   // 13: 최종 조립
   return {
-    sessionKey,
-    circuitShortName: meta.circuitShortName,
-    countryName: meta.countryName,
-    totalLaps,
+    sessionKey: bundle.sessionKey,
+    circuitShortName: bundle.circuitShortName,
+    countryName: bundle.countryName,
+    totalLaps: bundle.totalLaps,
     algoVersion: ALGO_VERSION,
     bounds,
     trackPath,
@@ -125,4 +163,9 @@ export async function buildCornerAnalysisData(sessionKey: number): Promise<Corne
     straights,
     teams,
   }
+}
+
+export async function buildCornerAnalysisData(sessionKey: number): Promise<CornerAnalysisData> {
+  const bundle = await fetchRawSessionBundle(sessionKey)
+  return computeCornerAnalysisFromBundle(bundle)
 }

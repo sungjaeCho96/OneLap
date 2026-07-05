@@ -1,7 +1,7 @@
 import { pgTable, serial, integer, text, real, jsonb, timestamp, unique } from 'drizzle-orm/pg-core'
 import type { TrackPoint } from '@/features/f1/trackSpeed'
 import type { PitStrategyData } from '@/features/f1/pitStrategy'
-import type { CornerAnalysisData } from '@/features/f1/cornerAnalysisBuild'
+import type { CornerAnalysisData, RawSessionBundle } from '@/features/f1/cornerAnalysisBuild'
 
 export const f1Sessions = pgTable('f1_sessions', {
   sessionKey: integer('session_key').primaryKey(),
@@ -42,6 +42,14 @@ export const f1CornerAnalysisCache = pgTable('f1_corner_analysis_cache', {
 }, (table) => [
   unique().on(table.sessionKey, table.algoVersion),
 ])
+
+// OpenF1 원본 텔레메트리 번들 — algoVersion과 무관하게 sessionKey 하나당 한 번만 저장한다.
+// 코너 탐지 상수를 튜닝해도(algoVersion 증가) 이 캐시가 있으면 OpenF1을 다시 호출하지 않는다.
+export const f1CornerRawCache = pgTable('f1_corner_raw_cache', {
+  sessionKey: integer('session_key').primaryKey(),
+  data: jsonb('data').notNull().$type<RawSessionBundle>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+})
 
 export const f1TrackSpeedCache = pgTable('f1_track_speed_cache', {
   id: serial('id').primaryKey(),

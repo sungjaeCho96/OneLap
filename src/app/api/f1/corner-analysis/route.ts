@@ -1,6 +1,11 @@
 import { ALGO_VERSION } from '@/features/f1/cornerAnalysis'
-import { buildCornerAnalysisData, type CornerAnalysisResponse } from '@/features/f1/cornerAnalysisBuild'
+import {
+  fetchRawSessionBundle,
+  computeCornerAnalysisFromBundle,
+  type CornerAnalysisResponse,
+} from '@/features/f1/cornerAnalysisBuild'
 import { getCachedCornerAnalysis, saveCornerAnalysisCache } from '@/lib/db/cornerAnalysisCache'
+import { getCachedRawSession, saveRawSessionCache } from '@/lib/db/cornerRawCache'
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url)
@@ -27,7 +32,17 @@ export async function GET(request: Request): Promise<Response> {
       return Response.json(body, { headers: { 'Cache-Control': 'no-store' } })
     }
 
-    const data = await buildCornerAnalysisData(sessionKey)
+    // OpenF1 원본 텔레메트리는 sessionKey 하나당 한 번만 받는다 — algoVersion이 바뀌어도
+    // (코너 탐지 상수 튜닝) 이 캐시가 있으면 여기서 재사용하고 순수 계산만 다시 돌린다.
+    const rawCached = await getCachedRawSession(sessionKey)
+    const bundle = rawCached ?? (await fetchRawSessionBundle(sessionKey))
+    if (!rawCached) {
+      saveRawSessionCache(bundle).catch((err: unknown) => {
+        console.error('[corner-analysis] 원본 텔레메트리 캐시 저장 실패:', err)
+      })
+    }
+
+    const data = computeCornerAnalysisFromBundle(bundle)
 
     saveCornerAnalysisCache(data, ALGO_VERSION).catch((err: unknown) => {
       console.error('[corner-analysis] DB 캐시 저장 실패:', err)
