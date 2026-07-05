@@ -21,7 +21,10 @@ export async function GET(request: Request): Promise<Response> {
     const cached = await getCachedCornerAnalysis(sessionKey, ALGO_VERSION)
     if (cached) {
       const body: CornerAnalysisResponse = { success: true, data: cached }
-      return Response.json(body, { headers: { 'Cache-Control': 'public, max-age=86400' } })
+      // no-store: 실제 캐싱은 DB 캐시(algoVersion 키 포함)가 담당한다. 여기서 브라우저
+      // Cache-Control까지 걸면 algoVersion을 올려도 브라우저가 예전 응답을 계속 재사용해
+      // 코너 탐지 상수를 튜닝할 때마다 혼란을 준다(실제로 겪은 문제).
+      return Response.json(body, { headers: { 'Cache-Control': 'no-store' } })
     }
 
     const data = await buildCornerAnalysisData(sessionKey)
@@ -32,7 +35,7 @@ export async function GET(request: Request): Promise<Response> {
 
     const body: CornerAnalysisResponse = { success: true, data }
     return Response.json(body, {
-      headers: { 'Cache-Control': 'public, max-age=86400' },
+      headers: { 'Cache-Control': 'no-store' },
     })
   } catch (err) {
     console.error('[corner-analysis] 처리 실패:', err)
