@@ -62,8 +62,11 @@ export interface TeamCarProfile {
 
 export const SPEED_SMOOTH_WINDOW = 5 // TODO(실데이터 검증)
 export const MIN_CORNER_SEPARATION_D = 0.015 // TODO(실데이터 검증)
-export const MIN_APEX_PROMINENCE_KMH = 15 // TODO(실데이터 검증)
+export const MIN_APEX_PROMINENCE_KMH = 10 // TODO(실데이터 검증) — 15에서 하향, 완만한 고속 코너의 얕은 감속폭도 인정
 export const BRAKE_CONFIRM_WINDOW_D = 0.03 // TODO(실데이터 검증)
+// 스로틀이 이 값 밑으로 떨어지면 브레이크 없이 리프트만 한 경우도 감속 의도로 인정한다.
+// 고속 코너는 브레이크 없이 스로틀만 살짝 떼고 통과하는 경우가 많아, 브레이크만 요구하면 고속 코너가 체계적으로 걸러진다.
+export const THROTTLE_LIFT_THRESHOLD = 90 // TODO(실데이터 검증)
 export const CORNER_WINDOW_D = 0.02 // TODO(실데이터 검증)
 export const OUTLIER_SLOW_THRESHOLD = 0.05 // TODO(실데이터 검증)
 export const MIN_INSTANCE_SAMPLE = 3 // TODO(실데이터 검증)
@@ -71,7 +74,7 @@ export const STRAIGHT_ACCEL_SPAN_D = 0.05 // TODO(실데이터 검증)
 export const HIGH_SPEED_CORNER_KMH = 200 // TODO(실데이터 검증)
 export const LOW_SPEED_CORNER_KMH = 125 // TODO(실데이터 검증)
 export const MIN_CORNER_SAMPLE = 2 // TODO(실데이터 검증)
-export const ALGO_VERSION = 1 // TODO(실데이터 검증)
+export const ALGO_VERSION = 2 // 코너 탐지 임계값 변경(브레이크→감속 확증, prominence 하향)으로 캐시 무효화
 
 // ─── Corner classification ────────────────────────────────────────────────────
 
@@ -116,10 +119,13 @@ function filterByProminence(sm: number[], candidates: number[]): number[] {
   })
 }
 
-// apex 이전 BRAKE_CONFIRM_WINDOW_D 구간에 브레이크 흔적이 있어야 실제 코너로 확정
-function hasBrakeConfirmation(points: TrackPoint[], apexD: number): boolean {
+// apex 이전 BRAKE_CONFIRM_WINDOW_D 구간에 브레이크 또는 스로틀 리프트 흔적이 있어야 실제 코너로 확정.
+// 브레이크만 요구하면 고속 코너(스로틀 리프트만으로 통과)가 체계적으로 걸러지므로 둘 중 하나만 있어도 인정한다.
+function hasDecelerationConfirmation(points: TrackPoint[], apexD: number): boolean {
   const lo = apexD - BRAKE_CONFIRM_WINDOW_D
-  return points.some((p) => p.d >= lo && p.d <= apexD && p.brake > 0)
+  return points.some(
+    (p) => p.d >= lo && p.d <= apexD && (p.brake > 0 || p.throttle < THROTTLE_LIFT_THRESHOLD),
+  )
 }
 
 // d 간격이 MIN_CORNER_SEPARATION_D 미만인 후보끼리는 더 느린(=더 낮은 speed) 후보만 남긴다
@@ -159,8 +165,8 @@ export function detectCorners(refLap: TrackPoint[]): CornerDef[] {
 
   const candidates = findLocalMinCandidates(sm)
   const prominent = filterByProminence(sm, candidates)
-  const brakeConfirmed = prominent.filter((idx) => hasBrakeConfirmation(refLap, refLap[idx].d))
-  const finalIndices = mergeCloseCandidates(sm, refLap, brakeConfirmed)
+  const decelConfirmed = prominent.filter((idx) => hasDecelerationConfirmation(refLap, refLap[idx].d))
+  const finalIndices = mergeCloseCandidates(sm, refLap, decelConfirmed)
 
   return finalIndices
     .sort((a, b) => refLap[a].d - refLap[b].d)
