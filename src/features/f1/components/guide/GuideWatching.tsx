@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { SecHead, Hl } from './primitives'
 import GuideUndercutOvercut from './GuideUndercutOvercut'
+import GuideApexChicane from './GuideApexChicane'
 
 const CHANGE_CARDS: { title: string; tag: string; body: ReactNode }[] = [
   {
@@ -83,6 +84,8 @@ export default function GuideWatching() {
           <GuideUndercutOvercut />
         </div>
       </section>
+
+      <GuideApexChicane />
 
       {/* 08. 용어집 */}
       <section className="py-[72px] border-t border-border">

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에이펙스 vs 시케인 — 초심자 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#0f1117;
+    --asphalt-2:#171a22;
+    --asphalt-3:#1d212b;
+    --line:#2a2f3b;
+    --chalk:#edeff2;
+    --smoke:#969ba6;
+    --smoke-dim:#6b707b;
+    --purple:#b45cff;
+    --green:#2fd27a;
+    --amber:#f4c13b;
+    --red:#ff2e55;
+    --track:#31374a;
+    --track-edge:#454c62;
+    --display:"Saira Condensed","Noto Sans KR",sans-serif;
+    --body:"Noto Sans KR",sans-serif;
+    --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--asphalt);color:var(--chalk);font-family:var(--body);
+    line-height:1.7;-webkit-font-smoothing:antialiased;padding:44px 22px 60px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+
+  .eyebrow{font-family:var(--display);font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+    font-size:.72rem;color:var(--smoke);display:inline-flex;align-items:center;gap:.6em;}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--purple);display:inline-block;}
+  h1{font-family:var(--body);font-weight:900;font-size:clamp(1.6rem,4vw,2.3rem);
+    line-height:1.15;letter-spacing:-.01em;margin:14px 0 12px;}
+  .intro{color:var(--smoke);font-weight:300;max-width:66ch;font-size:1rem;}
+  .intro b{color:var(--chalk);font-weight:500;}
+
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:36px;}
+  .panel{background:var(--asphalt-2);border:1px solid var(--line);border-radius:14px;
+    padding:24px 24px 26px;position:relative;overflow:hidden;}
+  .panel::before{content:"";position:absolute;top:0;left:0;width:100%;height:4px;background:var(--c);}
+  .p-tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--c);border:1px solid var(--line);border-radius:5px;padding:4px 8px;display:inline-block;}
+  .p-title{font-size:1.5rem;font-weight:800;font-family:var(--display);margin:14px 0 2px;letter-spacing:.01em;}
+  .p-title .ko{font-family:var(--body);font-weight:700;font-size:1.15rem;display:block;letter-spacing:0;}
+  .p-kind{color:var(--c);font-family:var(--mono);font-size:.74rem;margin-top:8px;letter-spacing:.04em;}
+  svg{width:100%;height:auto;display:block;margin:14px 0 6px;}
+  .p-desc{color:#c8ccd4;font-size:.92rem;font-weight:300;}
+  .p-desc b{color:var(--chalk);font-weight:500;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:26px;padding:16px 20px;
+    background:var(--asphalt-2);border:1px solid var(--line);border-radius:10px;
+    font-size:.8rem;color:var(--smoke);}
+  .legend span{display:inline-flex;align-items:center;gap:8px;}
+  .lg-line{width:22px;height:3px;border-radius:2px;background:var(--purple);}
+  .lg-dot{width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);}
+  .lg-kerb{width:22px;height:9px;border-radius:2px;
+    background:repeating-linear-gradient(90deg,var(--red) 0 5px,#fff 5px 10px);}
+
+  .link{margin-top:22px;background:rgba(180,92,255,.07);border:1px solid rgba(180,92,255,.3);
+    border-radius:11px;padding:20px 22px;}
+  .link h3{font-size:1.05rem;font-weight:700;color:var(--purple);margin-bottom:8px;display:flex;align-items:center;gap:9px;}
+  .link p{color:#cdcbe0;font-size:.93rem;font-weight:300;}
+  .link p b{color:var(--chalk);font-weight:600;}
+
+  .compare{width:100%;border-collapse:collapse;margin-top:26px;font-size:.9rem;}
+  .compare th,.compare td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .compare th{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--smoke);font-weight:400;}
+  .compare td:first-child{color:var(--smoke);font-weight:300;width:26%;}
+  .compare .apx{color:var(--red);font-weight:500;}
+  .compare .chi{color:var(--amber);font-weight:500;}
+  .compare tr td{color:#c8ccd4;font-weight:300;}
+
+  svg text{font-family:var(--body);}
+  .lbl{font-size:15px;font-weight:700;}
+  .lbl-sm{font-size:12.5px;font-weight:300;}
+
+  @media(max-width:760px){
+    .panels{grid-template-columns:1fr;}
+    .compare td:first-child{width:34%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">Racing Basics · 코너의 기초</span>
+  <h1>에이펙스와 시케인, 뭐가 다를까?</h1>
+  <p class="intro">둘은 "코너를 부르는 다른 이름"이 아니에요. <b>에이펙스는 코너 안의 한 '점'</b>이고, <b>시케인은 좌우로 꺾이는 '구간'</b>입니다. 층위가 다르죠 — 사실 <b>시케인 안에 에이펙스가 여러 개</b> 들어 있어요.</p>
+
+  <div class="panels">
+
+    <!-- ============ APEX ============ -->
+    <div class="panel" style="--c:var(--red)">
+      <span class="p-tag">A Point · 지점</span>
+      <div class="p-title">APEX<span class="ko">에이펙스 (정점)</span></div>
+      <div class="p-kind">코너 안쪽의 가장 가까운 한 점</div>
+
+      <svg viewBox="0 0 460 360" role="img" aria-label="하나의 코너와 에이펙스를 지나는 레이싱 라인">
+        <!-- asphalt edge -->
+        <path d="M 40 66 L 250 66 Q 384 66 384 200 L 384 356"
+              fill="none" stroke="var(--track-edge)" stroke-width="82" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- asphalt -->
+        <path d="M 40 66 L 250 66 Q 384 66 384 200 L 384 356"
+              fill="none" stroke="var(--track)" stroke-width="74" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- centre dashes -->
+        <path d="M 40 66 L 250 66 Q 384 66 384 200 L 384 356"
+              fill="none" stroke="#5b6273" stroke-width="1.5" stroke-dasharray="10 12" opacity=".5"/>
+
+        <!-- kerb at apex (white base + red dashes) -->
+        <path id="kerbA" d="M 288 96 Q 320 112 345 150 Q 356 168 360 186"
+              fill="none" stroke="#fff" stroke-width="9" stroke-linecap="butt"/>
+        <path d="M 288 96 Q 320 112 345 150 Q 356 168 360 186"
+              fill="none" stroke="var(--red)" stroke-width="9" stroke-dasharray="9 9" stroke-linecap="butt"/>
+
+        <!-- racing line -->
+        <path d="M 40 40 Q 250 40 326 148 Q 384 232 414 356"
+              fill="none" stroke="var(--purple)" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="900" stroke-dashoffset="900">
+          <animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.4s" fill="freeze"/>
+        </path>
+        <!-- direction arrow -->
+        <path d="M 70 40 l -14 -6 l 4 6 l -4 6 z" fill="var(--purple)"/>
+
+        <!-- apex dot -->
+        <circle cx="326" cy="148" r="12" fill="none" stroke="var(--red)" stroke-width="2" opacity=".5">
+          <animate attributeName="r" from="12" to="20" dur="1.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from=".5" to="0" dur="1.6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="326" cy="148" r="8" fill="var(--red)"/>
+
+        <!-- labels -->
+        <text x="40" y="26" class="lbl-sm" fill="var(--smoke)">진입 (넓게)</text>
+        <text x="326" y="148" dx="18" dy="-14" class="lbl" fill="#fff">에이펙스</text>
+        <text x="326" y="148" dx="18" dy="4" class="lbl-sm" fill="var(--smoke)">이 점을 스치듯 통과</text>
+        <text x="414" y="350" dx="-96" class="lbl-sm" fill="var(--smoke)" text-anchor="end">탈출 (넓게)</text>
+      </svg>
+
+      <p class="p-desc">코너에 <b>넓게 진입</b>해 안쪽 정점을 <b>살짝 스치고</b> 다시 넓게 빠져나가는 게 기본. 이 정점이 에이펙스예요. <b>모든 코너</b>에 하나씩 있고, 어디를 정점으로 잡느냐가 탈출 속도를 가릅니다.</p>
+    </div>
+
+    <!-- ============ CHICANE ============ -->
+    <div class="panel" style="--c:var(--amber)">
+      <span class="p-tag">A Section · 구간</span>
+      <div class="p-title">CHICANE<span class="ko">시케인</span></div>
+      <div class="p-kind">차를 늦추려 만든 좌우 꺾임 구간</div>
+
+      <svg viewBox="0 0 460 360" role="img" aria-label="좌우로 꺾이는 시케인과 두 개의 에이펙스">
+        <!-- asphalt edge -->
+        <path d="M 30 258 L 150 258 C 208 258 214 128 272 128 L 440 128"
+              fill="none" stroke="var(--track-edge)" stroke-width="82" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- asphalt -->
+        <path d="M 30 258 L 150 258 C 208 258 214 128 272 128 L 440 128"
+              fill="none" stroke="var(--track)" stroke-width="74" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- centre dashes -->
+        <path d="M 30 258 L 150 258 C 208 258 214 128 272 128 L 440 128"
+              fill="none" stroke="#5b6273" stroke-width="1.5" stroke-dasharray="10 12" opacity=".5"/>
+
+        <!-- kerb apex 1 (inside = bottom of first kink) -->
+        <path d="M 150 296 Q 185 296 205 276"
+              fill="none" stroke="#fff" stroke-width="9"/>
+        <path d="M 150 296 Q 185 296 205 276"
+              fill="none" stroke="var(--red)" stroke-width="9" stroke-dasharray="9 9"/>
+        <!-- kerb apex 2 (inside = top of second kink) -->
+        <path d="M 262 90 Q 292 90 322 90"
+              fill="none" stroke="#fff" stroke-width="9"/>
+        <path d="M 262 90 Q 292 90 322 90"
+              fill="none" stroke="var(--red)" stroke-width="9" stroke-dasharray="9 9"/>
+
+        <!-- racing line: straight-lines the chicane -->
+        <path d="M 30 262 L 150 262 Q 196 260 214 236 Q 240 202 258 168 Q 276 134 322 132 L 440 132"
+              fill="none" stroke="var(--purple)" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="1000" stroke-dashoffset="1000">
+          <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.6s" fill="freeze"/>
+        </path>
+        <path d="M 60 262 l -14 -6 l 4 6 l -4 6 z" fill="var(--purple)"/>
+
+        <!-- apex dots -->
+        <circle cx="205" cy="252" r="8" fill="var(--red)"/>
+        <circle cx="205" cy="252" r="12" fill="none" stroke="var(--red)" stroke-width="2" opacity=".5">
+          <animate attributeName="r" from="12" to="19" dur="1.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from=".5" to="0" dur="1.6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="272" cy="104" r="8" fill="var(--red)"/>
+        <circle cx="272" cy="104" r="12" fill="none" stroke="var(--red)" stroke-width="2" opacity=".5">
+          <animate attributeName="r" from="12" to="19" dur="1.6s" begin=".4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from=".5" to="0" dur="1.6s" begin=".4s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- labels -->
+        <text x="35" y="300" class="lbl-sm" fill="var(--smoke)">직선에서 진입 →</text>
+        <text x="205" y="252" dx="-14" dy="34" class="lbl-sm" fill="#fff" text-anchor="middle">에이펙스 ①</text>
+        <text x="272" y="104" dx="6" dy="-16" class="lbl-sm" fill="#fff">에이펙스 ②</text>
+        <text x="360" y="132" dy="-30" class="lbl-sm" fill="var(--smoke)">← 다시 직선</text>
+      </svg>
+
+      <p class="p-desc">보통 직선 중간에 <b>속도를 강제로 줄이려고</b> 설치해요. 좌우로 빠르게 꺾이는 <b>S자 구간</b>이라, 그 안에 <b>코너가 둘 이상</b> — 즉 <b>에이펙스도 여러 개</b>죠. 최대한 곧게 잇는 게 관건이에요.</p>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i class="lg-line"></i> 레이싱 라인 (이상적인 주행 궤적)</span>
+    <span><i class="lg-dot"></i> 에이펙스 (정점)</span>
+    <span><i class="lg-kerb"></i> 커브 (연석 · 코너 안쪽 경계)</span>
+  </div>
+
+  <div class="link">
+    <h3>🔑 핵심 관계</h3>
+    <p>둘은 경쟁 관계가 아니라 <b>포함 관계</b>예요. <b>에이펙스는 '점'</b>, <b>시케인은 '구간'</b>. 시케인은 코너 여러 개로 이뤄진 구간이니, <b>하나의 시케인 안에 에이펙스가 여러 개</b> 들어 있습니다. 오른쪽 그림의 빨간 점 두 개가 바로 그거예요.</p>
+  </div>
+
+  <table class="compare">
+    <thead>
+      <tr><th>구분</th><th class="apx">에이펙스</th><th class="chi">시케인</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>정체</td><td>코너 안쪽의 한 <b>점</b></td><td>좌우로 꺾이는 <b>구간</b></td></tr>
+      <tr><td>어디에</td><td>모든 코너에 존재</td><td>주로 직선 중간에 인위적으로 설치</td></tr>
+      <tr><td>목적</td><td>빠른 코너 탈출의 기준점</td><td>차 속도를 강제로 줄이기 위함</td></tr>
+      <tr><td>개수</td><td>코너당 1개 (잡는 위치는 선택)</td><td>그 안에 코너·에이펙스가 여러 개</td></tr>
+      <tr><td>비유</td><td>커브를 도는 '순간'의 한 점</td><td>여러 커브가 묶인 '지그재그 골목'</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
