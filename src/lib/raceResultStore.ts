@@ -25,7 +25,8 @@ export async function loadStoredResults(): Promise<{
     const age = Date.now() - new Date(store.lastCheckedAt).getTime()
     return {
       results: store.results,
-      shouldRefresh: age >= (store.checkTtlMs ?? DEFAULT_CHECK_TTL_MS),
+      // lastCheckedAt이 없거나 유효하지 않으면 age가 NaN이 되어 항상 false로 새는 것을 방지
+      shouldRefresh: Number.isNaN(age) || age >= (store.checkTtlMs ?? DEFAULT_CHECK_TTL_MS),
     }
   } catch {
     return { results: [], shouldRefresh: true }

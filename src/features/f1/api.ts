@@ -470,26 +470,26 @@ async function fetchAllRaceResultsFromOpenF1(noCache = false): Promise<F1RaceRes
 
   const latestIdx = sessions.length - 1
 
-  // 3개씩 배치 처리 — 33개 동시 요청 대신 배치당 ~9개로 rate limit 방지
-  const BATCH_SIZE = 3
+  // 세션 1개당 최대 3개 요청(session_result/drivers/quali) 동시 발생 — OpenF1 rate limit(3req/sec)을
+  // 넘지 않도록 세션 단위로 순차 처리하고 사이에 텀을 둔다. 배치로 묶으면 429가 누적돼 결과가 통째로 드롭된다.
+  const REQUEST_INTERVAL_MS = 400
   const results: (F1RaceResult | null)[] = []
 
-  for (let i = 0; i < sessions.length; i += BATCH_SIZE) {
-    const batch = sessions.slice(i, i + BATCH_SIZE)
-    const batchResults = await Promise.all(
-      batch.map((session, batchIdx) => {
-        const idx = i + batchIdx
-        return fetchOneRaceResult(
-          session,
-          idx + 1,
-          qualiKeyMap.get(session.meeting_key),
-          meetingMap.get(session.meeting_key),
-          idx === latestIdx,
-          noCache,
-        ).catch(() => null)
-      }),
-    )
-    results.push(...batchResults)
+  for (let idx = 0; idx < sessions.length; idx++) {
+    const session = sessions[idx]
+    const result = await fetchOneRaceResult(
+      session,
+      idx + 1,
+      qualiKeyMap.get(session.meeting_key),
+      meetingMap.get(session.meeting_key),
+      idx === latestIdx,
+      noCache,
+    ).catch(() => null)
+    results.push(result)
+
+    if (idx < sessions.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, REQUEST_INTERVAL_MS))
+    }
   }
 
   return results
