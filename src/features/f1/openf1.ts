@@ -60,11 +60,15 @@ const OF1_FETCH_OPTS = { next: { revalidate: 86400 } } as const
 // 2MB 제한("items over 2MB can not be cached")에 걸린다 — 이런 대용량 응답은
 // noStore=true로 호출해 Data Cache 시도 자체를 건너뛴다(원본 fetch 실패가 아니라
 // 캐시 저장 실패였을 뿐이지만, 매 요청마다 실패 로그가 반복되는 걸 막기 위함).
+// 429 Rate Limit: 최대 4회 재시도, 지수 백오프(1s/2s/4s/8s) — corner-analysis처럼
+// 세션당 수십 회를 순차 호출하는 경로에서는 1회·1s 고정 재시도로 복구가 안 되는 경우가
+// 실측으로 확인됨(연속 429가 수 초 이상 지속). 그 정도 텀을 버틸 수 있게 늘렸다.
+const MAX_RETRIES = 4
+
 export async function fetchOF1(url: string, attempt = 0, noStore = false): Promise<Response> {
   const res = await fetch(url, noStore ? { cache: 'no-store' } : OF1_FETCH_OPTS)
-  // 429 Rate Limit: 1회 재시도 (1s 대기)
-  if (res.status === 429 && attempt < 1) {
-    await new Promise((r) => setTimeout(r, 1000))
+  if (res.status === 429 && attempt < MAX_RETRIES) {
+    await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt))
     return fetchOF1(url, attempt + 1, noStore)
   }
   return res

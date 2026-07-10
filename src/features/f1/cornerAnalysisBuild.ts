@@ -57,6 +57,10 @@ export type CornerAnalysisResponse =
   | { success: true; data: CornerAnalysisData }
   | { success: false; error: string }
 
+// 드라이버당 laps/location/car_data 3회 호출이라 사이에 텀 없이 이어붙이면 OpenF1
+// rate limit(429)에 걸린다(api.ts REQUEST_INTERVAL_MS와 동일 컨벤션, 실측으로 확인).
+const DRIVER_FETCH_INTERVAL_MS = 400
+
 // 드라이버별 순차 처리 — 동시 실행 시 OpenF1 429 유발 (trackSpeed.ts/pit-strategy/route.ts와 동일 컨벤션)
 async function collectDriverTraces(
   sessionKey: number,
@@ -66,9 +70,12 @@ async function collectDriverTraces(
   scPeriods: readonly SafetyCarPeriod[],
 ): Promise<DriverTraceAccumulator[]> {
   const traces: DriverTraceAccumulator[] = []
-  for (const driver of drivers) {
-    const trace = await buildDriverTrace(sessionKey, driver, resultMap, stintsByDriver, scPeriods)
+  for (let i = 0; i < drivers.length; i++) {
+    const trace = await buildDriverTrace(sessionKey, drivers[i], resultMap, stintsByDriver, scPeriods)
     if (trace) traces.push(trace)
+    if (i < drivers.length - 1) {
+      await new Promise((r) => setTimeout(r, DRIVER_FETCH_INTERVAL_MS))
+    }
   }
   return traces
 }
