@@ -33,7 +33,10 @@ export async function loadStoredResults(): Promise<{
   }
 }
 
-// round 기준 upsert — 기존 데이터를 유지하면서 새 결과만 추가/갱신
+// raceName 기준 upsert — 기존 데이터를 유지하면서 새 결과만 추가/갱신
+// round 번호는 OpenF1(완료 세션 개수 기반 idx+1)과 Ergast(공식 캘린더 round)가 서로
+// 다르게 계산될 수 있어(예: rate limit로 일부 세션이 누락되면 idx가 밀림) round를 키로 쓰면
+// 같은 레이스가 다른 round로 중복 저장된다. raceName은 시즌 내에서 유일하므로 이를 키로 쓴다.
 export async function upsertResults(
   newResults: F1RaceResult[],
   checkTtlMs = DEFAULT_CHECK_TTL_MS,
@@ -41,9 +44,9 @@ export async function upsertResults(
   try {
     const { results: existing } = await loadStoredResults()
 
-    const map = new Map(existing.map((r) => [r.round, r]))
+    const map = new Map(existing.map((r) => [r.raceName, r]))
     for (const r of newResults) {
-      map.set(r.round, r)
+      map.set(r.raceName, r)
     }
     const merged = [...map.values()].sort((a, b) => b.round - a.round)
 
